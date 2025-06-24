@@ -1,13 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import LandingPage from './Pages/LandingPage'
+import { Routes, Route } from "react-router";
+import ClientLogin from './Pages/Login/ClientLogin';
+import ClientPage from './Pages/ClientPage';
+import ClientDashboard from './Component/Client/ClientDashboard';
 
 function App() {
   return (
     <>
-      <LandingPage/>
+      <Routes>
+        <Route index element={<LandingPage />} />
+        <Route path="/Client/Login" element={<ClientLogin />} />
+
+        <Route path="/Client" element={<ClientPage/>} >
+          <Route path="Dashboard" element={<ClientDashboard />} />
+        </Route>
+
+      </Routes>
     </>
   )
 }
