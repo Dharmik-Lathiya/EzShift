@@ -1,19 +1,11 @@
+const ClientSchema = require("../../../Models/ClientSchema")
+const clientSignup = (req, res) => {
 
-const clientSignup = (req,res)=>{
-    // let {email,fullname,password,mobileno}=req.body;
-    // console.log(email,fullname,password,mobileno);
-    const { fullname, mobileno, email, password } = req.body;
+  const { fullname, mobileno, email, password } = req.body;
+  ClientSchema.insertOne({fullName:fullname,mobileNo:mobileno,emailId:email,password:password})
+  .then(()=>console.log("Data Stored!!"))
+  .catch((e)=>console.log(e))
+  res.redirect("/Client/Dashboard")
+};
 
-  if (!fullname || !mobileno || !email || !password) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
-
-  try {
-    // Save user to DB
-    return res.status(200).json({ message: "User registered successfully" });
-  } catch (error) {
-    return res.status(500).json({ error: "Internal server error" });
-  }
-}
-
-module.exports=clientSignup;
+module.exports = clientSignup;
