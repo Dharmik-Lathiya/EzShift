@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router";
 import ClientLogin from './Pages/Login/ClientLogin';
 import ClientDashboard from './Pages/Client/ClientDashboard';
 import ClientHistory from './Pages/Client/ClientHistory';
+import ClientProfile from './Pages/Client/ClientProfile';
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
         <Route path="/Client" >
           <Route path="Dashboard" index element={<ClientDashboard />} />
           <Route path="History" element={<ClientHistory/>} />
+          <Route path="Profile" element={<ClientProfile/>} />
+
         </Route>
 
       </Routes>
