@@ -1,12 +1,11 @@
 import React from 'react'
 import LandingHeader from '../../Component/Landing/LandingHeader'
 import ClientProfileHead from '../../Component/Client/Profile/ClientProfileHead'
-import ClientNavbar from '../../Component/Client/Dashboard/ClientNavbar'
+import ClientHeader from '../../Component/Client/ClientHeader'
 
 export default function ClientProfile() {
   return (
     <>
-        <ClientNavbar/>
         <ClientProfileHead/>
     </>
   )
