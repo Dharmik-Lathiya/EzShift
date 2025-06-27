@@ -56,16 +56,16 @@ export default function ClientNavbar() {
             }`}
           >
             <ul className="flex flex-col space-y-5 text-white text-lg">
-              <li className="cursor-pointer hover:text-pink-400 transition">
+              <li className="cursor-pointer hover:text-yellow-600 transition">
                 Features
               </li>
-              <li className="cursor-pointer hover:text-pink-400 transition">
+              <li className="cursor-pointer hover:text-yellow-600 transition">
                 Technologies
               </li>
-              <li className="cursor-pointer hover:text-pink-400 transition">
+              <li className="cursor-pointer hover:text-yellow-600 transition">
                 Contact Us
               </li>
-              <li className="cursor-pointer hover:text-pink-400 transition">
+              <li className="cursor-pointer hover:text-yellow-600 transition">
                 About Us
               </li>
             </ul>
