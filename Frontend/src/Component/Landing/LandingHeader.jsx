@@ -29,7 +29,6 @@ export default function LandingHeader() {
                 <button
                     className=" text-white lg:px-6 lg:py-1.5 px-3 py-0.5 rounded-md text-md cursor-pointer bg-gradient-to-r from-pink-400 to-indigo-600 transition delay-150 duration-200 ease-in-out m-1 md:m-2"
                     ><a href='http://localhost:5173/Client/Login'>Get Start</a></button>
-                
             </div>
         </div>
     </nav>

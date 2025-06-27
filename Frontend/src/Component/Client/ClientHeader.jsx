@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import logo from "../../../assets/logo.png";
-import profilepicture from "../../../assets/profilepicture.avif";
+import logo from "../../assets/logo.png";
+import profilepicture from "../../assets/profilepicture.avif";
 
-export default function ClientNavbar() {
+export default function ClientHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   if (menuOpen) {
     document.body.style.overflow = "hidden";
@@ -28,21 +28,21 @@ export default function ClientNavbar() {
         <div className="md:block hidden">
           <ul className="flex justify-between text-md lg:text-lg">
             <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              features
+              <a href="Dashboard">Home</a>
             </li>
             <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              technologies
+              <a href="BookTrip">Book Trip</a>
             </li>
             <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              contact us
+              <a href="Map">Map</a>
             </li>
             <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              about us
+              <a href="History">History</a>
             </li>
           </ul>
         </div>
         <div className="h-11 w-11">
-          <img className="rounded-full" src={profilepicture} alt="" />
+          <a href="Profile"><img className="rounded-full" src={profilepicture} alt="" /></a>
         </div>
       </div>
       {menuOpen && (
