@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "../../assets/logo.png";
 import profilepicture from "../../assets/profilepicture.avif";
+import { Link } from "react-router";
 
 export default function ClientHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -25,19 +26,19 @@ export default function ClientHeader() {
             alt="Logo"
           />
         </div>
-        <div className="md:block hidden">
+        <div className="md:block hidden mx-auto">
           <ul className="flex justify-between text-md lg:text-lg">
             <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              <a href="Dashboard">Home</a>
+              <Link to="Dashboard">Home</Link>
             </li>
             <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              <a href="BookTrip">Book Trip</a>
+              <Link to="BookTrip">Book Trip</Link>
             </li>
             <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              <a href="Map">Map</a>
+              <Link to="Map">Map</Link>
             </li>
             <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              <a href="History">History</a>
+              <Link to="History">History</Link>
             </li>
           </ul>
         </div>
@@ -48,25 +49,24 @@ export default function ClientHeader() {
       {menuOpen && (
         <div
           onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 bg-black/20 backdrop-blur-xsm z-40"
+          className="fixed inset-0 z-6000 h-[100dvh] bg-black/30 w-60 "
         >
           <div
-            className={`fixed top-20 left-0 h-70  z-50 bg-black/30 backdrop-blur-sm p-10 pl-15 pr-15 rounded-r-lg transform transition-transform duration-300 ease-in-out ${
-              menuOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+            className={`fixed top-20 left-0 h-full inset-0 p-10 pl-15 pr-15 rounded-r-lg transform transition-transform duration-300 ease-in-out ${menuOpen ? "translate-x-0" : "-translate-x-full"
+              }`}
           >
-            <ul className="flex flex-col space-y-5 text-white text-lg">
+            <ul className="z-6000 flex flex-col space-y-5 text-white text-lg">
               <li className="cursor-pointer hover:text-yellow-600 transition">
-                Features
+                <Link to="Dashboard">Home</Link>
               </li>
               <li className="cursor-pointer hover:text-yellow-600 transition">
-                Technologies
+                <Link to="BookTrip">Book Trip</Link>
               </li>
               <li className="cursor-pointer hover:text-yellow-600 transition">
-                Contact Us
+                <Link to="Map">Map</Link>
               </li>
               <li className="cursor-pointer hover:text-yellow-600 transition">
-                About Us
+                <Link to="History">History</Link>
               </li>
             </ul>
           </div>

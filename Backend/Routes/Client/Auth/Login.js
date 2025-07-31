@@ -1,10 +1,15 @@
 const ClientSchema = require("../../../Models/ClientSchema");
+var ObjectId = require('mongodb').ObjectId; 
 const clientLogin = async (req, res) => {
   const { email, password } = req.body;
   console.log(email, password);
   let exsitingUser = await ClientSchema.findOne({ emailId:email });
 
   if (exsitingUser) {
+    let userId=exsitingUser._id;
+    let newId=new ObjectId(userId).toString();
+    console.log(newId);
+    
     let exsitingPassword = exsitingUser.password;
     
     if (password === exsitingPassword) {
