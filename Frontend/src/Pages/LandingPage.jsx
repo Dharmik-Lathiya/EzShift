@@ -10,7 +10,7 @@ import LandingFooter from '../Component/Landing/LandingFooter'
 
 export default function LandingPage() {
   return (
-    <main className='bg-[]'>
+    <main className=''>
         <LandingHeader/>
         <LandingMain/>
         <LandingPerformance/>

@@ -68,7 +68,7 @@ export default function ClientLogin() {
                   type="email"
                   placeholder="Enter Email"
                   name="email"
-                  value={formData.email}
+                  m run
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
