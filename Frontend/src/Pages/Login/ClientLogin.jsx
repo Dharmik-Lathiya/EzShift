@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function ClientLogin() {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,37 +24,63 @@ export default function ClientLogin() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Login form submit
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    await fetch("http://localhost:3000/Client/Login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        email: formData.email,
-        password: formData.password,
-      }),
-    });
-    window.location.href = "/Client/Dashboard";
+    try {
+      const response = await fetch("http://localhost:3000/Client/Login", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.status) {
+        toast.success("Login successful!");
+        
+        setTimeout(() => {
+          window.location.href = "/Client/Dashboard";
+        }, 1000);
+      } else {
+        toast.error(result.message || "Login failed");
+      }
+    } catch (err) {
+      toast.error("Server error during login");
+      console.error(err);
+    }
   };
 
-  // Sign up form submit (do not change)
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    await fetch("http://localhost:3000/Client/SignUp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams(formData),
-    });
-    window.location.href = "/Client/Dashboard";
+    try {
+      const response = await fetch("http://localhost:3000/Client/SignUp", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.status) {
+        toast.success("Signup successful!");
+        setTimeout(() => {
+          window.location.href = "/Client/Dashboard";
+        }, 1000);
+      } else {
+        toast.error(result.message || "Signup failed");
+      }
+    } catch (err) {
+      toast.error("Server error during signup");
+      console.error(err);
+    }
   };
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 sm:p-10">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
@@ -61,51 +88,45 @@ export default function ClientLogin() {
           </h2>
 
           {isLogin ? (
-            <form className="space-y-4" method="post" onSubmit={handleLoginSubmit}>
+            <form className="space-y-4" onSubmit={handleLoginSubmit}>
               <div>
                 <label className="block text-gray-600 mb-1">Email</label>
                 <input
                   type="email"
-                  placeholder="Enter Email"
                   name="email"
-                  m run
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter Email"
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
-
               <div>
                 <label className="block text-gray-600 mb-1">Password</label>
                 <input
                   type="password"
                   name="password"
-                  placeholder="Enter Password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter Password"
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
-
-              <button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold transition duration-200"
-              >
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
                 Login
               </button>
             </form>
           ) : (
-            <form className="space-y-4" method="post" onSubmit={handleSignupSubmit}>
+            <form className="space-y-4" onSubmit={handleSignupSubmit}>
               <div>
                 <label className="block text-gray-600 mb-1">Full Name</label>
                 <input
                   type="text"
-                  placeholder="Enter Name"
                   name="fullname"
                   value={formData.fullname}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter Name"
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -116,15 +137,12 @@ export default function ClientLogin() {
                   maxLength={10}
                   inputMode="numeric"
                   name="mobileno"
-                  placeholder="Enter Mobile No"
                   value={formData.mobileno}
                   onChange={(e) => {
-                    const value = e.target.value;
-                    if (/^\d{0,10}$/.test(value)) {
-                      handleChange(e);
-                    }
+                    if (/^\d{0,10}$/.test(e.target.value)) handleChange(e);
                   }}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter Mobile No"
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -132,11 +150,11 @@ export default function ClientLogin() {
                 <label className="block text-gray-600 mb-1">Email</label>
                 <input
                   type="email"
-                  placeholder="Enter Email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter Email"
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -145,17 +163,14 @@ export default function ClientLogin() {
                 <input
                   type="password"
                   name="password"
-                  placeholder="Enter Password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter Password"
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
-              <button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold transition duration-200"
-              >
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
                 Sign Up
               </button>
             </form>

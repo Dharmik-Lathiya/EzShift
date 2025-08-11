@@ -1,9 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const useTripStore = create(persist(
+const useTripStore =  (persist(
   (set, get) => ({
-    // Form data
     clientId: '',
     fullName: '',
     mobileNo: '',
@@ -17,7 +16,7 @@ const useTripStore = create(persist(
     note: '',
     distance: '',
     pricing: {},
-
+    vehicle: null, // Vehicle data
     // Trip data
     allTrips: [],
     loading: false,

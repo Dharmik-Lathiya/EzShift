@@ -4,7 +4,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 export default function ClientTripPricing() {
-const {
+  const {
+    clientId,
     fullName,
     mobileNo,
     pickupAddress,
@@ -16,41 +17,42 @@ const {
     numWorkers,
     note,
     distance,
-    pricing,
-    clientId // <-- Make sure clientId is available from your store or context
+    pricing
   } = useTripStore();
 
-  if (!pricing) return null;
+  if (!pricing || Object.keys(pricing).length === 0) return null;
 
   const handlePayment = async () => {
     const txnid = `TXN${Date.now()}`;
     const paymentDetails = {
       amount: pricing.total,
       firstname: fullName,
-      email: "test@example.com", 
+      email: "test@example.com",
       productinfo: "EzShift Trip",
       txnid,
     };
 
     try {
-      const res = await axios.post('http://localhost:3000/api/payu/Client/pay', paymentDetails);
-      if (res.data.success) {
-        // Store trip in DB before redirect (not recommended for real payments)
-        await axios.post('http://localhost:3000/Client/Trip/Book', {
-          clientId, // should be a valid ObjectId string
+      const payRes = await axios.post('http://localhost:3000/api/payu/Client/pay', paymentDetails);
+
+      if (payRes.data.success) {
+        const tripRes = await axios.post('http://localhost:3000/Client/Trip/Book', {
+          clientId,
           fullName,
-          mobileNo: Number(mobileNo), // ensure it's a number
+          mobileNo: Number(mobileNo),
           pickupAddress,
           dropAddress,
-          date: new Date(date).toISOString(), // send as ISO string
+          date: new Date(date).toISOString(),
           timeSlot,
           vehicleType,
           needWorkers: Boolean(needWorkers),
           numWorkers: Number(numWorkers),
           note,
           distance: Number(distance),
-          pricing: Number(pricing.total) // if pricing is an object, use pricing.total
+          pricing: Number(pricing.total),
+          vehicle: useTripStore.getState().vehicle
         });
+
         localStorage.setItem('tripDetails', JSON.stringify({
           fullName,
           mobileNo,
@@ -65,61 +67,54 @@ const {
           distance,
           pricing: pricing.total
         }));
-        redirectToPayU(res.data.data);
+
+        redirectToPayU(payRes.data.data);
       } else {
-        toast.error("Payment initialization failed.");
+        toast.error("Payment initialization failed. Please try again.");
       }
-    } catch (error) {
-      console.error(error); // Check your backend console for details!
-      toast.error("Error processing payment.");
-    }
+    } catch (err) {
+      console.error("Booking Error:", err.response?.data || err.message);
+
+
+  if (err.response?.data?.message) {
+    toast.error(err.response.data.message); // show proper backend message
+  } else {
+    toast.error("Error occurred while processing payment.");
+  }
+}
+
   };
 
-  function redirectToPayU(data) {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = "https://test.payu.in/_payment";
+ function redirectToPayU(data) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "https://test.payu.in/_payment"; // PayU sandbox URL
 
-    for (let key in data) {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = data[key];
-      form.appendChild(input);
-    }
-
-    document.body.appendChild(form);
-    form.submit();
+  for (let key in data) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = data[key];
+    form.appendChild(input);
   }
 
-  console.log("Trip data received:", {
-    clientId,
-    fullName,
-    mobileNo,
-    pickupAddress,
-    dropAddress,
-    date,
-    timeSlot,
-    vehicleType,
-    needWorkers,
-    numWorkers,
-    note,
-    distance,
-    pricing
-});
+  document.body.appendChild(form);
+  form.submit();
+}
+
 
   return (
     <div className="mt-6 p-4 bg-[#f0f3f4] rounded-xl max-w-md">
       <h3 className="text-lg font-bold text-[#111518] mb-2">Trip Pricing Breakdown</h3>
       <p>Distance: <strong>{distance} km</strong></p>
-      <p>Base Charge: ₹{pricing.base}</p>
-      <p>Vehicle Cost ({vehicleType}): ₹{pricing?.distance ? pricing.distance.toFixed(2) : 'N/A'}</p>
+      <p>Base Charge: ₹{pricing?.base ?? 0}</p>
+      <p>Vehicle Cost ({vehicleType}): ₹{pricing?.distance?.toFixed(2) ?? '0.00'}</p>
       {needWorkers && (
-        <p>Worker Cost ({numWorkers} x ₹200): ₹{pricing.workers}</p>
+        <p>Worker Cost ({numWorkers} x ₹200): ₹{pricing?.workers ?? 0}</p>
       )}
       <hr className="my-2" />
       <div className="font-bold flex justify-between text-[#19a1e5] text-lg">
-        <div>Total: ₹{pricing.total}</div>
+        <div>Total: ₹{pricing?.total ?? 0}</div>
         <div>
           <button
             onClick={handlePayment}

@@ -5,9 +5,9 @@ const routes = require("./Routes/route")
 const clientPayRoute = require("./Routes/Client/clientPayRoute")
 
 const port = 3000;
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors()); 
-app.use(express.json());
 
 
 require("./Database/dbconnection")

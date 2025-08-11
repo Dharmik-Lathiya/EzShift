@@ -10,6 +10,10 @@ export default function AdminTrips() {
     fetchTrips();
   }, []);
 
+  useEffect(() => {
+    console.log("Trips updated:", trips);
+  }, [trips]);
+
   const fetchTrips = async () => {
     setLoading(true);
     try {
@@ -29,19 +33,30 @@ export default function AdminTrips() {
   };
 
   const handleAccept = async (tripId) => {
-    setUpdatingTripId(tripId);
-    try {
-      await axios.put(`http://localhost:3000/Admin/Trip/Accept/${tripId}`, {
-        isAccept: true,
-      });
-
+  setUpdatingTripId(tripId);
+  try {
+    const res = await axios.put(`http://localhost:3000/Admin/Trip/Accept/${tripId}`, {});
+    
+    // Check backend response for success
+    if (res.data.success) {
       await fetchTrips();
-    } catch (error) {
-      console.error('Error updating trip status:', error);
-    } finally {
-      setUpdatingTripId(null);
+    } else {
+      alert(res.data.message || "Unable to accept trip.");
     }
-  };
+  } catch (error) {
+    console.error('Error updating trip status:', error);
+    const backendMessage = error?.response?.data?.message;
+
+    if (backendMessage === 'No available vehicle found for the selected type.') {
+      alert("No vehicle available. Please try again later.");
+    } else {
+      alert("Something went wrong while accepting the trip.");
+    }
+  } finally {
+    setUpdatingTripId(null);
+  }
+};
+
 
   return (
     <div>
@@ -53,41 +68,49 @@ export default function AdminTrips() {
       ) : (
         <table className="min-w-full border">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2">Trip ID</th>
-              <th className="border px-4 py-2">Pickup</th>
-              <th className="border px-4 py-2">Destination</th>
-              <th className="border px-4 py-2">Date</th>
-              <th className="border px-4 py-2">Vehicle</th>
-              <th className="border px-4 py-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {trips.map((trip) => (
-              <tr key={trip._id}>
-                <td className="border px-4 py-2">{trip.clientId}</td>
-                <td className="border px-4 py-2">{trip.pickupAddress}</td>
-                <td className="border px-4 py-2">{trip.dropAddress}</td>
-                <td className="border px-4 py-2">
-                  {trip.date ? new Date(trip.date).toLocaleDateString() : 'N/A'}
-                </td>
-                <td className="border px-4 py-2">{trip.vehicleType || 'N/A'}</td>
-                <td className="border px-4 py-2">
-                  {trip.isAccept === true ? (
-                    <span className="text-green-600 font-semibold">Accepted</span>
-                  ) : (
-                    <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-                      onClick={() => handleAccept(trip._id)}
-                      disabled={updatingTripId === trip._id}
-                    >
-                      {updatingTripId === trip._id ? 'Accepting...' : 'Accept'}
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+  <tr className="bg-gray-100">
+    <th className="border px-4 py-2">Trip ID</th>
+    <th className="border px-4 py-2">Client Name</th>
+    <th className="border px-4 py-2">Mobile</th>
+    <th className="border px-4 py-2">Pickup</th>
+    <th className="border px-4 py-2">Destination</th>
+    <th className="border px-4 py-2">Date</th>
+    <th className="border px-4 py-2">Vehicle</th>
+    <th className="border px-4 py-2">Status</th>
+  </tr>
+</thead>
+
+         <tbody>
+  {trips.map((trip) => (
+    <tr key={trip._id}>
+      <td className="border px-4 py-2">{trip._id || 'N/A'}</td>
+      <td className="border px-4 py-2">{trip.fullName || 'N/A'}</td>
+      <td className="border px-4 py-2">{trip.mobileNo || 'N/A'}</td>
+      <td className="border px-4 py-2">{trip.from || 'N/A'}</td>
+      <td className="border px-4 py-2">{trip.to || 'N/A'}</td>
+      <td className="border px-4 py-2">
+        {trip.date ? new Date(trip.date).toLocaleDateString() : 'N/A'}
+      </td>
+      <td className="border px-4 py-2">{trip.vehicle?.vehicleType || 'N/A'}</td>
+      <td className="border px-4 py-2">
+        {trip.status === 'Ongoing' ? (
+          <span className="text-yellow-600 font-semibold">Ongoing</span>
+        ) : trip.isAccept === true ? (
+          <span className="text-green-600 font-semibold">Accepted</span>
+        ) : (
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+            onClick={() => handleAccept(trip._id)}
+            disabled={updatingTripId === trip._id}
+          >
+            {updatingTripId === trip._id ? 'Accepting...' : 'Accept'}
+          </button>
+        )}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       )}
     </div>

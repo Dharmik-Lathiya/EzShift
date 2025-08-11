@@ -79,6 +79,12 @@ const TripList = () => {
     return 'text-green-600 bg-green-50';
   };
 
+  // Payment handler placeholder
+  const handlePayment = (trip) => {
+    // TODO: Implement payment logic/modal/redirect
+    alert(`Initiate payment for trip: ${trip._id}`);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-64">
@@ -230,6 +236,17 @@ const TripList = () => {
                     </div>
                   )}
                 </div>
+                {/* Payment Button: Only show if trip is completed and not paid */}
+                {trip.status === 'Completed' && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() => handlePayment(trip)}
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+                    >
+                      Pay Now
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}

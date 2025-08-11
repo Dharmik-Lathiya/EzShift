@@ -1,19 +1,13 @@
 const mongoose = require("mongoose");
 
-const ClientSchema=mongoose.Schema({
-    fullName:{type:String},
-    mobileNo:{type:Number},
-    emailId:{type:String},
-    password:{type:String},
-    dob:{type:Date},
-    img:{type:String},
-    tripHistory:[{
-        from:{type:String},
-        To:{type:String},
-        date:{type:Date},
-        vehicle:{type:String},
-    }]
+const clientSchema = new mongoose.Schema({
+  fullName: String,
+  mobileNo: String,
+  gender:String,
+  dob:String,
+  emailId: { type: String, unique: true },
+  password: String,
+  joinAt:String,
+}, { timestamps: true });
 
-})
-
-module.exports = mongoose.model("client",ClientSchema);
+module.exports = mongoose.model("Client", clientSchema);

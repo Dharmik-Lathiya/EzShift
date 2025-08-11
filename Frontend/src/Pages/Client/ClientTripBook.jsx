@@ -30,10 +30,8 @@ export default function ClientTripBook() {
     setPricing
   } = useTripStore();
 
-  // Generate a mock ObjectId if clientId is missing (for testing only)
   useEffect(() => {
     if (!clientId) {
-      // Generate a valid 24-character hex string for ObjectId
       const mockId = Array(24)
         .fill(0)
         .map(() => Math.floor(Math.random() * 16).toString(16))
@@ -70,13 +68,12 @@ export default function ClientTripBook() {
         if (!res.data.features || res.data.features.length === 0) {
           throw new Error(`No coordinates found for: ${place}`);
         }
-        return res.data.features[0].geometry.coordinates; // [lng, lat]
+        return res.data.features[0].geometry.coordinates;
       };
 
       const start = await geoCode(formData.pickUp);
       const end = await geoCode(formData.destination);
 
-      // Directions API expects: { coordinates: [[lng, lat], [lng, lat]] }
       const route = await axios.post(
         `https://api.openrouteservice.org/v2/directions/driving-car`,
         { coordinates: [start, end] },
@@ -202,8 +199,13 @@ export default function ClientTripBook() {
 
         <div className="mb-4">
           <label className="flex items-center gap-x-3">
-            <input type="checkbox" onChange={() => setNeedWorkers(!needWorkers)}
-              className="h-5 w-5 border-[#dce2e5]" />
+            <input
+  type="checkbox"
+  checked={needWorkers}
+  onChange={() => setNeedWorkers(!needWorkers)}
+  className="h-5 w-5 border-[#dce2e5]"
+/>
+
             <p className="text-[#111518] text-base font-normal">Help required with loading/unloading</p>
           </label>
         </div>
