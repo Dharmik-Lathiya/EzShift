@@ -6,6 +6,8 @@ import useTripStore from '../../store/useTripStore';
 import ClientTripPricing from '../../Component/Client/BookTrip/ClientTripPricing';
 
 export default function ClientTripBook() {
+
+
   const {
     clientId,
     setClientId,
@@ -16,8 +18,6 @@ export default function ClientTripBook() {
     numWorkers,
     distance,
     pricing,
-    setFullName,
-    setMobileNo,
     setPickupAddress,
     setDropAddress,
     setDate,
@@ -30,19 +30,9 @@ export default function ClientTripBook() {
     setPricing
   } = useTripStore();
 
-  useEffect(() => {
-    if (!clientId) {
-      const mockId = Array(24)
-        .fill(0)
-        .map(() => Math.floor(Math.random() * 16).toString(16))
-        .join('');
-      setClientId(mockId);
-    }
-  }, [clientId, setClientId]);
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    mobileNo: '',
+    clientId: '',
     pickUp: '',
     destination: '',
     date: '',
@@ -97,6 +87,8 @@ export default function ClientTripBook() {
 
       const total = baseCharge + vehicleCost + workerCost;
 
+      setClientId(localStorage.getItem('clientId') || '');
+
       setPricing({
         base: baseCharge,
         vehicle: vehicleCost,
@@ -114,8 +106,6 @@ export default function ClientTripBook() {
     setFormData((prev) => ({ ...prev, [name]: value }));
 
     switch (name) {
-      case 'fullName': setFullName(value); break;
-      case 'mobileNo': setMobileNo(value); break;
       case 'pickUp': setPickupAddress(value); break;
       case 'destination': setDropAddress(value); break;
       case 'date': setDate(value); break;
@@ -140,19 +130,6 @@ export default function ClientTripBook() {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="flex flex-wrap gap-4 mb-4">
-          <label className="flex flex-col flex-1 min-w-[280px]">
-            <p className="text-[#111518] text-base font-medium pb-2">Full Name</p>
-            <input name="fullName" onChange={handleChange} required placeholder="Enter your full name"
-              className="form-input rounded-xl bg-[#f0f3f4] h-14 p-4" />
-          </label>
-          <label className="flex flex-col flex-1 min-w-[280px]">
-            <p className="text-[#111518] text-base font-medium pb-2">Mobile No.</p>
-            <input name="mobileNo" onChange={handleChange} required placeholder="Enter your mobile number"
-              className="form-input rounded-xl bg-[#f0f3f4] h-14 p-4" />
-          </label>
-        </div>
-
         <div className="flex flex-col gap-4 mb-4">
           <label className="flex flex-col">
             <p className="text-[#111518] text-base font-medium pb-2">Pickup Address</p>

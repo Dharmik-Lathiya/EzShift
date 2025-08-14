@@ -1,36 +1,49 @@
 const mongoose = require("mongoose");
 
 const TripSchema = new mongoose.Schema({
-  from: { type: String, required: true },
-  to: { type: String, required: true },
+  pickupAddress: { type: String, required: true },
+  dropAddress: { type: String, required: true },
   date: { type: Date, required: true },
-  vehicle: {
+  vehicleType: {
+    type: String,
+    enum: ['van', 'pickup', 'heavy'],
+    required: true
+  },
+  vehicleId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "vehicles",
-    required: false 
+    ref: "Vehicle",
+    required: false
   },
   vehicleAssigned: {
     type: Boolean,
     default: false
   },
-  fare: { type: Number },
   status: {
     type: String,
     enum: ['Pending', 'Assigned', 'InProgress', 'Completed', 'Paid'],
     default: 'Pending'
   },
-  client: {
+  numWorkers: {
+    type: Number,
+  },
+  clientId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'clients',
+    ref: 'Client',
     required: true
   },
   worker: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'workers'
+    ref: 'Worker'
   },
   acceptedAt: {
     type: Date
-  }
+  },
+  note: {
+    type: String
+  },
+  timeSlot: {
+    type: String
+  },
 }, { timestamps: true });
 
 

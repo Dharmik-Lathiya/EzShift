@@ -21,9 +21,7 @@ const workerLogin = async (req, res) => {
         message: "Incorrect password",
       });
     }
-
     
-
     return res.status(200).json({
       status: true,
       message: "Successfully logged in",

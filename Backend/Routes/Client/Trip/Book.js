@@ -5,113 +5,64 @@ const Worker = require("../../../Models/WorkerSchema");
 const tripBook = async (req, res) => {
   try {
     console.log("📦 Booking trip with data:", req.body);
+    const { clientId, pickupAddress, dropAddress, date, vehicleType, vehicleId, numWorkers, note, timeSlot } = req.body;
 
-    const {
+    const trip = new Trip({
       clientId,
-      fullName,
-      mobileNo,
       pickupAddress,
       dropAddress,
       date,
-      timeSlot,
       vehicleType,
-      vehicle, // ✅ now accepted from client
-      needWorkers,
+      vehicleId,
       numWorkers,
       note,
-      distance,
-      pricing
-    } = req.body;
-
-    // ✅ Normalize vehicle type
-    const typeMapping = {
-      "small van": "Small Van",
-      "van": "Small Van",
-      "pickup": "Pickup Truck",
-      "heavy": "Mini Truck"
-    };
-
-    const normalizedType = vehicleType?.toLowerCase();
-    const mappedVehicleType = typeMapping[normalizedType];
-
-    if (!mappedVehicleType) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid vehicle type: ${vehicleType}`
-      });
-    }
-
-    let vehicleId = null;
-    let vehicleAssigned = false;
-
-    if (vehicle) {
-      // ✅ Use client-provided vehicle
-      const existingVehicle = await Vehicle.findById(vehicle);
-      if (existingVehicle) {
-        vehicleId = existingVehicle._id;
-        vehicleAssigned = true;
-      } else {
-        return res.status(404).json({
-          success: false,
-          message: "Provided vehicle ID not found"
-        });
-      }
-    } else {
-      // ✅ Auto-assign an available vehicle
-      const availableVehicle = await Vehicle.findOne({
-        vehicleType: new RegExp(`^${mappedVehicleType}$`, "i"),
-        status: /^Inactive$/i
-      }).populate("ownerId");
-
-      if (availableVehicle) {
-        availableVehicle.status = "Active";
-        await availableVehicle.save();
-        vehicleId = availableVehicle._id;
-        vehicleAssigned = true;
-      } else {
-        console.warn("⚠️ No available vehicle found — trip will be saved without vehicle.");
-      }
-    }
-
-    const trip = new Trip({
-      client: clientId,
-      fullName,
-      mobileNo: Number(mobileNo),
-      pickupAddress,
-      dropAddress,
-      from: pickupAddress,
-      to: dropAddress,
-      date: new Date(date),
-      timeSlot,
-      vehicleType: mappedVehicleType,
-      needWorkers,
-      numWorkers: Number(numWorkers),
-      note,
-      distance: Number(distance),
-      fare: Number(pricing),
-      vehicle: vehicleId,
-      vehicleAssigned,
-      status: 'Pending',
-      worker: undefined,
-      acceptedAt: undefined 
+      timeSlot
     });
 
     await trip.save();
 
-    return res.status(200).json({
-      success: true,
-      message: vehicleAssigned
-        ? "Trip booked with vehicle assigned."
-        : "Trip booked without vehicle (pending assignment).",
-      data: trip
+    // Find all vehicles with the booked vehicleType
+    const vehicles = await Vehicle.find({ vehicleType });
+
+    // Extract owners from those vehicles
+    // Assuming vehicle.ownerId or vehicle.owner (adjust field accordingly)
+    const owners = vehicles.map(v => v.ownerId || v.owner).filter(Boolean);
+
+    console.log("🚗 Vehicles found for vehicleType:", vehicleType, "=>", vehicles.length, "vehicles");
+
+    const workers = await Worker.find({ status: "Active" }).limit(numWorkers);
+
+    for (let worker of workers) {
+      await Worker.findByIdAndUpdate(
+        worker._id,
+        { $addToSet: { trips: trip._id } },
+        { new: true }
+      );
+    }
+    console.log("👷 Workers assigned to trip:", workers.length);
+
+    // Optional: Remove duplicates (owners can have multiple vehicles)
+    const uniqueOwners = [...new Set(owners)];
+
+    uniqueOwners.forEach(ownerId => {
+      console.log("Owner ID:", ownerId);
+
     });
 
+    console.log("Owners to notify for vehicleType", vehicleType, ":", uniqueOwners);
+
+    // Respond with trip data + owners list (optional)
+    return res.status(201).json({
+      status: true,
+      message: "Trip booked successfully",
+      data: trip,
+      notifiedOwners: uniqueOwners,
+    });
   } catch (error) {
-    console.error("❌ Trip Booking Error:", error);
+    console.error("Error booking trip:", error);
     return res.status(500).json({
-      success: false,
-      message: "Failed to book trip",
-      error: error.message
+      status: false,
+      message: "Server error while booking trip",
     });
   }
 };
