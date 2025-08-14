@@ -46,7 +46,7 @@ export default function WorkerLogin() {
       
       
       if (response.ok && result.status) {
-        localStorage.setItem("workerId", result.data);
+      localStorage.setItem("workerId", result.data);
       localStorage.setItem("workerIsLogin", true);
       
         toast.success("Login successful!");

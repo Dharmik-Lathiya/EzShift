@@ -448,7 +448,7 @@ export default function WorkerVehicle() {
                     </button>
                     <button
                       aria-label={`Toggle status of ${vehicle.vehicleName}`}
-                      className="bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 text-xs font-semibold transition-colors duration-150"
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs font-semibold transition-colors duration-150"
                       onClick={() => handleDeleteVehicle(vehicle._id)}
                     >
                       Delete

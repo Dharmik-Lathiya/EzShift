@@ -11,7 +11,6 @@ router.get('/pending', async (req, res) => {
   }
 });
 
-// POST /api/worker/trips/accept - Worker accepts a trip
 router.post('/accept', async (req, res) => {
   try {
     const { tripId, workerId } = req.body;

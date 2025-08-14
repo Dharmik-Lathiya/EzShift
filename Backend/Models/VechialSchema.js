@@ -21,6 +21,7 @@ const VehicleSchema = new mongoose.Schema({
     enum: ["Active", "Inactive"],
     default: "Inactive"
   },
+  
   vehicleOwner:{
      type: Object, required: false,default: ""
   },
@@ -29,7 +30,7 @@ const VehicleSchema = new mongoose.Schema({
   },
   ownerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "workers",
+    ref: "Worker",
     required: false,
     default: null
   },

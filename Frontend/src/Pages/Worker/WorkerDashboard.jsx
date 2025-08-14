@@ -29,7 +29,6 @@ export default function WorkerDashboard() {
     const fetchStats = async () => {
       setLoading(true);
       try {
-        // Placeholder: Replace with real API call
         const res = await fetch(`/api/worker/dashboard?workerId=${workerId}`);
         const data = await res.json();
         setStats({

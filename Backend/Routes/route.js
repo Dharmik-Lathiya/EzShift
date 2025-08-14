@@ -14,7 +14,8 @@ const {
 } = require('./Worker/Vehicle/vehicleRoutes');
 
 const {
-  getWorkerProfile
+  getWorkerProfile,
+  updateWorkerProfile
 } = require('./Worker/profileRoutes');
 
 // Client Routes
@@ -36,7 +37,7 @@ const workerSignup = require('./Worker/Auth/Signup');
 // Client APIs
 routes.post("/Client/Login", clientLogin);
 routes.post("/Client/SignUp", clientSignup);
-routes.post("/Client/Trip/Book", tripBook);
+routes.post("/Client/BookTrip", tripBook);
 
 // Admin APIs
 routes.get("/Admin/User/GetAll", getAllUsers);
@@ -62,6 +63,7 @@ routes.post("/Worker/Vehicle/Add", upload.fields([
   { name: 'vehicleDocument', maxCount: 1 }
 ]), createVehicle);
 routes.get("/Worker/Profile/:id",getWorkerProfile);
+routes.put("/Worker/Profile/Edit/:id",updateWorkerProfile);
 
 
 module.exports = routes;

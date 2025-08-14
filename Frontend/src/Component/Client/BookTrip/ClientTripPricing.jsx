@@ -2,6 +2,7 @@ import React from 'react';
 import useTripStore from '../../../store/useTripStore';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 export default function ClientTripPricing() {
   const {
@@ -22,85 +23,47 @@ export default function ClientTripPricing() {
 
   if (!pricing || Object.keys(pricing).length === 0) return null;
 
-  const handlePayment = async () => {
-    const txnid = `TXN${Date.now()}`;
-    const paymentDetails = {
-      amount: pricing.total,
-      firstname: fullName,
-      email: "test@example.com",
-      productinfo: "EzShift Trip",
-      txnid,
-    };
-
-    try {
-      const payRes = await axios.post('http://localhost:3000/api/payu/Client/pay', paymentDetails);
-
-      if (payRes.data.success) {
-        const tripRes = await axios.post('http://localhost:3000/Client/Trip/Book', {
-          clientId,
-          fullName,
-          mobileNo: Number(mobileNo),
-          pickupAddress,
-          dropAddress,
-          date: new Date(date).toISOString(),
-          timeSlot,
-          vehicleType,
-          needWorkers: Boolean(needWorkers),
-          numWorkers: Number(numWorkers),
-          note,
-          distance: Number(distance),
-          pricing: Number(pricing.total),
-          vehicle: useTripStore.getState().vehicle
-        });
-
-        localStorage.setItem('tripDetails', JSON.stringify({
-          fullName,
-          mobileNo,
-          pickupAddress,
-          dropAddress,
-          date,
-          timeSlot,
-          vehicleType,
-          needWorkers,
-          numWorkers,
-          note,
-          distance,
-          pricing: pricing.total
-        }));
-
-        redirectToPayU(payRes.data.data);
-      } else {
-        toast.error("Payment initialization failed. Please try again.");
+const handleBooking = async () => {
+  try {
+    const response = await axios.post(
+      'http://localhost:3000/Client/BookTrip/',
+      {
+        clientId,
+        pickupAddress,
+        dropAddress,
+        date,
+        timeSlot,
+        vehicleType,
+        needWorkers,
+        numWorkers,
+        note,
+        distance,
+        pricing
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    } catch (err) {
-      console.error("Booking Error:", err.response?.data || err.message);
+    );
 
+    await Swal.fire({
+      icon: 'success',
+      title: 'Trip booked successfully!',
+      showConfirmButton: false,
+      timer: 1500
+    });
+  } catch (error) {
+    console.error('Booking failed:', error);
 
-  if (err.response?.data?.message) {
-    toast.error(err.response.data.message); // show proper backend message
-  } else {
-    toast.error("Error occurred while processing payment.");
+    await Swal.fire({
+      icon: 'error',
+      title: 'Booking failed',
+      text: 'Please try again later.',
+      confirmButtonText: 'OK'
+    });
   }
-}
-
-  };
-
- function redirectToPayU(data) {
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = "https://test.payu.in/_payment"; // PayU sandbox URL
-
-  for (let key in data) {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = data[key];
-    form.appendChild(input);
-  }
-
-  document.body.appendChild(form);
-  form.submit();
-}
+};
 
 
   return (
@@ -117,10 +80,10 @@ export default function ClientTripPricing() {
         <div>Total: ₹{pricing?.total ?? 0}</div>
         <div>
           <button
-            onClick={handlePayment}
             className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+            onClick={handleBooking}
           >
-            Pay Now
+            Book Trip
           </button>
         </div>
       </div>

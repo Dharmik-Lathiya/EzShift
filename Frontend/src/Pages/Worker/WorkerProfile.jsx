@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 export default function WorkerProfile() {
   const workerId = localStorage.getItem("workerId");
-
   const [profile, setProfile] = useState({
     name: '',
     email: '',
@@ -14,17 +13,15 @@ export default function WorkerProfile() {
   });
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        console.log(workerId);
-        
         const res = await fetch(`http://localhost:3000/Worker/Profile/${workerId}`);
         const data = await res.json();
-        console.log(data);
-        
         setProfile({
           name: data.fullname || '',
           email: data.emailId || '',
@@ -46,12 +43,42 @@ export default function WorkerProfile() {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSave = async () => {
-    await fetch(`/api/worker/profile/update`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...profile, workerId }),
+    const formData = new FormData();
+    formData.append("workerId", workerId);
+    formData.append("name", profile.name);
+    formData.append("email", profile.email);
+    formData.append("phone", profile.phone);
+    formData.append("address", profile.address);
+    formData.append("city", profile.city);
+    formData.append("status", profile.status);
+
+    console.log(formData);
+    
+    if (imageFile) formData.append("avatar", imageFile);
+
+    await fetch(`http://localhost:3000/Worker/Profile/Edit/${workerId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: profile.name,
+        email: profile.email,
+        phone: profile.phone,
+        address: profile.address,
+        city: profile.city,
+        status: profile.status,
+        avatar: imageFile ? URL.createObjectURL(imageFile) : profile.avatar,
+      }),
     });
+
     setEditMode(false);
   };
 
@@ -60,7 +87,6 @@ export default function WorkerProfile() {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
         {/* Profile */}
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex justify-between items-center">
@@ -76,11 +102,19 @@ export default function WorkerProfile() {
 
           <div className="mt-4 flex items-center space-x-4">
             <img
-              src={profile.avatar || 'https://via.placeholder.com/60'}
+              src={preview || profile.avatar || 'https://via.placeholder.com/60'}
               alt="Avatar"
               className="w-16 h-16 rounded-full object-cover border"
             />
             <div>
+              {editMode && (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="block mb-2"
+                />
+              )}
               {editMode ? (
                 <input
                   type="text"
@@ -145,7 +179,7 @@ export default function WorkerProfile() {
 
         {/* Emails */}
         <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Contect</h2>
+          <h2 className="text-lg font-semibold mb-4">Contact</h2>
           {editMode ? (
             <input
               type="email"
@@ -162,7 +196,6 @@ export default function WorkerProfile() {
         {/* Account Options */}
         <div className="bg-white rounded-xl shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Account Options</h2>
-          <p className="text-gray-700">Status: {profile.status}</p>
           <p className="text-gray-700">Language: English</p>
           <p className="text-gray-700">Time zone: (GMT+5:30) India Standard Time</p>
         </div>

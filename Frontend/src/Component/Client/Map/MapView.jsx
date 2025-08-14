@@ -70,7 +70,7 @@ const MapView = () => {
       const totalDistance = segment.distance / 1000; // meters to km
 
       setRouteCoords(coords);
-      setSteps(instructions);
+      // setSteps(instructions);
       setDistance(totalDistance.toFixed(2));
 
       // Calculate pricing

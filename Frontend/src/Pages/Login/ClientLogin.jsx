@@ -37,10 +37,12 @@ export default function ClientLogin() {
       });
 
       const result = await response.json();
+      
 
       if (response.ok && result.status) {
         toast.success("Login successful!");
-        
+        localStorage.setItem("clientId", result.data);
+        localStorage.setItem("clientIsLogin", true);  
         setTimeout(() => {
           window.location.href = "/Client/Dashboard";
         }, 1000);
@@ -66,6 +68,8 @@ export default function ClientLogin() {
 
       if (response.ok && result.status) {
         toast.success("Signup successful!");
+        localStorage.setItem("clientId", result.data);
+        localStorage.setItem("clientIsLogin", true);
         setTimeout(() => {
           window.location.href = "/Client/Dashboard";
         }, 1000);
