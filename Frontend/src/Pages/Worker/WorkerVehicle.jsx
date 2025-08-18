@@ -1,4 +1,3 @@
-// components/WorkerVehicle.js
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Swal from "sweetalert2";
@@ -11,8 +10,6 @@ export default function WorkerVehicle() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingVehicleId, setEditingVehicleId] = useState(null);
 
-
-  // Form states
   const [vehicleOwner, setVehicleOwner] = useState("");
   const [vehicleName, setVehicleName] = useState("");
   const [vehicleCompany, setVehicleCompany] = useState("");
@@ -83,11 +80,19 @@ export default function WorkerVehicle() {
     });
   };
 
+  const vehicleOptions = [
+    { value: 'miniTruck', name: 'Mini Truck' },
+    { value: 'smallVan', name: 'Small Van' },
+    { value: 'pickupTruck', name: 'Pickup Truck' },
+    { value: 'mediumDutyTruck', name: 'Medium Duty Truck' },
+    { value: 'containerTruck', name: 'Container Truck' },
+    { value: 'openBodyTruck', name: 'Open Body Truck' },
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!vehicleName || !vehicleNumber || !vehicleOwner) {
-      // alert("Please fill all required fields");
       toast.error("Please fill all required fields");
       return;
     }
@@ -111,7 +116,6 @@ export default function WorkerVehicle() {
     });
     toast.success("Vehicle added successfully!");
 
-    // Reset
     setVehicleOwner("");
     setVehicleName("");
     setVehicleCompany("");
@@ -290,21 +294,26 @@ export default function WorkerVehicle() {
 
           <div className="mb-4">
             <label className="block font-medium mb-2">Vehicle Type</label>
-            <input
-              type="text"
-              placeholder="e.g. Tata, Mahindra"
+            <select
               value={vehicleType}
               onChange={(e) => setVehicleType(e.target.value)}
               className="w-full border rounded p-2"
-            />
+            >
+              <option value="">-- Select Vehicle --</option>
+              {vehicleOptions.map((vehicle) => (
+                <option key={vehicle.value} value={vehicle.value}>
+                  {vehicle.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Vehicle Model Number */}
           <div className="mb-4">
-            <label className="block font-medium mb-2">Vehicle Model Number</label>
+            <label className="block font-medium mb-2">Vehicle Model (Year)</label>
             <input
               type="text"
-              placeholder="e.g. ZX200, DLX"
+              placeholder="e.g. 2020,2021"
               value={vehicleModel}
               onChange={(e) => setVehicleModel(e.target.value)}
               className="w-full border rounded p-2"

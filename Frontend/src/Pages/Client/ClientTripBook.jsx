@@ -39,7 +39,8 @@ export default function ClientTripBook() {
     timeSloat: '',
     vehicelType: '',
     workers: '',
-    note: ''
+    note: '',
+    
   });
 
   const ORS_API_KEY = '5b3ce3597851110001cf6248694b5dfdf31748509b54037cad134a7b';
@@ -167,9 +168,12 @@ export default function ClientTripBook() {
             <select name="vehicelType" onChange={handleChange} required
               className="form-input rounded-xl bg-[#f0f3f4] h-14 p-4">
               <option value="">Select vehicle type</option>
-              <option value="pickup">Pickup Truck</option>
-              <option value="van">Small Van</option>
-              <option value="heavy">Heavy Truck</option>
+              <option value="miniTruck">Mini Truck</option>
+              <option value="smallVan">Small Van</option>
+              <option value="pickupTruck">Pickup Truck</option>
+              <option value="mediumDutyTruck">Medium Duty Truck</option>
+              <option value="containerTruck">Container Truck</option>
+              <option value="openBodyTruck">Open Body Truck</option>
             </select>
           </label>
         </div>

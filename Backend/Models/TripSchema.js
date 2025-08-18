@@ -6,7 +6,7 @@ const TripSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   vehicleType: {
     type: String,
-    enum: ['van', 'pickup', 'heavy'],
+    enum: ['miniTruck','smallVan','pickupTruck','mediumDutyTruck','containerTruck','openBodyTruck'],
     required: true
   },
   vehicleId: {
@@ -17,6 +17,9 @@ const TripSchema = new mongoose.Schema({
   vehicleAssigned: {
     type: Boolean,
     default: false
+  },
+  pricing:{
+    type : Object,
   },
   status: {
     type: String,
@@ -31,10 +34,7 @@ const TripSchema = new mongoose.Schema({
     ref: 'Client',
     required: true
   },
-  worker: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Worker'
-  },
+  workers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Worker" }],
   acceptedAt: {
     type: Date
   },

@@ -1,121 +1,100 @@
-import React, { useEffect, useState } from 'react';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 export default function WorkerTrips() {
-  // Placeholder: Replace with actual worker ID from auth/session
-  const workerId = 'WORKER_ID_PLACEHOLDER';
+  const workerId = localStorage.getItem("workerId") || "12345";
+  const [trips, setTrips] = useState([]);
 
-  const [availableTrips, setAvailableTrips] = useState([]);
-  const [assignedTrips, setAssignedTrips] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch available (pending) trips and assigned trips
+  // Fetch pending trips
   useEffect(() => {
     const fetchTrips = async () => {
-      setLoading(true);
       try {
-        // Fetch available trips (pending, unassigned)
-        const resAvailable = await fetch('/Worker/Trip/pending');
-        const dataAvailable = await resAvailable.json();
-        setAvailableTrips(dataAvailable.trips || []);
-
-        // Fetch assigned trips for this worker
-        const resAssigned = await fetch(`/api/worker/trips/assigned?workerId=${workerId}`); // Placeholder endpoint
-        const dataAssigned = await resAssigned.json();
-        setAssignedTrips(dataAssigned.trips || []);
-      } catch (err) {
-        setAvailableTrips([]);
-        setAssignedTrips([]);
+        const res = await axios.get(
+          `http://localhost:3000/Worker/Trip/Pending/${workerId}`
+        );
+        console.log("Pending Trips", res.data.trips);
+        setTrips(res.data.trips || []);
+      } catch (error) {
+        console.error("Error fetching trips:", error);
       }
-      setLoading(false);
     };
     fetchTrips();
   }, [workerId]);
 
-  // Accept a trip
+  // Accept trip
   const handleAccept = async (tripId) => {
     try {
-      await fetch('/Worker/Trip/accept', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tripId, workerId }),
+      await axios.post(`http://localhost:3000/Worker/Trip/Accept`, {
+        tripId,
+        workerId,
       });
-      window.location.reload();
-    } catch (err) {
-      alert('Failed to accept trip');
+      alert("Trip accepted ✅");
+      setTrips(trips.filter((t) => t._id !== tripId));
+    } catch (error) {
+      console.error("Error accepting trip:", error);
+      alert("Error accepting trip");
     }
   };
 
-  // Complete a trip
-  const handleComplete = async (tripId) => {
+  // Decline trip
+  const handleDecline = async (tripId) => {
     try {
-      await fetch('/Worker/Trip/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tripId, workerId }),
+      await axios.post(`http://localhost:3000/Worker/Trip/Decline`, {
+        tripId,
+        workerId,
       });
-      window.location.reload();
-    } catch (err) {
-      alert('Failed to complete trip');
+      alert("Trip declined");
+      setTrips(trips.filter((t) => t._id !== tripId));
+    } catch (error) {
+      console.error("Error declining trip:", error);
+      alert("Error declining trip ");
     }
   };
-
-  if (loading) return <div className="p-6 text-lg">Loading trips...</div>;
 
   return (
-    <div className="p-6 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4 text-cyan-800">Available Trips</h2>
-      <div className="grid grid-cols-1 gap-4 mb-8">
-        {availableTrips.length === 0 && <div>No available trips.</div>}
-        {availableTrips.map((trip) => (
-          <div key={trip._id} className="bg-white p-4 rounded-lg shadow border-l-4 border-cyan-400">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-gray-800 font-medium">Pickup: <span className="text-black">{trip.pickupAddress}</span></p>
-                <p className="text-gray-800 font-medium">Drop: <span className="text-black">{trip.dropAddress}</span></p>
-              </div>
-              <div className="text-sm text-gray-500">
-                <p>{new Date(trip.date).toLocaleDateString()}</p>
-                <p className="text-yellow-600">Pending</p>
-              </div>
-            </div>
-            <div className="mt-2 text-sm text-gray-600">Distance: {trip.distance} km</div>
-            <button
-              className="mt-2 bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
-              onClick={() => handleAccept(trip._id)}
-            >
-              Accept Trip
-            </button>
-          </div>
-        ))}
-      </div>
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Pending Trips</h2>
 
-      <h2 className="text-2xl font-bold mb-4 text-cyan-800">My Assigned Trips</h2>
-      <div className="grid grid-cols-1 gap-4">
-        {assignedTrips.length === 0 && <div>No assigned trips.</div>}
-        {assignedTrips.map((trip) => (
-          <div key={trip._id} className="bg-white p-4 rounded-lg shadow border-l-4 border-cyan-400">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-gray-800 font-medium">Pickup: <span className="text-black">{trip.pickupAddress}</span></p>
-                <p className="text-gray-800 font-medium">Drop: <span className="text-black">{trip.dropAddress}</span></p>
+      {trips.length === 0 ? (
+        <p>No pending trips.</p>
+      ) : (
+        <div className="space-y-4">
+          {trips.map((trip) => (
+            <div
+              key={trip._id}
+              className="p-4 border rounded shadow-md bg-white flex flex-row justify-between items-center gap-4"
+            >
+              {/* Trip details inline */}
+              <div className="flex flex-wrap gap-6 text-sm">
+                <span><strong>From:</strong> {trip.pickupAddress}</span>
+                <span><strong>To:</strong> {trip.dropAddress}</span>
+                <span><strong>Date:</strong> {new Date(trip.date).toLocaleDateString()}</span>
+                <span>
+                  <strong>Fare:</strong> ₹
+                  {trip.pricing?.total ? parseInt(trip.pricing.total) || 0 : 0}
+                </span>
+                <span><strong>Status:</strong> {trip.status}</span>
               </div>
-              <div className="text-sm text-gray-500">
-                <p>{new Date(trip.date).toLocaleDateString()}</p>
-                <p className={trip.status === 'Completed' ? 'text-green-600' : 'text-yellow-600'}>{trip.status}</p>
+
+              {/* Buttons inline */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleAccept(trip._id)}
+                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleDecline(trip._id)}
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                >
+                  Decline
+                </button>
               </div>
             </div>
-            <div className="mt-2 text-sm text-gray-600">Distance: {trip.distance} km</div>
-            {trip.status !== 'Completed' && (
-              <button
-                className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                onClick={() => handleComplete(trip._id)}
-              >
-                Mark as Completed
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
