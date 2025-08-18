@@ -33,3 +33,22 @@ exports.updateWorkerProfile = (req, res) => {
       res.status(500).json({ message: 'Server error' });
     });
 };
+
+exports.updateWorkerToken = (req, res) => {
+  const workerId = req.params.id;
+  const { fcmToken } = req.body;
+
+  console.log(`Updating FCM token for worker ID: ${workerId}, New Token: ${fcmToken}`);
+
+  Worker.findByIdAndUpdate(workerId, { fcmToken }, { new: true })
+    .then(worker => {
+      if (!worker) {
+        return res.status(404).json({ message: 'Worker not found' });
+      }
+      res.json(worker);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    });
+};

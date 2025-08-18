@@ -2,54 +2,56 @@ const express = require('express');
 const router = express.Router();
 const Trip = require('../../Models/TripSchema');
 
-router.get('/pending', async (req, res) => {
+router.get('/Pending/:id', async (req, res) => {
   try {
-    const pendingTrips = await Trip.find({ status: 'Pending', worker: { $exists: false } });
-    res.status(200).json({ success: true, trips: pendingTrips });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error fetching pending trips', error });
-  }
-});
+    const workerId = req.params.id;
 
-router.post('/accept', async (req, res) => {
+    // Find trips with status "Pending" where workers array contains this workerId
+    const trips = await Trip.find({ 
+      status: 'Pending', 
+      workers: workerId 
+    })
+    .populate("clientId", "name email")   // if you want client details
+    .populate("vehicleId", "type number"); // if you want vehicle details
+
+    res.status(200).json({ success: true, trips });
+  } catch (error) {
+    console.error("Error fetching pending trips:", error);
+    res.status(500).json({ success: false, message: 'Error fetching pending trips', error });
+  } 
+});
+// Accept trip
+router.post('/Accept', async (req, res) => {
   try {
     const { tripId, workerId } = req.body;
-    if (!tripId || !workerId) {
-      return res.status(400).json({ success: false, message: 'tripId and workerId are required' });
-    }
-    // Find the trip and ensure it's still pending and unassigned
-    const trip = await Trip.findOne({ _id: tripId, status: 'Pending', worker: { $exists: false } });
-    if (!trip) {
-      return res.status(404).json({ success: false, message: 'Trip not available or already assigned' });
-    }
-    trip.worker = workerId;
-    trip.acceptedAt = new Date();
-    trip.status = 'Assigned';
-    await trip.save();
-    res.status(200).json({ success: true, message: 'Trip accepted', trip });
+
+    const trip = await Trip.findByIdAndUpdate(
+      tripId,
+      { 
+        $push: { workers: workerId },
+        status: 'Assigned',
+        acceptedAt: new Date()
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ success: true, trip });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error accepting trip', error });
   }
 });
 
-// POST /api/worker/trips/complete - Worker marks trip as completed
-router.post('/complete', async (req, res) => {
+// Decline trip
+router.post('/Decline', async (req, res) => {
   try {
     const { tripId, workerId } = req.body;
-    if (!tripId || !workerId) {
-      return res.status(400).json({ success: false, message: 'tripId and workerId are required' });
-    }
-    // Find the trip and ensure the worker is assigned and status is correct
-    const trip = await Trip.findOne({ _id: tripId, worker: workerId, status: { $in: ['Assigned', 'InProgress'] } });
-    if (!trip) {
-      return res.status(404).json({ success: false, message: 'Trip not found or not eligible for completion' });
-    }
-    trip.status = 'Completed';
-    await trip.save();
-    res.status(200).json({ success: true, message: 'Trip marked as completed', trip });
+
+    // optional: log declined workers in trip
+    res.status(200).json({ success: true, message: 'Trip declined' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error marking trip as completed', error });
+    res.status(500).json({ success: false, message: 'Error declining trip', error });
   }
 });
+
 
 module.exports = router;

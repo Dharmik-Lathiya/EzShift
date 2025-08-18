@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function LandingMain() {
   const [scrollOpacity, setScrollOpacity] = useState(1);
 
+  const { scrollYProgress } = useScroll();
 
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 90]);   
+  const rotateZ = useTransform(scrollYProgress, [0, 1], [0, 300]);
 
   return (
     <section
@@ -70,7 +74,7 @@ export default function LandingMain() {
                     journey</button>
                 <button className="px-6 py-3 text-lg text-white bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl m-1 md:m-3 hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-gray-500/25 transform hover:scale-105 border border-gray-600/30 backdrop-blur-sm">find the vehicle</button>
             </div>
-            <div className="flex flex-col gap-5 md:flex-row mt-10">
+            {/* <div className="flex flex-col gap-5 md:flex-row mt-10">
                 <div
                     className="bg-gradient-to-br from-black/70 via-gray-800/30 to-black/70 backdrop-blur-xl md:py-7 md:px-20 rounded-2xl shadow-[0_8px_32px_rgba(0,_0,_0,_0.4)] pt-5 pb-5 pl-6 pr-6 border border-gray-600/30 hover:border-gray-500/50 transition-all duration-300 transform hover:scale-105 hover:shadow-[0_12px_40px_rgba(0,_0,_0,_0.6)]">
                     <span className="text-cyan-400 text-5xl sm:text-4xl drop-shadow-lg"><i
@@ -90,8 +94,16 @@ export default function LandingMain() {
                     <p className="mt-3 text-2xl font-bold text-white">99.99%</p>
                     <p className="text-gray-300">Lorem ipsum dolor sit. Lorem ipsum dolor sit amet.</p>
                 </div>
-            </div>
-        </div>
+            </div>*/}
+        </div> 
+        <div className="grid place-items-center -mt-20">
+      <motion.img
+        src="/new.png" 
+        alt="Description of image"
+        style={{ scale, rotateZ }}
+        className="w-[700px] h-[700px]" // starting size
+      />
+    </div>
     </section>
   )
 }
