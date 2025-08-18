@@ -1,36 +1,46 @@
 import React, { useState } from 'react';
-import { FaTruckPickup, FaShuttleVan, FaTruckMoving, FaMotorcycle, FaTruck } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import useVehicleStore from '../../../store/useVehicleStore';
 
+import { 
+  FaTruckPickup, 
+  FaShuttleVan, 
+  FaTruckMoving, 
+  FaTruckMonster, 
+  FaTruckLoading, 
+  FaTruck 
+} from 'react-icons/fa';
+
 const vehicleOptions = [
-  { name: 'Pickup Truck', icon: <FaTruckPickup size={28} /> },
-  { name: 'Small Van', icon: <FaShuttleVan size={28} /> },
-  { name: 'Mini Truck', icon: <FaTruckMoving size={28} /> },
-  { name: 'Three Wheeler', icon: <FaMotorcycle size={28} /> },
-  { name: 'Tempo', icon: <FaTruck size={28} /> },
+  { value: 'miniTruck', name: 'Mini Truck', icon: <FaTruckMoving size={28} /> }, 
+  { value: 'smallVan', name: 'Small Van', icon: <FaShuttleVan size={28} /> },
+  { value: 'pickupTruck', name: 'Pickup Truck', icon: <FaTruckPickup size={28} /> },
+  { value: 'mediumDutyTruck', name: 'Medium Duty Truck', icon: <FaTruckMonster size={28} /> },
+  { value: 'containerTruck', name: 'Container Truck', icon: <FaTruckLoading size={28} /> }, 
+  { value: 'openBodyTruck', name: 'Open Body Truck', icon: <FaTruck size={28} /> }, 
 ];
 
+
 export default function ThirdSetup() {
-  const {vehicleType} = useVehicleStore();
+  const { vehicleType } = useVehicleStore();
   const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
 
-  const handleSelect = (vehicle) => {
-    setSelected(vehicle);
+  const handleSelect = (vehicleValue) => {
+    setSelected(vehicleValue);
   };
 
   const handleSubmit = () => {
-    
     if (!selected) {
       alert('Please select a vehicle.');
       return;
     }
+
+    // Save to zustand store
     useVehicleStore.getState().setVehicleType(selected);
-    console.log('Zustand vehicle:',  useVehicleStore.getState().vehicleType);
-    useVehicleStore.getState().setVehicleType(selected);
-    navigate("/Worker/SetupProfile/VehicleInformation")
-    
+    console.log('Zustand vehicle:', useVehicleStore.getState().vehicleType);
+
+    navigate("/Worker/SetupProfile/VehicleInformation");
   };
 
   return (
@@ -42,9 +52,9 @@ export default function ThirdSetup() {
           {vehicleOptions.map((vehicle, index) => (
             <button
               key={index}
-              onClick={() => handleSelect(vehicle.name)}
+              onClick={() => handleSelect(vehicle.value)}
               className={`border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-gray-100 transition ${
-                selected === vehicle.name ? 'border-green-600 bg-green-50' : 'border-gray-300'
+                selected === vehicle.value ? 'border-green-600 bg-green-50' : 'border-gray-300'
               }`}
             >
               <div className="mb-2">{vehicle.icon}</div>

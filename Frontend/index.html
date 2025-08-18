@@ -1,20 +1,33 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EzShift</title>
-    <link
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EzShift</title>
+
+  <!-- Optional styles and scripts your app needs -->
+  <link
     rel="stylesheet"
     href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
-    />
-    
-    <script src="https://kit.fontawesome.com/930359cba8.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  />
+  <script src="https://kit.fontawesome.com/930359cba8.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/main.jsx"></script>
+
+  <script>
+    // Register service worker immediately after load
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+          .catch((err) => {
+            console.error('Service Worker registration failed:', err);
+          });
+      });
+    }
+  </script>
+</body>
 </html>

@@ -71,6 +71,7 @@ const navigate = useNavigate();
           <Route path="Trips" element={<WorkerTrips />} />
           <Route path="Profile" element={<WorkerProfile />} />
           <Route path="Vehicle" element={<WorkerVehicle />} />
+          <Route path="CompletedTrips" element={<div>Done</div>} />
         </Route>
 
         <Route path="/Worker/SetupProfile" element={<WorkerSetup />}>

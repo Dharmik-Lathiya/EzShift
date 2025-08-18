@@ -13,6 +13,7 @@ const useTripStore = create(persist(
     numWorkers: 0,
     note: '',
     distance: '',
+    rate: '',
     pricing: {},
     vehicle: null, 
     allTrips: [],
@@ -33,6 +34,7 @@ const useTripStore = create(persist(
     setNote: (val) => set({ note: val }),
     setDistance: (val) => set({ distance: val }),
     setPricing: (val) => set({ pricing: val }),
+    setRate: (val) => set({ rate: val }),
 
     // Trip fetching
     fetchAllTrips: async () => {
@@ -70,6 +72,7 @@ const useTripStore = create(persist(
       note: state.note,
       distance: state.distance,
       pricing: state.pricing,
+      rate: state.rate,
     })
   }
 ));

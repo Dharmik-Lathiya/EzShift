@@ -4,7 +4,8 @@ import { FiSearch, FiBell, FiInfo, FiMoon, FiMenu, FiX } from 'react-icons/fi';
 
 const navItems = [
   { name: 'Dashboard', path: '/Worker' },
-  { name: 'Assigned Trips', path: '/Worker/Trips' },
+  { name: 'Trips', path: '/Worker/Trips' },
+  { name: 'Completed Trips', path: '/Worker/CompletedTrips' },
   { name: 'Vehicle', path: '/Worker/Vehicle' },
   { name: 'Profile', path: '/Worker/Profile' },
 ];

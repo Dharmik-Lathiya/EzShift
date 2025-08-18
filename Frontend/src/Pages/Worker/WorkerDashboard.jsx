@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { FaCalendarDay, FaTasks, FaRupeeSign, FaChartLine, FaDollarSign, FaProjectDiagram } from 'react-icons/fa';
+import React, { useEffect, useRef, useState } from 'react';
+import { FaCalendarDay, FaTasks, FaRupeeSign, FaChartLine, FaDollarSign, FaProjectDiagram, FaBell } from 'react-icons/fa';
 import { Line, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend } from 'chart.js';
+import { requestFCMToken, listenForMessages } from '../../../public/firebase';
+import { getMessaging, onMessage } from 'firebase/messaging';
+import { messaging } from '../../firbase-config.js';
+import { Filler } from "chart.js";
+ 
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Filler);
 
 export default function WorkerDashboard() {
-  // Placeholder: Replace with actual worker ID from auth/session
-  const workerId = 'WORKER_ID_PLACEHOLDER';
+  const workerId = localStorage.getItem('workerId') || '12345';
 
   const [stats, setStats] = useState({
     assignedTrips: 0,
@@ -22,36 +26,130 @@ export default function WorkerDashboard() {
     location: '',
     status: 'Available',
     name: 'Worker',
+    Filler,
   });
   const [loading, setLoading] = useState(true);
 
+  const [fcmToken, setFcmToken] = useState(null);
+  const hasSentRef = useRef(false);
+
   useEffect(() => {
+    if (fcmToken && !hasSentRef.current) {
+      hasSentRef.current = true;
+
+      fetch(`http://localhost:3000/Worker/FCMToken/${workerId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fcmToken }),
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error('Failed to send FCM token');
+          return response.json();
+        })
+        .then((data) => console.log('FCM token sent successfully:', data))
+        .catch((error) => console.error('Error sending FCM token:', error));
+    }
+  }, [fcmToken, workerId]);
+
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([])
+
+
+
+
+  useEffect(() => {
+    let ignore = false;
+
     const fetchStats = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/worker/dashboard?workerId=${workerId}`);
+        const res = await fetch(`http://localhost:3000/Worker/Profile/${workerId}`);
         const data = await res.json();
-        setStats({
-          assignedTrips: data.assignedTrips || 0,
-          completedTrips: data.completedTrips || 0,
-          earningsToday: data.earningsToday || 0,
-          spendMonth: data.spendMonth || 0,
-          totalProjects: data.totalProjects || 0,
-          sales: data.sales || 0,
-          lineChart: data.lineChart || [],
-          barChart: data.barChart || [],
-          shift: data.shift || '10:00 AM - 6:00 PM',
-          location: data.location || 'Sector 21, Mumbai',
-          status: data.status || 'Available',
-          name: data.name || 'Worker',
-        });
+        console.log(data);
+        if (!ignore) {
+          setStats({
+            assignedTrips: data.assignedTrips || 0,
+            completedTrips: data.completedTrips || 0,
+            earningsToday: data.earningsToday || 0,
+            spendMonth: data.spendMonth || 0,
+            totalProjects: data.totalProjects || 0,
+            sales: data.sales || 0,
+            lineChart: data.lineChart || [],
+            barChart: data.barChart || [],
+            shift: data.shift || '10:00 AM - 6:00 PM',
+            location: data.location || 'Sector 21, Mumbai',
+            status: data.status || 'Available',
+            name: data.name || 'Worker',
+          });
+        }
       } catch (err) {
-        // fallback to defaults
+        if (!ignore) {
+          console.error(err);
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     };
-    fetchStats();
+
+    if (workerId) {
+      fetchStats();
+    }
+
+    return () => {
+      ignore = true;
+    };
   }, [workerId]);
+
+
+  useEffect(() => {
+    const fetchFcmToken = async () => {
+      const token = await requestFCMToken();
+      if (token) {
+        setFcmToken(token);
+      }
+    };
+    fetchFcmToken();
+  }, []);
+
+  useEffect(() => {
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    const message = event.data;
+    if (message?.type === 'FCM_BG_MESSAGE') {
+      const payload = message.payload;
+      setNotifications(prev => [
+        { id: Date.now(), title: payload.notification?.title, body: payload.notification?.body },
+        ...prev,
+      ]);
+    }
+  });
+}, []);
+
+
+
+  useEffect(() => {
+    listenForMessages((payload) => {
+      console.log("Foreground FCM:", payload);
+      setNotifications(prev => [
+        { id: Date.now(), ...payload.notification, tripId: payload.data?.tripId },
+        ...prev
+      ]);
+    });
+  }, []);
+
+ useEffect(() => {
+  const unsubscribe = onMessage(messaging, (payload) => {
+    console.log('Foregroundandkjashdbad message received:', payload);
+    new Notification(payload.notification?.title || 'Alert', {
+      body: payload.notification?.body,
+      icon: payload.notification?.icon || '/favicon.ico',
+    });
+  });
+
+  return unsubscribe;
+}, []);
 
   const lineChartData = {
     labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
@@ -83,9 +181,40 @@ export default function WorkerDashboard() {
   return (
     <div className="p-6 from-cyan-50 to-blue-100 min-h-screen">
       {/* Top Bar */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 relative">
         <h1 className="text-2xl font-semibold text-cyan-800">Welcome, {stats.name}</h1>
-        <span className="text-gray-600">Status: <span className="text-green-600 font-semibold">{stats.status}</span></span>
+        <div className="flex items-center gap-6">
+          <span className="text-gray-600">
+            Status: <span className="text-green-600 font-semibold">{stats.status}</span>
+          </span>
+          <div className="relative">
+            <button
+              className="relative text-green-600 text-xl"
+              onClick={() => setShowNotifications(!showNotifications)}
+            >
+              <FaBell />
+              {notifications.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                  {notifications.length}
+                </span>
+              )}
+            </button>
+
+            {/* Notification Dropdown */}
+            {showNotifications && (
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border z-50">
+                <div className="p-3 font-semibold border-b">Notifications</div>
+                <ul>
+                  {notifications.map((n) => (
+                    <li key={n.id} className="p-2 hover:bg-gray-100 text-sm">
+                      {n.message}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Top Cards */}

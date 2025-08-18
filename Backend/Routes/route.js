@@ -15,7 +15,8 @@ const {
 
 const {
   getWorkerProfile,
-  updateWorkerProfile
+  updateWorkerProfile,
+  updateWorkerToken
 } = require('./Worker/profileRoutes');
 
 // Client Routes
@@ -56,6 +57,7 @@ routes.put('/Vehicle/Edit/:id', updateVehicle);
 
 // Worker APIs
 routes.use('/Worker/Trip', workerTripRoutes);
+
 routes.post("/Worker/Login", workerLogin);
 routes.post("/Worker/SignUp", workerSignup);
 routes.post("/Worker/Vehicle/Add", upload.fields([
@@ -63,6 +65,7 @@ routes.post("/Worker/Vehicle/Add", upload.fields([
   { name: 'vehicleDocument', maxCount: 1 }
 ]), createVehicle);
 routes.get("/Worker/Profile/:id",getWorkerProfile);
+routes.patch("/Worker/FCMToken/:id",updateWorkerToken);
 routes.put("/Worker/Profile/Edit/:id",updateWorkerProfile);
 
 

@@ -6,8 +6,12 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^5.1.0",
+    "firebase": "^12.1.0",
+    "firebase-admin": "^13.4.0",
+    "install": "^0.13.0",
     "mongoose": "^8.16.0",
     "multer": "^2.0.2",
-    "node-dev": "^8.0.0"
+    "node-dev": "^8.0.0",
+    "npm": "^11.5.2"
   }
 }
