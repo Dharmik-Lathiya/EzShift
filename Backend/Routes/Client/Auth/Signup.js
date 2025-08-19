@@ -3,11 +3,11 @@ const bcrypt = require("bcrypt");
 
 
 const clientSignup = async (req, res) => {
-  const { fullname, mobileno, email, password, address } = req.body;
+  const { fullName, mobileNo, email, password, address } = req.body;
 
   try {
     const existingUser = await Client.findOne({ emailId: email });
-    if (existingUser) {
+    if (existingUser) { 
       return res.status(400).json({
         status: false,
         message: "User already exists",
@@ -16,9 +16,16 @@ const clientSignup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    console.log("New client registration:", {
+      fullName,
+      mobileNo,
+      emailId: email,
+      address,
+    });
+
     const newClient = new Client({
-      fullname,
-      mobileNo: mobileno,
+      fullName,
+      mobileNo,
       emailId: email,
       address,
       password: hashedPassword

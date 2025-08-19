@@ -20,6 +20,22 @@ router.get('/Pending/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error fetching pending trips', error });
   } 
 });
+
+router.get('/Completed/:id', async (req, res) => {
+  try{
+    const workerId = req.params.id; 
+
+    const trips = await Trip.find({ workers: workerId, status: 'Completed' })
+    .populate("clientId", "name email")
+    .populate("vehicleId", "type number");
+
+    res.status(200).json({ success: true, trips });
+  } catch (error) {
+    console.error("Error completing trip:", error);
+    res.status(500).json({ success: false, message: 'Error completing trip', error });
+  }
+});
+
 // Accept trip
 router.post('/Accept', async (req, res) => {
   try {

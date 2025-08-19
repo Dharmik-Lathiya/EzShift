@@ -27,40 +27,45 @@ export default function WorkerLogin() {
   });
 };
 
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:3000/Worker/Login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+const handleLoginSubmit = async (e) => {
+  e.preventDefault();
 
-      const result = await response.json();
-      console.log("res",result.data);
-      
-      
-      if (response.ok && result.status) {
-      localStorage.setItem("workerId", result.data);
-      localStorage.setItem("workerIsLogin", true);
-      
-        toast.success("Login successful!");
+  try {
+    const response = await fetch("http://localhost:3000/Worker/Login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData), // { email, password }
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.status) {
+      if (result.data.role === "admin") {
+        localStorage.setItem("adminId", result.data.userId);
+        localStorage.setItem("adminIsLogin", true);
+        toast.success("Admin login successful!");
+        setTimeout(() => {
+          window.location.href = "/Admin";
+        }, 1000);
+      } else if (result.data.role === "worker") {
+        localStorage.setItem("workerId", result.data.userId);
+        localStorage.setItem("workerIsLogin", true);
+        toast.success("Worker login successful!");
         setTimeout(() => {
           window.location.href = "/Worker";
         }, 1000);
-      } else {
-        toast.error(result.message || "Invalid email or password");
       }
-    } catch (error) {
-      toast.error("Server error during login");
-      console.error(error);
+    } else {
+      toast.error(result.message || "Login failed");
     }
-  };
+  } catch (error) {
+    toast.error("Server error during login");
+    console.error(error);
+  }
+};
+
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();

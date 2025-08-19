@@ -73,17 +73,17 @@ const MapView = () => {
       // setSteps(instructions);
       setDistance(totalDistance.toFixed(2));
 
-      // Calculate pricing
-      const baseCharge = 100;
       const vehicleRates = {
-        mini: 10,
-        sedan: 15,
-        truck: 25,
+        miniTruck: 1000,
+        smallVan: 1500,
+        pickupTruck: 2000,
+        mediumDutyTruck: 2500,
+        containerTruck: 3000,
+        openBodyTruck: 3500,
       };
-      const perKmRate = vehicleRates[vehicleType] || 15;
-      const vehicleCost = totalDistance * perKmRate;
-      const workerCost = needWorkers ? numWorkers * 200 : 0;
-
+    const perKmRate = vehicleRates[vehicleType] || 1500;
+    const vehicleCost = totalDistance * perKmRate;
+    const workerCost = needWorkers ? numWorkers * 200 : 0;
       setPricing({
         base: baseCharge,
         distance: vehicleCost,
