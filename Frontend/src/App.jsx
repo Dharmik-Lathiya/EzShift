@@ -1,6 +1,6 @@
 import './App.css'
 import LandingPage from './Pages/LandingPage'
-import { Routes, Route, useNavigate } from "react-router";
+import { Routes, Route, useNavigate, Navigate } from "react-router";
 import ClientLogin from './Pages/Login/ClientLogin';
 import ClientDashboard from './Pages/Client/ClientDashboard';
 import ClientHistory from './Pages/Client/ClientHistory';
@@ -30,7 +30,10 @@ import WorkerProfile from './Pages/Worker/WorkerProfile';
 
 function App() {
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const clientIsLogin = localStorage.getItem("clientIsLogin") === "true";
+  const workerIsLogin = localStorage.getItem("workerIsLogin") === "true";
+  const adminIsLogin = localStorage.getItem("adminIsLogin") === "true";
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -48,10 +51,11 @@ const navigate = useNavigate();
         <Route path="/Client/Auth" element={<ClientLogin />} />
         <Route path="/Worker/Auth" element={<WorkerLogin />} />
 
-
-        <Route path="/Client" element={<ClientLayout />}>
+        <Route
+          path="/Client"
+          element={clientIsLogin ? <ClientLayout /> : <Navigate to="/Client/Auth" />}>
           <Route index element={<ClientDashboard />} />
-          <Route path="Dashboard" index element={<ClientDashboard />} />
+          <Route path="Dashboard" element={<ClientDashboard />} />
           <Route path="History" element={<ClientHistory />} />
           <Route path="BookTrip" element={<ClientTripBook />} />
           <Route path="Profile" element={<ClientProfile />} />
@@ -59,33 +63,37 @@ const navigate = useNavigate();
           <Route path="Payment/Success" element={<PaymentSuccess />} />
         </Route>
 
-        <Route path="/Admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard/>} />
+        <Route path="/Admin" element={ adminIsLogin ? <AdminLayout /> : <Navigate to="/Worker/Auth" />}>
+          <Route index element={<AdminDashboard />} />
           <Route path="Trips" element={<AdminTrips />} />
           <Route path="Users" element={<AdminUsers />} />
           <Route path="Vehicles" element={<AdminVehicles />} />
         </Route>
 
-        <Route path="/Worker" element={<WorkerLayout />}>
-          <Route index element={<WorkerDashboard/>} />
+        <Route
+          path="/Worker"
+          element={workerIsLogin ? <WorkerLayout /> : <Navigate to="/Worker/Auth" />}
+        >
+          <Route index element={<WorkerDashboard />} />
           <Route path="Trips" element={<WorkerTrips />} />
           <Route path="Profile" element={<WorkerProfile />} />
           <Route path="Vehicle" element={<WorkerVehicle />} />
           <Route path="CompletedTrips" element={<div>Done</div>} />
         </Route>
 
-        <Route path="/Worker/SetupProfile" element={<WorkerSetup />}>
-          <Route index element={<FirstSetup/>} />
+        <Route
+          path="/Worker/SetupProfile"
+          element={workerIsLogin ? <WorkerSetup /> : <Navigate to="/Worker/Auth" />}
+        >
+          <Route index element={<FirstSetup />} />
           <Route path="City" element={<SecondSetup />} />
           <Route path="VehicleType" element={<ThirdSetup />} />
           <Route path="VehicleInformation" element={<FourthSetup />} />
           <Route path="Welcome" element={<FifthSetup />} />
-          
-          
         </Route>
 
 
-        
+
         {/* <Route path="/payment-failure" element={<PaymentFailure />} /> */}
 
       </Routes>

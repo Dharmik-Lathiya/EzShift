@@ -4,8 +4,8 @@ import toast, { Toaster } from 'react-hot-toast';
 export default function ClientLogin() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    fullname: "",
-    mobileno: "",
+    fullName: "",
+    mobileNo: "",
     email: "",
     password: "",
   });
@@ -13,8 +13,8 @@ export default function ClientLogin() {
   const handleModeSwitch = () => {
     setIsLogin(!isLogin);
     setFormData({
-      fullname: "",
-      mobileno: "",
+      fullName: "",
+      mobileNo: "",
       email: "",
       password: "",
     });
@@ -126,8 +126,8 @@ export default function ClientLogin() {
                 <label className="block text-gray-600 mb-1">Full Name</label>
                 <input
                   type="text"
-                  name="fullname"
-                  value={formData.fullname}
+                  name="fullName"
+                  value={formData.fullName}
                   onChange={handleChange}
                   placeholder="Enter Name"
                   className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
@@ -140,8 +140,8 @@ export default function ClientLogin() {
                   type="tel"
                   maxLength={10}
                   inputMode="numeric"
-                  name="mobileno"
-                  value={formData.mobileno}
+                  name="mobileNo"
+                  value={formData.mobileNo}
                   onChange={(e) => {
                     if (/^\d{0,10}$/.test(e.target.value)) handleChange(e);
                   }}

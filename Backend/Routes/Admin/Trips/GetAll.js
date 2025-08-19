@@ -2,7 +2,7 @@ const Trip = require("../../../Models/TripSchema");
 
 const getAllTrips = async (req, res) => {
   try {
-    const trips = await Trip.find().populate("vehicle");
+    const trips = await Trip.find().populate('clientId', 'fullName mobileNo emailId')
     res.status(200).json({
       success: true,
       data: trips,

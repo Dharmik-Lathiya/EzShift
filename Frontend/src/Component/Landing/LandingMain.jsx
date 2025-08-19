@@ -95,7 +95,7 @@ export default function LandingMain() {
                 </div>
             </div>*/}
       </div>
-      <div className="grid place-items-center -mt-20">
+      <div className="grid place-items-center -mt-20" style={{userSelect: 'none'}}>
         <motion.img
           src="/new.png"
           alt="Description of image"
