@@ -2,62 +2,72 @@ import React from "react";
 
 export default function LandingFooter() {
   return (
-    <footer className="bg-slate-900 text-white p-3 pt-15">
-      <div className="grid gap-5 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-20 md:pl-5 md:pr-5">
+    <footer className="bg-slate-900 text-white px-6 py-12 md:px-12">
+      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        {/* Logo + About */}
         <div>
-          <div className="flex items-center gap-4 mb-5">
-            <span className="text-black inline-block w-12 h-12 md:h-17 md:w-17 md:p-3 bg-gradient-to-r from-rose-400 to-pink-800 rounded-md text-center p-2 text-xl md:text-4xl">
-              <i className="fa-solid fa-bolt"></i>
+          <div className="flex items-center gap-3 mb-5">
+            <span className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-rose-400 to-pink-700 rounded-md text-2xl">
+              <i className="fa-solid fa-truck"></i>
             </span>
-            <p className="bg-gradient-to-tl from-pink-800 to-indigo-700 bg-clip-text text-transparent text-4xl font-semibold">
+            <p className="bg-gradient-to-r from-pink-600 to-sky-400 bg-clip-text text-transparent text-3xl font-bold">
               EzShift
             </p>
           </div>
-          <p className="text-gray-500">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illum vel,
-            hic fuga illo minima corrupti reiciendis error, corporis distinctio
-            numquam, omnis accusantium ex facere.
+          <p className="text-gray-400 leading-6">
+            EzShift makes shifting easier! From mini-trucks to container trucks, 
+            with professional workers and real-time tracking — we handle your 
+            move with care, speed, and affordability.
           </p>
         </div>
+
+        {/* Quick Links */}
         <div>
-          <h5 className="text-2xl mb-2 text-white pl-0">Lorem, ipsum.</h5>
-          <div className="leading-5.5 text-sm text-gray-500 pl-5 md:pl-0">
-            <p>Lorem, ipsum.</p>
-            <p>Lorem, ipsum dolor.</p>
-            <p>Lorem.</p>
-            <p>Lorem, ipsum.</p>
-            <p>Lorem, ipsum.</p>
-            <p>Lorem, ipsum dolor.</p>
-          </div>
+          <h5 className="text-xl mb-4 font-semibold">Quick Links</h5>
+          <ul className="space-y-2 text-gray-400">
+            <li><a href="/" className="hover:text-sky-400">Home</a></li>
+            <li><a href="/about" className="hover:text-sky-400">About Us</a></li>
+            <li><a href="/services" className="hover:text-sky-400">Our Services</a></li>
+            <li><a href="/pricing" className="hover:text-sky-400">Pricing</a></li>
+            <li><a href="/contact" className="hover:text-sky-400">Contact</a></li>
+          </ul>
         </div>
+
+        {/* Services */}
         <div>
-          <h5 className="text-2xl mb-2 text-white pl-0">Lorem, ipsum.</h5>
-          <div className="leading-5.5 text-sm text-gray-500 pl-5 md:pl-0">
-            <p>Lorem, ipsum.</p>
-            <p>Lorem, ipsum dolor.</p>
-            <p>Lorem.</p>
-            <p>Lorem, ipsum.</p>
-            <p>Lorem, ipsum.</p>
-            <p>Lorem, ipsum dolor.</p>
-          </div>
+          <h5 className="text-xl mb-4 font-semibold">Our Services</h5>
+          <ul className="space-y-2 text-gray-400">
+            <li>Household Shifting</li>
+            <li>Office Relocation</li>
+            <li>Vehicle Transport</li>
+            <li>Workers for Loading/Unloading</li>
+            <li>Real-time Tracking</li>
+            <li>Affordable Packages</li>
+          </ul>
         </div>
+
+        {/* Contact */}
         <div>
-          <h5 className="text-2xl mb-2 text-white">Lorem, ipsum.</h5>
-          <div className=" text-sm text-gray-500 pl-5 md:pl-0"> 
-            <p className="leading-5.5">
-              Lorem, ipsum. Lorem ipsum dolor sit amet consectetur adipisicing. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsam, alias?
-            </p>
-            <div className="flex leading-5.5 items-center gap-5 md:gap-1 mt-2 mb-2">
-              <p className="text-sky-400 text-lg">Lorem, ipsum dolor.</p>
-              <button className="bg-gradient-to-r from-pink-500 to-indigo-700 text-white px-3 py-2 text-lg rounded-md m-1 md:m-3">download</button>
-            </div>
-            <p className="leading-5.5">Lorem ipsum dolor sit amet consectetur adipisicing. Lorem ipsum dolor sit amet consectetur.</p>
+          <h5 className="text-xl mb-4 font-semibold">Get In Touch</h5>
+          <p className="text-gray-400 mb-3">
+            Have questions? Reach out to us anytime!
+          </p>
+          <p className="text-gray-400"><i className="fa-solid fa-phone mr-2"></i> +91 98765 43210</p>
+          <p className="text-gray-400"><i className="fa-solid fa-envelope mr-2"></i> support@ezshift.com</p>
+          <p className="text-gray-400"><i className="fa-solid fa-location-dot mr-2"></i> Ahmedabad, India</p>
+          <div className="flex gap-4 mt-4 text-xl">
+            <a href="#"><i className="fa-brands fa-facebook hover:text-sky-400"></i></a>
+            <a href="#"><i className="fa-brands fa-instagram hover:text-sky-400"></i></a>
+            <a href="#"><i className="fa-brands fa-linkedin hover:text-sky-400"></i></a>
+            <a href="#"><i className="fa-brands fa-twitter hover:text-sky-400"></i></a>
           </div>
         </div>
       </div>
-      <div className="text-center mt-10 mb-5 w-full border-t-1 border-white">
-        <p className="mt-5">Made with <i class="fa-solid fa-heart text-red-700"></i> by Easy Tutorials</p>
-        <p> &copy; 2025 Your Company Name. All rights reserved.</p>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-gray-700 mt-10 pt-5 text-center text-gray-400 text-sm">
+        <p>Made with <i className="fa-solid fa-heart text-red-500"></i> by EzShift Team</p>
+        <p>© {new Date().getFullYear()} EzShift. All Rights Reserved.</p>
       </div>
     </footer>
   );

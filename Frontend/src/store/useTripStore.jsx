@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { calculatePricing } from '../utils/pricing';
 
 const useTripStore = create(persist(
   (set, get) => ({
@@ -28,13 +29,28 @@ const useTripStore = create(persist(
     setDropAddress: (val) => set({ dropAddress: val }),
     setDate: (val) => set({ date: val }),
     setTimeSlot: (val) => set({ timeSlot: val }),
-    setVehicleType: (val) => set({ vehicleType: val }),
+    setVehicleType: (val) => {
+      set({ vehicleType: val });
+      get().calculateAndSetPricing();
+    },
     setNeedWorkers: (val) => set({ needWorkers: val }),
-    setNumWorkers: (val) => set({ numWorkers: val }),
+    setNumWorkers: (val) => {
+      set({ numWorkers: val });
+      get().calculateAndSetPricing();
+    },
     setNote: (val) => set({ note: val }),
-    setDistance: (val) => set({ distance: val }),
+    setDistance: (val) => {
+      set({ distance: val });
+      get().calculateAndSetPricing();
+    },
     setPricing: (val) => set({ pricing: val }),
     setRate: (val) => set({ rate: val }),
+
+    calculateAndSetPricing: () => {
+      const { distance, vehicleType, numWorkers } = get();
+      const pricing = calculatePricing(distance, vehicleType, numWorkers);
+      set({ pricing });
+    },
 
     // Trip fetching
     fetchAllTrips: async () => {

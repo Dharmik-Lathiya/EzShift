@@ -3,7 +3,7 @@ const Vehicle = require("../../../Models/VechialSchema");
 const Worker = require("../../../Models/WorkerSchema");
 const { sendFCMNotification } = require("../../../sendNoti"); 
 
-const tripBook = async (req, res) => {
+exports.tripBook = async (req, res) => {
   try {
     console.log("📦 Booking trip with data:", req.body);
 
@@ -101,4 +101,18 @@ const tripBook = async (req, res) => {
   }
 };
 
-module.exports = tripBook;
+exports.getClientAllTrips = async (req, res) => {
+  try {
+    const clientId = req.params.id;
+
+    console.log("Fetching all trips for client:", clientId);
+
+    const trips = await Trip.find({ clientId: clientId })
+      .populate("vehicleId");
+
+    res.status(200).json({ success: true, trips });
+  } catch (error) {
+    console.error("Error fetching all trips:", error);
+    res.status(500).json({ success: false, message: 'Error fetching all trips', error });
+  }
+};

@@ -24,6 +24,16 @@ export default function ClientTripPricing() {
   if (!pricing || Object.keys(pricing).length === 0) return null;
 
 const handleBooking = async () => {
+  if (!clientId) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Booking failed',
+      text: 'Please log in to book a trip.',
+      confirmButtonText: 'OK'
+    });
+    return;
+  }
+
   try {
     const response = await axios.post(
       'http://localhost:3000/Client/BookTrip/',
@@ -71,7 +81,7 @@ const handleBooking = async () => {
       <h3 className="text-lg font-bold text-[#111518] mb-2">Trip Pricing Breakdown</h3>
       <p>Distance: <strong>{distance} km</strong></p>
       <p>Base Charge: ₹{pricing?.base ?? 0}</p>
-      <p>Vehicle Cost ({vehicleType}): ₹{pricing?.distance?.toFixed(2) ?? '0.00'}</p>
+      <p>Vehicle Cost ({vehicleType}): ₹{pricing?.vehicle?.toFixed(2) ?? '0.00'}</p>
       {needWorkers && (
         <p>Worker Cost ({numWorkers} x ₹200): ₹{pricing?.workers ?? 0}</p>
       )}

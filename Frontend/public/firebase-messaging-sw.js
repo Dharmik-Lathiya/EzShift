@@ -1,6 +1,7 @@
+// /public/firebase-messaging-sw.js
 
-importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js');
+importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js");
 
 firebase.initializeApp({
   apiKey: "AIzaSyC44q9D_ymN44N1yJByFptH02mPhSSNcQg",
@@ -14,14 +15,32 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  console.log("📩 Received background message:", payload);
+// Listen for push in SW
+self.addEventListener("push", (event) => {
+  const payload = event.data.json();
+  console.log("📩 Push received in SW:", payload);
 
-  self.registration.showNotification(payload.notification.title, {
-    body: payload.notification.body,
-    icon: "/logo.png", // optional
+  const title = payload.notification?.title || "New Notification";
+  const body = payload.notification?.body || "";
+  const data = payload.data || {};
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon: "/logo.png",
+      data,
+    })
+  );
+
+  // Send data to React app
+  self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+    clients.forEach((client) => {
+      client.postMessage({
+        type: "NEW_NOTIFICATION",
+        tripId: data.tripId,
+        title,
+        body,
+      });
+    });
   });
 });
-
-
-

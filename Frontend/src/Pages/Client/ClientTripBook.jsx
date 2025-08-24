@@ -27,9 +27,11 @@ export default function ClientTripBook() {
     setNumWorkers,
     setNote,
     setDistance,
-    setPricing
+    setPricing,
+    calculateAndSetPricing
   } = useTripStore();
 
+  const [showPricing, setShowPricing] = useState(false);
 
   const [formData, setFormData] = useState({
     clientId: '',
@@ -43,9 +45,13 @@ export default function ClientTripBook() {
     
   });
 
+  useEffect(() => {
+    setClientId(localStorage.getItem('clientId') || '');
+  }, [setClientId]);
+
   const ORS_API_KEY = '5b3ce3597851110001cf6248694b5dfdf31748509b54037cad134a7b';
 
-  const calculateDistanceAndPrice = async () => {
+  const calculateDistance = async () => {
     try {
       if (!formData.pickUp || !formData.destination) {
         toast.error("Please enter both pickup and destination addresses.");
@@ -73,34 +79,18 @@ export default function ClientTripBook() {
 
       const distKm = route.data.routes[0].summary.distance / 1000;
       setDistance(distKm.toFixed(2));
-
-      let ratePerKm = 0;
-      switch (formData.vehicelType) {
-        case 'pickup': ratePerKm = 10; break;
-        case 'van': ratePerKm = 15; break;
-        case 'heavy': ratePerKm = 20; break;
-        default: ratePerKm = 0;
-      }
-
-      const baseCharge = 100;
-      const vehicleCost = ratePerKm * distKm;
-      const workerCost = needWorkers ? numWorkers * 200 : 0;
-
-      const total = baseCharge + vehicleCost + workerCost;
-
-      setClientId(localStorage.getItem('clientId') || '');
-
-      setPricing({
-        base: baseCharge,
-        vehicle: vehicleCost,
-        workers: workerCost,
-        total: total.toFixed(2)
-      });
     } catch (error) {
       console.error('Distance calculation error:', error);
       toast.error(error.message || "Distance calculation failed.");
     }
   };
+
+  useEffect(() => {
+    if (distance && vehicleType) {
+        calculateAndSetPricing();
+        setShowPricing(true);
+    }
+  }, [distance, vehicleType, numWorkers, calculateAndSetPricing]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -120,8 +110,7 @@ export default function ClientTripBook() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await calculateDistanceAndPrice();
-
+    await calculateDistance();
   };
 
   return (
@@ -211,12 +200,12 @@ export default function ClientTripBook() {
 
         <div className="flex justify-start">
           <button type="submit" className="rounded-full h-12 px-6 bg-[#19a1e5] text-white text-base font-bold hover:bg-[#138ccc] transition">
-            Show Pricing
+            Calculate Distance
           </button>
         </div>
       </form>
 
-      <ClientTripPricing />
+      {showPricing && <ClientTripPricing />}
     </div>
   );
 }

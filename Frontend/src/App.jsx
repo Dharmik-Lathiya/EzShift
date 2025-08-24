@@ -51,6 +51,8 @@ function App() {
         <Route path="/Client/Auth" element={<ClientLogin />} />
         <Route path="/Worker/Auth" element={<WorkerLogin />} />
 
+
+
         <Route
           path="/Client"
           element={clientIsLogin ? <ClientLayout /> : <Navigate to="/Client/Auth" />}>
@@ -62,6 +64,8 @@ function App() {
           <Route path="Map" element={<ClientMap />} />
           <Route path="Payment/Success" element={<PaymentSuccess />} />
         </Route>
+
+        <Route path="/Client/Map" element={<div>Map Placeholder</div>} />
 
         <Route path="/Admin" element={ adminIsLogin ? <AdminLayout /> : <Navigate to="/Worker/Auth" />}>
           <Route index element={<AdminDashboard />} />
@@ -78,7 +82,6 @@ function App() {
           <Route path="Trips" element={<WorkerTrips />} />
           <Route path="Profile" element={<WorkerProfile />} />
           <Route path="Vehicle" element={<WorkerVehicle />} />
-          <Route path="CompletedTrips" element={<div>Done</div>} />
         </Route>
 
         <Route

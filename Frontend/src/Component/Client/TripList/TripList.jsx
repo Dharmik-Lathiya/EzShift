@@ -38,7 +38,6 @@ const TripList = () => {
       );
     }
 
-    // Sort trips
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'date':
@@ -80,35 +79,9 @@ const TripList = () => {
   };
 
   // Payment handler placeholder
-  const handlePayment = (trip) => {
-    // TODO: Implement payment logic/modal/redirect
-    alert(`Initiate payment for trip: ${trip._id}`);
-  };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <div className="text-red-600 mb-4">{error}</div>
-        <button
-          onClick={() => {
-            clearError();
-            loadTrips();
-          }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
+    // TODO: Implement payment logic/modal/redirect 
+    
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
