@@ -2,56 +2,60 @@ import React from "react";
 
 export default function LandingFinancialRevolution() {
   return (
-    <section className="relative min-h-screen w-full bg-slate-600 text-white bg-no-repeat bg-cover bg-center bg-[url('/img/rotate.jpg')] sm:bg-[url('/img/dark-gradient-background-with-copy-space_53876-99548.avif')]">
-      <div className="items-center flex flex-col text-center relative p-4">
+    <section className="relative min-h-screen w-full bg-white text-gray-900 bg-no-repeat bg-cover bg-center bg-[url('/img/rotate.jpg')] sm:bg-[url('/img/dark-gradient-background-with-copy-space_53876-99548.avif')]">
+      <div className="flex flex-col items-center text-center relative px-6 py-12 max-w-6xl mx-auto">
+        
+        {/* Badge */}
         <div className="mt-5">
-          <p className="border-white border-1 rounded-full p-2 bg-white/10 backdrop-blur-lg text-white">
-            <span>
-              <i className="fa-solid fa-bolt text-white"></i>
-            </span>
-            high level technology used
+          <p className="inline-flex items-center gap-2 border border-gray-200 rounded-full px-4 py-2 bg-white shadow-sm text-sm font-medium text-gray-700">
+            <i className="fa-solid fa-bolt text-yellow-500"></i>
+            High-level technology used
           </p>
         </div>
 
-        <div className="mt-7 mb-7">
-          <h1 className="md:text-8xl md:font-medium sm:text-6xl font-medium text-5xl bg-gradient-to-r from-cyan-200 to-indigo-500 bg-clip-text text-transparent">
+        {/* Title */}
+        <div className="mt-10 mb-8">
+          <h1 className="md:text-7xl sm:text-6xl text-4xl font-extrabold bg-gradient-to-r from-cyan-500 to-indigo-600 bg-clip-text text-transparent">
             Join the Financial
           </h1>
-          <h1 className="md:text-8xl md:font-medium sm:text-6xl font-medium  text-5xl bg-gradient-to-r from-pink-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="md:text-7xl sm:text-6xl text-4xl font-extrabold bg-gradient-to-r from-pink-600 to-indigo-700 bg-clip-text text-transparent mt-2">
             Revolution
           </h1>
         </div>
 
-        <div className="mb-7">
-          <p className="">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis
-            maxime recusandae laborum quam deserunt sint dolorum ipsam
-            doloremque, ut, debitis obcaecati ea beatae quod aut at culpa? Illum
-            voluptates iusto nisi minus expedita, rem repudiandae repellendus
-            laudantium blanditiis quis odit!
+        {/* Description */}
+        <div className="mb-8 max-w-3xl">
+          <p className="text-gray-600 leading-relaxed">
+            Experience the next generation of secure, fast, and reliable
+            financial transactions. With innovative technology and 
+            transparent operations, we empower you to manage your 
+            money like never before.
           </p>
         </div>
 
-        <div className="mb-7">
-          <button className="bg-gradient-to-r from-pink-500 to-indigo-700 px-3 py-2 text-lg rounded-lg  m-1 md:m-3">
-            start your transaction
+        {/* Buttons */}
+        <div className="mb-12 flex flex-wrap justify-center gap-4">
+          <button className="bg-gradient-to-r from-pink-500 to-indigo-700 px-6 py-3 text-lg font-semibold text-white rounded-lg shadow hover:opacity-90 transition">
+            Start your transaction
           </button>
-          <button className="px-3 py-2 text-lg text-black bg-white rounded-lg  m-1 md:m-3">
-            find the reciept
+          <button className="px-6 py-3 text-lg font-semibold text-gray-900 bg-white border border-gray-300 rounded-lg shadow hover:bg-gray-50 transition">
+            Find the receipt
           </button>
         </div>
-        <div className="flex flex-col gap-5 md:flex-row mt-10">
-          <div className="bg-black/30 backdrop-blur-lg md:py-7 md:px-20 rounded-lg shadow-[3px_6px_17px_-9px_rgba(236,_72,_153,_0.5)] pt-5 pb-5 pl-6 pr-6">
-            <p className="mt-3 text-2xl">24/7</p>
-            <p>Lorem ipsum dolor sit. Lorem ipsum dolor sit amet.</p>
+
+        {/* Feature cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-6">
+          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition">
+            <p className="text-3xl font-bold text-indigo-600">24/7</p>
+            <p className="mt-2 text-gray-600">Reliable support anytime, anywhere.</p>
           </div>
-          <div className="bg-black/30 backdrop-blur-lg md:py-7 md:px-20 rounded-lg shadow-[3px_6px_17px_-9px_rgba(236,_72,_153,_0.5)] pt-5 pb-5 pl-6 pr-6">
-            <p className="mt-3 text-2xl">14 days</p>
-            <p>Lorem ipsum dolor sit. Lorem ipsum dolor sit amet.</p>
+          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition">
+            <p className="text-3xl font-bold text-indigo-600">14 Days</p>
+            <p className="mt-2 text-gray-600">Easy refunds and secure settlements.</p>
           </div>
-          <div className="bg-black/30 backdrop-blur-lg md:py-7 md:px-20 rounded-lg shadow-[3px_6px_17px_-9px_rgba(236,_72,_153,_0.5)] pt-5 pb-5 pl-6 pr-6">
-            <p className="mt-3 text-2xl">Zero</p>
-            <p>Lorem ipsum dolor sit. Lorem ipsum dolor sit amet.</p>
+          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition">
+            <p className="text-3xl font-bold text-indigo-600">Zero</p>
+            <p className="mt-2 text-gray-600">Hidden fees — complete transparency.</p>
           </div>
         </div>
       </div>

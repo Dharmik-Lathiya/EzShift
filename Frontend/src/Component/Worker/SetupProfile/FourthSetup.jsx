@@ -5,6 +5,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
 export default function FourthSetup() {
+  
   const {
     vehicleOwner,
     setVehicleOwner,
@@ -32,6 +33,7 @@ export default function FourthSetup() {
     if (
       !vehicleOwner ||
       !vehicleName ||
+      !vehicleNumber ||
       !vehicleCompany ||
       !vehicleModel ||
       !drivingLicenseNumber ||
@@ -42,16 +44,26 @@ export default function FourthSetup() {
       return;
     }
 
-    if (!vehicleNumber) {
-  toast.error("Vehicle number is required");
-  return;
-}
+    if (!/^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}$/.test(vehicleNumber)) {
+      toast.error("Invalid vehicle number format");
+      return;
+    }
 
+    if(!/^[A-Z]{2}[0-9]{2}[0-9]{4}[0-9]{7}$/.test(drivingLicenseNumber)){
+      toast.error("Invalid driving license number format");
+      return;
+    }
 
-    console.log("Done",drivingLicense, vehicleDocument);
+    if(!/^[0-9]{4}$/.test(vehicleModel)){
+      toast.error("Invalid vehicle model year format");
+      return;
+    }
+
+    console.log("Done",URL.createObjectURL(drivingLicense), vehicleDocument);
     console.log("Vehicle Type:", vehicleType);
 
     let ownerId = localStorage.getItem("workerId");
+
     // Prepare form data
     const formData = new FormData();
     formData.append('vehicleOwner', vehicleOwner);
@@ -61,8 +73,8 @@ export default function FourthSetup() {
     formData.append("vehicleType", vehicleType);
     formData.append('vehicleNumber', vehicleNumber);
     formData.append('drivingLicenseNumber', drivingLicenseNumber);
-    formData.append("drivingLicense", drivingLicense);
-    formData.append("vehicleDocument", vehicleDocument);
+    formData.append("drivingLicense", URL.createObjectURL(drivingLicense));
+    formData.append("vehicleDocument", URL.createObjectURL(vehicleDocument));
     formData.append("ownerId", ownerId);
 
     console.log('Submitted:', {
@@ -88,15 +100,14 @@ export default function FourthSetup() {
       toast.success('Vehicle details submitted successfully.');
       navigate('/Worker/SetupProfile/Welcome');
     } catch (err) {
-      toast.error('Error submitting vehicle details.');
-      console.error(err);
+      toast.error(err);
+      console.error(err); 
     }
     
     setVehicleOwner("");
     setVehicleName("");
     setVehicleCompany("");
     setVehicleModel("");
-    setVehicleType("");
     setVehicleNumber("");
     setDrivingLicenseNumber("");
     setDrivingLicense(null);
@@ -152,12 +163,12 @@ export default function FourthSetup() {
           />
         </div>
 
-        {/* Vehicle Model Number */}
+        {/* Vehicle Model Year */}
         <div className="mb-4">
-          <label className="block font-medium mb-2">Vehicle Model Number</label>
+          <label className="block font-medium mb-2">Vehicle Model Year</label>
           <input
             type="text"
-            placeholder="e.g. ZX200, DLX"
+            placeholder="e.g. 2020, 2021"
             value={vehicleModel}
             onChange={(e) => setVehicleModel(e.target.value)}
             className="w-full border rounded p-2"

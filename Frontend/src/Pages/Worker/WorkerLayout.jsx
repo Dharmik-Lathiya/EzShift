@@ -5,7 +5,6 @@ import { FiSearch, FiBell, FiInfo, FiMoon, FiMenu, FiX } from 'react-icons/fi';
 const navItems = [
   { name: 'Dashboard', path: '/Worker' },
   { name: 'Trips', path: '/Worker/Trips' },
-  { name: 'Completed Trips', path: '/Worker/CompletedTrips' },
   { name: 'Vehicle', path: '/Worker/Vehicle' },
   { name: 'Profile', path: '/Worker/Profile' },
 ];
@@ -62,16 +61,17 @@ export default function WorkerLayout() {
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex md:flex-col w-64 bg-white shadow-lg py-5 px-6">
         <div className="mb-10 text-2xl font-bold text-green-600 tracking-wide">
-          EzShift Worker
+          EzShift Shifter
         </div>
         <nav>{renderNavLinks()}</nav>
         <div className="mt-auto pt-8 text-xs text-gray-400">
-          &copy; {new Date().getFullYear()} EzShift Worker
+          &copy; {new Date().getFullYear()} EzShift Shifter
         </div>
         <button
           className="w-full mt-6 px-4 py-2 bg-red-100 text-red-600 rounded-lg font-semibold hover:bg-red-200 transition"
           onClick={() => {
-            window.location.href = '/Client/Login';
+            window.location.href = '/Worker/Auth';
+            localStorage.setItem('workerId', '');
           }}
         >
           Logout

@@ -39,6 +39,23 @@ export default function WorkerProfile() {
     fetchProfile();
   }, [workerId]);
 
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data && event.data.type === 'NEW_NOTIFICATION') {
+        // You can trigger a state update, show a modal, or just an alert
+        alert(`New Notification:\nTitle: ${event.data.title}\nBody: ${event.data.body}\nTrip ID: ${event.data.tripId}`);
+        console.log('Notification payload received in component:', event.data);
+      }
+    };
+
+    navigator.serviceWorker.addEventListener('message', handleMessage);
+
+    // Cleanup the listener when the component unmounts
+    return () => {
+      navigator.serviceWorker.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };

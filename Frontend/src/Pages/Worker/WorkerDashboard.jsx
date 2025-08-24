@@ -4,9 +4,10 @@ import { Line, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend } from 'chart.js';
 import { requestFCMToken, listenForMessages } from '../../../public/firebase';
 import { getMessaging, onMessage } from 'firebase/messaging';
-import { messaging } from '../../firbase-config.js';
+import { messaging } from '../../firebase-config.js';
 import { Filler } from "chart.js";
- 
+import useSendWorkerNotification from '../../store/useSendWorkerNotification.jsx';
+
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Filler);
 
@@ -16,7 +17,7 @@ export default function WorkerDashboard() {
   const [stats, setStats] = useState({
     assignedTrips: 0,
     completedTrips: 0,
-    earningsToday: 0,
+    earnings: 0,
     spendMonth: 0,
     totalProjects: 0,
     sales: 0,
@@ -26,6 +27,7 @@ export default function WorkerDashboard() {
     location: '',
     status: 'Available',
     name: 'Worker',
+    totalTrips: 0,
     Filler,
   });
   const [loading, setLoading] = useState(true);
@@ -52,12 +54,11 @@ export default function WorkerDashboard() {
   }, [fcmToken, workerId]);
 
 
+
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([])
-
-
-
-
+  // Global state for notifications
+  const { notifications, addNotification, setTripId } = useSendWorkerNotification();
+  
   useEffect(() => {
     let ignore = false;
 
@@ -71,7 +72,7 @@ export default function WorkerDashboard() {
           setStats({
             assignedTrips: data.assignedTrips || 0,
             completedTrips: data.completedTrips || 0,
-            earningsToday: data.earningsToday || 0,
+            earnings: data.earning || 0,
             spendMonth: data.spendMonth || 0,
             totalProjects: data.totalProjects || 0,
             sales: data.sales || 0,
@@ -80,7 +81,8 @@ export default function WorkerDashboard() {
             shift: data.shift || '10:00 AM - 6:00 PM',
             location: data.location || 'Sector 21, Mumbai',
             status: data.status || 'Available',
-            name: data.name || 'Worker',
+            name: data.name || 'Shifter',
+            totalTrips: data.trips.length,
           });
         }
       } catch (err) {
@@ -114,42 +116,46 @@ export default function WorkerDashboard() {
     fetchFcmToken();
   }, []);
 
+   // Foreground messages
   useEffect(() => {
-  navigator.serviceWorker.addEventListener('message', (event) => {
-    const message = event.data;
-    if (message?.type === 'FCM_BG_MESSAGE') {
-      const payload = message.payload;
-      setNotifications(prev => [
-        { id: Date.now(), title: payload.notification?.title, body: payload.notification?.body },
-        ...prev,
-      ]);
-    }
-  });
-}, []);
+    const unsubscribe = onMessage(messaging, (payload) => {
+      console.log("📩 Foreground FCM:", payload);
 
+      const { title, body } = payload.notification || {};
+      const tripId = payload.data?.tripId;
 
+      setTripId(tripId);
+      // Add to global state
+      addNotification({ id: Date.now(), title, body });
+    });
 
+    return () => unsubscribe();
+  }, [setTripId, addNotification]);
+
+  // Background messages from SW
   useEffect(() => {
-    listenForMessages((payload) => {
-      console.log("Foreground FCM:", payload);
-      setNotifications(prev => [
-        { id: Date.now(), ...payload.notification, tripId: payload.data?.tripId },
-        ...prev
-      ]);
-    });
-  }, []);
+    if (!("serviceWorker" in navigator)) return;
 
- useEffect(() => {
-  const unsubscribe = onMessage(messaging, (payload) => {
-    console.log('Foregroundandkjashdbad message received:', payload);
-    new Notification(payload.notification?.title || 'Alert', {
-      body: payload.notification?.body,
-      icon: payload.notification?.icon || '/favicon.ico',
-    });
-  });
+    const handleMessage = (event) => {
+      if (event.data && event.data.type === "NEW_NOTIFICATION") {
+        console.log("Received notification from service worker:", event.data);
+        const { tripId, title, body } = event.data;
 
-  return unsubscribe;
-}, []);
+        setTripId(tripId);
+        // Add to global state
+        addNotification({ id: Date.now(), title, body });
+      }
+    };
+
+    navigator.serviceWorker.addEventListener("message", handleMessage);
+
+    return () => {
+      navigator.serviceWorker.removeEventListener("message", handleMessage);
+    };
+  }, [setTripId, addNotification]);
+
+
+
 
   const lineChartData = {
     labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
@@ -207,9 +213,11 @@ export default function WorkerDashboard() {
                 <ul>
                   {notifications.map((n) => (
                     <li key={n.id} className="p-2 hover:bg-gray-100 text-sm">
-                      {n.message}
+                      <p className="font-semibold">{n.title}</p>
+                      <p className="text-gray-600">{n.body}</p>
                     </li>
                   ))}
+
                 </ul>
               </div>
             )}
@@ -220,8 +228,8 @@ export default function WorkerDashboard() {
       {/* Top Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <Card icon={<FaCalendarDay />} title="Today's Shift" value={stats.shift} sub={stats.location} />
-        <Card icon={<FaTasks />} title="Assigned Tasks" value={stats.assignedTrips} sub="Pickup, Drop, Confirm" />
-        <Card icon={<FaRupeeSign />} title="Earnings" value={`₹${stats.earningsToday}`} sub="Today" />
+        <Card icon={<FaTasks />} title="Total Trips" value={stats.totalTrips} sub="Pickup, Drop, Confirm" />
+        <Card icon={<FaRupeeSign />} title="Earnings" value={`₹${stats.earnings}`} sub="Today" />
         <Card icon={<FaDollarSign />} title="Spend this month" value={`₹${stats.spendMonth}`} sub="" />
         <Card icon={<FaProjectDiagram />} title="Total Projects" value={stats.totalProjects} sub="" />
         <Card icon={<FaChartLine />} title="Sales" value={`₹${stats.sales}`} sub="+23% since last month" />

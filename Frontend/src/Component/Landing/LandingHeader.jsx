@@ -3,8 +3,8 @@ import logo from '../../assets/logo.png'
 
 export default function LandingHeader() {
   return (
-    <nav>
-        <div className="h-20 w-full bg-slate-900 flex justify-between items-center px-6">
+    <nav className="bg-slate-950">
+        <div className="h-16 p-12 w-full flex justify-between items-center px-6">
             <div className="w-fit">
                 <img className="lg:h-15 lg:w-40 h-10 w30 cursor-pointer"
                     src={logo} alt="Logo" />

@@ -84,6 +84,25 @@ exports.updateVehicleStatus = async (req, res) => {
   }
 };
 
+// route: GET /Worker/Vehicle/Active/:id?vehicleType=Truck
+exports.getActiveVehicles = async (req, res) => {
+  try {
+    const vehicle = req.query.vehicleType; // from query
+    const vehicles = await Vehicle.find({
+      ownerId: req.params.id,
+      vehicleType: vehicle,
+      status: "Active",
+    });
+
+    if (vehicles.length === 0) {
+      return res.status(404).json({ success: false, message: 'No active vehicles found' });
+    }
+
+    res.json({ success: true, vehicles });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching active vehicles', error });
+  }
+};
 
 exports.deleteVehicle = async (req, res) => {
   try {
