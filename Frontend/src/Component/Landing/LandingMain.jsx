@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 export default function LandingMain() {
-  const [scrollOpacity, setScrollOpacity] = useState(1);
 
   const { scrollYProgress } = useScroll();
 
@@ -15,35 +14,35 @@ export default function LandingMain() {
   return (
     <section
       className="relative min-h-screen w-full text-white bg-gradient-to-br from-black via-slate-950 to-black bg-no-repeat bg-cover bg-center overflow-hidden"
-      >
-  {/* Animated Background Elements */}
-  <div className="absolute inset-0 overflow-hidden">
-    {/* Floating particles */}
-    <div className="absolute top-20 left-10 w-2 h-2 bg-slate-400 rounded-full animate-pulse opacity-60"></div>
-    <div className="absolute top-40 right-20 w-1 h-1 bg-slate-300 rounded-full animate-ping opacity-40"></div>
-    <div className="absolute top-60 left-1/4 w-3 h-3 bg-slate-500 rounded-full animate-bounce opacity-50"></div>
-    <div className="absolute top-80 right-1/3 w-2 h-2 bg-slate-400 rounded-full animate-pulse opacity-70"></div>
-    <div className="absolute top-96 left-1/2 w-1 h-1 bg-slate-300 rounded-full animate-ping opacity-30"></div>
+    >
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Floating particles */}
+        <div className="absolute top-20 left-10 w-2 h-2 bg-slate-400 rounded-full animate-pulse opacity-60"></div>
+        <div className="absolute top-40 right-20 w-1 h-1 bg-slate-300 rounded-full animate-ping opacity-40"></div>
+        <div className="absolute top-60 left-1/4 w-3 h-3 bg-slate-500 rounded-full animate-bounce opacity-50"></div>
+        <div className="absolute top-80 right-1/3 w-2 h-2 bg-slate-400 rounded-full animate-pulse opacity-70"></div>
+        <div className="absolute top-96 left-1/2 w-1 h-1 bg-slate-300 rounded-full animate-ping opacity-30"></div>
 
-    {/* Gradient orbs */}
-    <div className="absolute top-32 left-1/3 w-32 h-32 bg-gradient-to-r from-slate-600/20 to-transparent rounded-full blur-xl animate-pulse"></div>
-    <div className="absolute top-64 right-1/4 w-24 h-24 bg-gradient-to-l from-slate-500/15 to-transparent rounded-full blur-lg animate-bounce"></div>
-    <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-r from-slate-700/10 to-transparent rounded-full blur-2xl animate-pulse"></div>
+        {/* Gradient orbs */}
+        <div className="absolute top-32 left-1/3 w-32 h-32 bg-gradient-to-r from-slate-600/20 to-transparent rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-64 right-1/4 w-24 h-24 bg-gradient-to-l from-slate-500/15 to-transparent rounded-full blur-lg animate-bounce"></div>
+        <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-r from-slate-700/10 to-transparent rounded-full blur-2xl animate-pulse"></div>
 
-    {/* Grid pattern overlay */}
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)] bg-[length:50px_50px] opacity-30"></div>
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)] bg-[length:50px_50px] opacity-30"></div>
 
-    {/* Vignette effect */}
-    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/50"></div>
+        {/* Vignette effect */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/50"></div>
 
-    {/* Animated lines */}
-    <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-500/20 to-transparent animate-pulse"></div>
-    <div className="absolute top-3/4 right-0 w-px h-32 bg-gradient-to-b from-transparent via-slate-400/10 to-transparent animate-pulse"></div>
+        {/* Animated lines */}
+        <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-500/20 to-transparent animate-pulse"></div>
+        <div className="absolute top-3/4 right-0 w-px h-32 bg-gradient-to-b from-transparent via-slate-400/10 to-transparent animate-pulse"></div>
 
-    {/* Glowing corners */}
-    <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-600/10 to-transparent rounded-br-full"></div>
-    <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-slate-600/10 to-transparent rounded-tl-full"></div>
-  </div>
+        {/* Glowing corners */}
+        <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-600/10 to-transparent rounded-br-full"></div>
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-slate-600/10 to-transparent rounded-tl-full"></div>
+      </div>
 
 
       <div className="items-center flex flex-col text-center relative p-4 z-10">
@@ -53,20 +52,23 @@ export default function LandingMain() {
         </div>
 
         <div className="mt-7 mb-7">
-          <h1
-            className="md:text-8xl md:font-medium sm:text-6xl font-medium text-5xl bg-gradient-to-r from-red-300 to-red-500 bg-clip-text text-transparent">
-            The future of</h1>
-          <h1
-            className="md:text-8xl md:font-medium sm:text-6xl font-medium  text-5xl bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
-            home transport</h1>
-        </div>
+  <h1 className="md:text-8xl md:font-medium sm:text-6xl font-medium text-5xl text-white">
+    The future of
+  </h1>
+  <h1 className="md:text-8xl md:font-medium sm:text-6xl font-medium text-5xl text-white">
+    smart moving
+  </h1>
+</div>
 
-        <div className="mb-7">
-          <p className="">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis maxime recusandae laborum quam
-            deserunt sint dolorum ipsam doloremque, ut, debitis obcaecati ea beatae quod aut at culpa? Illum
-            voluptates iusto nisi minus expedita, rem repudiandae repellendus laudantium blanditiis quis odit!
-          </p>
-        </div>
+
+        <div className="mb-7 w-2xl">
+  <p className="text-white text-xl">
+    We make home shifting simple and stress-free. From packing to delivery, our team ensures a smooth moving experience every time.
+  </p>
+</div>
+
+
+
 
         <div className="mb-7 ">
           <button className="bg-gradient-to-r from-red-600 via-red-700 to-red-800 px-6 py-3 text-lg rounded-xl m-1 md:m-3 hover:from-red-700 hover:via-red-800 hover:to-red-900 transition-all duration-300 shadow-lg hover:shadow-red-500/25 transform hover:scale-105 border border-red-500/30 backdrop-blur-sm">start your
@@ -95,7 +97,7 @@ export default function LandingMain() {
                 </div>
             </div>*/}
       </div>
-      <div className="grid place-items-center -mt-20" style={{userSelect: 'none'}}>
+      <div className="grid place-items-center -mt-20" style={{ userSelect: 'none' }}>
         <motion.img
           src="/new.png"
           alt="Description of image"
@@ -104,81 +106,78 @@ export default function LandingMain() {
         />
       </div>
 
+      <div className="relative -mt-80 w-full min-h-screen overflow-hidden">
 
-      {/* Black gradient transition area */}
-      <div className="w-full h-40 -mt-120 bg-white-800"></div>
-
-      {/* Main content area with gradient */}
-      <div className="relative w-full min-h-screen bg-white-800 overflow-hidden">
-        {/* Simple Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50"></div>
-
-          {/* Simple animated particles */}
-          <div className="absolute top-20 left-10 w-1 h-1 bg-red-500 rounded-full animate-pulse opacity-40"></div>
-          <div className="absolute top-40 right-20 w-1 h-1 bg-red-400 rounded-full animate-ping opacity-30"></div>
-          <div className="absolute top-60 left-1/4 w-1 h-1 bg-red-600 rounded-full animate-pulse opacity-50"></div>
-          <div className="absolute top-80 right-1/3 w-1 h-1 bg-red-500 rounded-full animate-ping opacity-40"></div>
-
-          {/* Simple gradient orbs */}
-          <div className="absolute top-32 left-1/3 w-24 h-24 bg-gradient-to-r from-red-600/10 to-transparent rounded-full blur-lg"></div>
-          <div className="absolute bottom-32 right-1/4 w-32 h-32 bg-gradient-to-l from-red-500/8 to-transparent rounded-full blur-xl"></div>
+         <div className="text-center pt-20 px-4 md:px-8 md:pb-20 pb-16 relative z-10">
+        {/* Heading */}
+        <div className="animate-fade-in-up">
+          <h2 className="text-[#19a1e5] font-extrabold md:text-5xl text-3xl mb-6">
+            Performance That Speaks
+          </h2>
+          <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-16">
+            Experience lightning-fast delivery with our cutting-edge technology 
+            and a dedicated fleet of vehicles designed for reliability and speed.
+          </p>
         </div>
 
-        <div className="text-center pt-20 pl-4 pr-4 md:pl-8 md:pr-8 md:pb-20 pb-16 relative z-10">
-          <div className="animate-fade-in-up">
-            <h2 className="text-red-400 font-bold md:text-5xl text-3xl mb-6">
-              Performance That Speaks
-            </h2>
-            <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-16">
-              Experience lightning-fast delivery with our cutting-edge technology and dedicated fleet of vehicles.
-            </p>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          
+          {/* Successful Deliveries */}
+          <div
+            className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
+                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+            style={{ animationDelay: "0.2s" }}
+          >
+            <div className="text-[#19a1e5] text-5xl mb-4">
+              <i className="fa-solid fa-arrow-up-right-dots"></i>
+            </div>
+            <h3 className="text-gray-900 text-3xl font-bold mb-2">5,109+</h3>
+            <p className="text-gray-500 text-lg">Successful Deliveries</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <div className="bg-black/60 backdrop-blur-sm border border-red-500/20 rounded-xl p-6 
-              hover:border-red-500/40 hover:bg-black/80 transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-              style={{ animationDelay: '0.2s' }}>
-              <div className="text-red-400 text-4xl mb-4">
-                <i className="fa-solid fa-arrow-up-right-dots"></i>
-              </div>
-              <div className="text-red-300 text-2xl font-bold mb-2">5109+</div>
-              <div className="text-gray-400">Successful Deliveries</div>
+          {/* Miles Covered */}
+          <div
+            className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
+                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+            style={{ animationDelay: "0.4s" }}
+          >
+            <div className="text-[#19a1e5] text-5xl mb-4">
+              <i className="fa-solid fa-road"></i>
             </div>
+            <h3 className="text-gray-900 text-3xl font-bold mb-2">100M+</h3>
+            <p className="text-gray-500 text-lg">Miles Covered</p>
+          </div>
 
-            <div className="bg-black/60 backdrop-blur-sm border border-red-500/20 rounded-xl p-6 
-              hover:border-red-500/40 hover:bg-black/80 transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-              style={{ animationDelay: '0.4s' }}>
-              <div className="text-red-400 text-4xl mb-4">
-                <i className="fa-brands fa-slack"></i>
-              </div>
-              <div className="text-red-300 text-2xl font-bold mb-2">100m+</div>
-              <div className="text-gray-400">Miles Covered</div>
+          {/* Uptime Guarantee */}
+          <div
+            className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
+                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+            style={{ animationDelay: "0.6s" }}
+          >
+            <div className="text-[#19a1e5] text-5xl mb-4">
+              <i className="fa-solid fa-bolt"></i>
             </div>
+            <h3 className="text-gray-900 text-3xl font-bold mb-2">99.99%</h3>
+            <p className="text-gray-500 text-lg">Uptime Guarantee</p>
+          </div>
 
-            <div className="bg-black/60 backdrop-blur-sm border border-red-500/20 rounded-xl p-6 
-              hover:border-red-500/40 hover:bg-black/80 transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-              style={{ animationDelay: '0.6s' }}>
-              <div className="text-red-400 text-4xl mb-4">
-                <i className="fa-solid fa-bolt"></i>
-              </div>
-              <div className="text-red-300 text-2xl font-bold mb-2">99.99%</div>
-              <div className="text-gray-400">Uptime Guarantee</div>
+          {/* Customer Rating */}
+          <div
+            className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
+                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+            style={{ animationDelay: "0.8s" }}
+          >
+            <div className="text-[#19a1e5] text-5xl mb-4">
+              <i className="fa-solid fa-star"></i>
             </div>
-
-            <div className="bg-black/60 backdrop-blur-sm border border-red-500/20 rounded-xl p-6 
-              hover:border-red-500/40 hover:bg-black/80 transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-              style={{ animationDelay: '0.8s' }}>
-              <div className="text-red-400 text-4xl mb-4">
-                <i className="fa-solid fa-star"></i>
-              </div>
-              <div className="text-red-300 text-2xl font-bold mb-2">4.9★</div>
-              <div className="text-gray-400">Customer Rating</div>
-            </div>
+            <h3 className="text-gray-900 text-3xl font-bold mb-2">4.9★</h3>
+            <p className="text-gray-500 text-lg">Customer Rating</p>
           </div>
         </div>
       </div>
+      </div>
+
     </section>
   )
 }
