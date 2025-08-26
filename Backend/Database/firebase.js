@@ -1,38 +1,22 @@
-// Import the functions you need from the SDKs you need
-importScripts('https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/9.1.2/firebase-messaging.js');
+const admin = require('firebase-admin');
+require('dotenv').config();
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC44q9D_ymN44N1yJByFptH02mPhSSNcQg",
-  authDomain: "ezshift-fafa7.firebaseapp.com",
-  projectId: "ezshift-fafa7",
-  storageBucket: "ezshift-fafa7.firebasestorage.app",
-  messagingSenderId: "72388914696",
-  appId: "1:72388914696:web:fbc7feb19a3b1af75c6bbd",
-  measurementId: "G-H8KGRRRPRE"
-};
-
-const vapidKeys = "BMruF894vKbbp2OJykTdHsQNC_O9b3mfbTHSui_kakTJzQ_LDADNVGI77GixHXzA3Ym9UAqyGWoMQ8tkCwicyC8";
-
-const app = initializeApp(firebaseConfig);
-
-const messaging = getMessaging(app);
-
-export const requestFCMToken = async () =>{
-    return Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-            return getToken(messaging, { vapidKey: vapidKeys }).then((currentToken) => {
-                if (currentToken) {
-                    console.log("FCM Token:", currentToken);
-                    return currentToken;
-                } else {
-                    console.error("No registration token available.");
-                }
-            }).catch((err) => {
-                console.error("An error occurred while retrieving token. ", err);
-            });
-        } else {
-            console.error("Notification permission denied.");
-        }
-    });
+// Check if the Base64 environment variable exists
+if (!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT_BASE64 environment variable is not set.');
 }
+
+// Decode the Base64 string to a JSON string
+const serviceAccountJson = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf8');
+
+// Parse the JSON string into an object
+const serviceAccount = JSON.parse(serviceAccountJson);
+
+// Initialize the Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+console.log('Firebase Admin SDK initialized successfully.');
+
+module.exports = admin;
