@@ -15,7 +15,7 @@ export default function AdminTrips() {
   const fetchTrips = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:3000/Admin/Trip/GetAll");
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/Admin/Trip/GetAll`);
       if (Array.isArray(res.data.data)) {
         setTrips(res.data.data);
       } else {

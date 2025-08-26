@@ -21,7 +21,7 @@ export default function WorkerProfile() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:3000/Worker/Profile/${workerId}`);
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Profile/${workerId}`);
         const data = await res.json();
         setProfile({
           name: data.fullname || '',
@@ -53,7 +53,7 @@ export default function WorkerProfile() {
   };
 
   const handleSave = async () => {
-    await fetch(`http://localhost:3000/Worker/Profile/Edit/${workerId}`, {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Profile/Edit/${workerId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

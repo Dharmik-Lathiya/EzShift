@@ -92,7 +92,7 @@ export default function FourthSetup() {
 
     try {
       const res = await axios.post(
-        'http://localhost:3000/Worker/Vehicle/Add',
+        `${import.meta.env.VITE_BACKEND_URL}/Worker/Vehicle/Add`,
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

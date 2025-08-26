@@ -11,7 +11,7 @@ export default function AdminVehicles() {
     const fetchVehicles = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:3000/Admin/Vehicle/GetAll");
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/Admin/Vehicle/GetAll`);
         if (res.data.success) {
           setVehicles(res.data.data);
         } else {

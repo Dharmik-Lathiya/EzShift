@@ -27,7 +27,7 @@ export default function WorkerVehicle() {
 
   const fetchVehicles = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/Vehicle/Fetch/${workerId}`);
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Vehicle/Fetch/${workerId}`);
       const data = await res.json();
       setVehicles(data.vehicles || []);
     } catch (err) {
@@ -51,7 +51,7 @@ export default function WorkerVehicle() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:3000/Vehicle/Status/${id}`, {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Vehicle/Status/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: updatedStatus }),
@@ -110,7 +110,7 @@ export default function WorkerVehicle() {
     if (drivingLicense) formData.append("drivingLicense", drivingLicense);
     if (vehicleDocument) formData.append("vehicleDocument", vehicleDocument);
 
-    await fetch("http://localhost:3000/Worker/Vehicle/Add", {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Vehicle/Add`, {
       method: "POST",
       body: formData,
     });
@@ -143,7 +143,7 @@ export default function WorkerVehicle() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await fetch(`http://localhost:3000/Vehicle/Delete/${vehicleId}`, {
+          await fetch(`${import.meta.env.VITE_BACKEND_URL}/Vehicle/Delete/${vehicleId}`, {
             method: "POST",
           });
           toast.success("Vehicle deleted successfully!");
@@ -162,7 +162,7 @@ export default function WorkerVehicle() {
     setEditingVehicleId(vehicleId);
 
     try {
-      const res = await fetch(`http://localhost:3000/Vehicle/Get/${vehicleId}`);
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Vehicle/Get/${vehicleId}`);
       const data = await res.json();
 
       if (res.ok) {
@@ -190,7 +190,7 @@ export default function WorkerVehicle() {
     e.stopPropagation();
 
 
-    const res = await fetch(`http://localhost:3000/Vehicle/Edit/${vehicleId}`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Vehicle/Edit/${vehicleId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

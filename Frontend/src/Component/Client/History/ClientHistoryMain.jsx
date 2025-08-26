@@ -38,7 +38,7 @@ const [trips, setTrips] = useState([]);
   const fetchTrips = (clientId) => {
     setLoading(true);
     axios
-      .get(`http://localhost:3000/Client/Trip/GetAll/${clientId}`)
+      .get(`${import.meta.env.VITE_BACKEND_URL}/Client/Trip/GetAll/${clientId}`)
       .then((response) => {
         setTrips(response.data.trips);
       })
@@ -103,7 +103,7 @@ const [trips, setTrips] = useState([]);
 
   try {
     const res = await axios.post(
-      "http://localhost:3000/api/payu/Client/pay",
+      `${import.meta.env.VITE_BACKEND_URL}/api/payu/Client/pay`,
       paymentDetails
     );
 

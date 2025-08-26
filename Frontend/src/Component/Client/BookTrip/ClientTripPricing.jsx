@@ -36,7 +36,7 @@ const handleBooking = async () => {
 
   try {
     const response = await axios.post(
-      'http://localhost:3000/Client/BookTrip/',
+      `${import.meta.env.VITE_BACKEND_URL}/Client/BookTrip/`,
       {
         clientId,
         pickupAddress,
