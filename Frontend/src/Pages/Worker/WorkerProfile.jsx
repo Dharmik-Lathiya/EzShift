@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Pencil, Save, Mail, Phone, MapPin } from "lucide-react";
 
 export default function WorkerProfile() {
   const workerId = localStorage.getItem("workerId");
@@ -39,23 +40,6 @@ export default function WorkerProfile() {
     fetchProfile();
   }, [workerId]);
 
-  useEffect(() => {
-    const handleMessage = (event) => {
-      if (event.data && event.data.type === 'NEW_NOTIFICATION') {
-        // You can trigger a state update, show a modal, or just an alert
-        alert(`New Notification:\nTitle: ${event.data.title}\nBody: ${event.data.body}\nTrip ID: ${event.data.tripId}`);
-        console.log('Notification payload received in component:', event.data);
-      }
-    };
-
-    navigator.serviceWorker.addEventListener('message', handleMessage);
-
-    // Cleanup the listener when the component unmounts
-    return () => {
-      navigator.serviceWorker.removeEventListener('message', handleMessage);
-    };
-  }, []);
-
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
@@ -69,154 +53,155 @@ export default function WorkerProfile() {
   };
 
   const handleSave = async () => {
-    const formData = new FormData();
-    formData.append("workerId", workerId);
-    formData.append("name", profile.name);
-    formData.append("email", profile.email);
-    formData.append("phone", profile.phone);
-    formData.append("address", profile.address);
-    formData.append("city", profile.city);
-    formData.append("status", profile.status);
-
-    console.log(formData);
-    
-    if (imageFile) formData.append("avatar", imageFile);
-
     await fetch(`http://localhost:3000/Worker/Profile/Edit/${workerId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: profile.name,
-        email: profile.email,
-        phone: profile.phone,
-        address: profile.address,
-        city: profile.city,
-        status: profile.status,
+        ...profile,
         avatar: imageFile ? URL.createObjectURL(imageFile) : profile.avatar,
       }),
     });
-
     setEditMode(false);
   };
 
   if (loading) return <div className="p-6 text-lg">Loading profile...</div>;
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Profile */}
-        <div className="bg-white rounded-xl shadow p-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold">Your profile</h2>
-            <button
-              onClick={() => setEditMode(!editMode)}
-              className="text-sm text-purple-600 hover:underline"
-            >
-              {editMode ? 'Cancel' : 'Edit'}
-            </button>
-          </div>
-          <p className="text-sm text-gray-500 mt-1">Joined {new Date().toLocaleDateString()}</p>
+    <div className="p-6 flex justify-center bg-gray-50">
+  <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <div className="mt-4 flex items-center space-x-4">
-            <img
-              src={preview || profile.avatar || 'https://via.placeholder.com/60'}
-              alt="Avatar"
-              className="w-16 h-16 rounded-full object-cover border"
-            />
-            <div>
-              {editMode && (
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="block mb-2"
-                />
-              )}
-              {editMode ? (
-                <input
-                  type="text"
-                  name="name"
-                  value={profile.name}
-                  onChange={handleChange}
-                  className="border rounded px-2 py-1 w-full"
-                />
-              ) : (
-                <p className="text-lg font-medium">{profile.name}</p>
-              )}
-              {editMode ? (
-                <input
-                  type="text"
-                  name="phone"
-                  value={profile.phone}
-                  onChange={handleChange}
-                  className="border rounded px-2 py-1 w-full mt-1"
-                />
-              ) : (
-                <p className="text-gray-600">{profile.phone}</p>
-              )}
-            </div>
-          </div>
+    {/* Profile Card */}
+    <div className="bg-white rounded-2xl shadow-lg p-6 relative border border-gray-100 hover:shadow-xl transition">
+      {/* Edit Button */}
+      <div className="absolute top-4 right-4">
+        <button
+          onClick={() => setEditMode(!editMode)}
+          className="flex items-center gap-1 text-sm px-3 py-1 rounded-full 
+          bg-purple-100 text-purple-700 hover:bg-purple-200 transition"
+        >
+          <Pencil size={14} />
+          {editMode ? 'Cancel' : 'Edit'}
+        </button>
+      </div>
+
+      {/* Avatar + Info */}
+      <div className="flex items-center h-40 gap-6">
+        <img
+          src={preview || profile.avatar || 'https://via.placeholder.com/80'}
+          alt="Avatar"
+          className="w-24 h-24 rounded-full object-cover border-4 border-purple-100 shadow-md"
+        />
+        <div className="flex-1">
           {editMode && (
-            <button
-              onClick={handleSave}
-              className="mt-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-            >
-              Save
-            </button>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block mb-2 text-sm"
+            />
           )}
-        </div>
-
-        {/* Address */}
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Address</h2>
-          {editMode ? (
-            <>
-              <textarea
-                name="address"
-                value={profile.address}
-                onChange={handleChange}
-                className="border rounded w-full px-2 py-1 mb-2"
-              />
-              <input
-                type="text"
-                name="city"
-                value={profile.city}
-                onChange={handleChange}
-                placeholder="City"
-                className="border rounded w-full px-2 py-1"
-              />
-            </>
-          ) : (
-            <>
-              <p className="text-gray-700">{profile.address}</p>
-              <p className="text-gray-500">{profile.city}</p>
-            </>
-          )}
-        </div>
-
-        {/* Emails */}
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Contact</h2>
           {editMode ? (
             <input
-              type="email"
-              name="email"
-              value={profile.email}
+              type="text"
+              name="name"
+              value={profile.name}
               onChange={handleChange}
-              className="border rounded px-2 py-1 w-full"
+              className="border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-purple-500"
             />
           ) : (
-            <p className="text-gray-700">{profile.email}</p>
+            <h2 className="text-2xl font-semibold">{profile.name}</h2>
+          )}
+          {editMode ? (
+            <input
+              type="text"
+              name="phone"
+              value={profile.phone}
+              onChange={handleChange}
+              className="border rounded-lg px-3 py-2 w-full mt-2 focus:ring-2 focus:ring-purple-500"
+            />
+          ) : (
+            <p className="text-gray-600 flex items-center gap-2 mt-1">
+              <Phone size={16} className="text-purple-600" /> {profile.phone}
+            </p>
           )}
         </div>
-
-        {/* Account Options */}
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Account Options</h2>
-          <p className="text-gray-700">Language: English</p>
-          <p className="text-gray-700">Time zone: (GMT+5:30) India Standard Time</p>
-        </div>
       </div>
+
+      {/* Save Button */}
+      {editMode && (
+        <button
+          onClick={handleSave}
+          className="mt-6 flex items-center justify-center gap-2 w-full px-4 py-2 
+          bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+        >
+          <Save size={16} /> Save Changes
+        </button>
+      )}
     </div>
+
+    {/* Address Card */}
+    <div className="bg-white rounded-2xl shadow-lg p-6 h-60 border border-gray-100 hover:shadow-xl transition">
+      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+        <MapPin size={18} className="text-purple-600" /> Address
+      </h3>
+      {editMode ? (
+        <>
+          <textarea
+            name="address"
+            value={profile.address}
+            onChange={handleChange}
+            className="border rounded-lg w-full px-3 py-2 mb-2 focus:ring-2 focus:ring-purple-500"
+          />
+          <input
+            type="text"
+            name="city"
+            value={profile.city}
+            onChange={handleChange}
+            placeholder="City"
+            className="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-purple-500"
+          />
+        </>
+      ) : (
+        <div className="text-gray-700">
+          <p className="flex items-start gap-2">
+            <MapPin size={18} className="mt-1 text-purple-600" />
+            {profile.address}, {profile.city}
+          </p>
+        </div>
+      )}
+    </div>
+
+    {/* Contact Card */}
+    <div className="bg-white rounded-2xl h-50 shadow-lg p-6 border border-gray-100 hover:shadow-xl transition">
+      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+        <Mail size={18} className="text-purple-600" /> Contact
+      </h3>
+      {editMode ? (
+        <input
+          type="email"
+          name="email"
+          value={profile.email}
+          onChange={handleChange}
+          className="border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-purple-500"
+        />
+      ) : (
+        <p className="text-gray-700 flex items-center gap-2">
+          <Mail size={18} className="text-purple-600" /> {profile.email}
+        </p>
+      )}
+    </div>
+
+    {/* Account Settings Card */}
+    <div className="bg-white h-100 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition">
+      <h3 className="text-lg font-semibold mb-3">⚙️ Account Settings</h3>
+      <p className="text-gray-700">
+        Status: <span className="font-medium text-green-600">{profile.status}</span>
+      </p>
+      <p className="text-gray-700 mt-1">Language: English</p>
+      <p className="text-gray-700">Time Zone: (GMT+5:30) India Standard Time</p>
+    </div>
+  </div>
+</div>
+
   );
 }

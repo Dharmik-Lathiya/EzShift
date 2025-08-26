@@ -108,9 +108,13 @@ export default function WorkerDashboard() {
 
   useEffect(() => {
     const fetchFcmToken = async () => {
+      console.log('Requesting FCM token...');
       const token = await requestFCMToken();
       if (token) {
+        console.log('FCM Token:', token);
         setFcmToken(token);
+      } else {
+        console.log('FCM token not received.');
       }
     };
     fetchFcmToken();
@@ -229,7 +233,7 @@ export default function WorkerDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <Card icon={<FaCalendarDay />} title="Today's Shift" value={stats.shift} sub={stats.location} />
         <Card icon={<FaTasks />} title="Total Trips" value={stats.totalTrips} sub="Pickup, Drop, Confirm" />
-        <Card icon={<FaRupeeSign />} title="Earnings" value={`₹${stats.earnings}`} sub="Today" />
+        <Card icon={<FaRupeeSign />} title="Earnings" value={`₹${stats.earnings.toFixed(2)}`} sub="Today" />
         <Card icon={<FaDollarSign />} title="Spend this month" value={`₹${stats.spendMonth}`} sub="" />
         <Card icon={<FaProjectDiagram />} title="Total Projects" value={stats.totalProjects} sub="" />
         <Card icon={<FaChartLine />} title="Sales" value={`₹${stats.sales}`} sub="+23% since last month" />

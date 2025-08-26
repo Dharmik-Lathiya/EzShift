@@ -1,12 +1,37 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
-export default function LandingMain() {
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(false);
 
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    if (media.matches !== matches) setMatches(media.matches);
+
+    const listener = () => setMatches(media.matches);
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, [matches, query]);
+
+  return matches;
+}
+
+export default function LandingMain() {
   const { scrollYProgress } = useScroll();
 
-  const rawScale = useTransform(scrollYProgress, [0, 1], [1, 90]);
-  const rawRotate = useTransform(scrollYProgress, [0, 1], [0, 300]);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+
+  const rawScale = useTransform(
+    scrollYProgress,
+    [0, 1],
+    isDesktop ? [1, 120] : [1, 500]
+  );
+
+  const rawRotate = useTransform(
+    scrollYProgress,
+    [0, 1],
+    isDesktop ? [0, 800] : [0, 900]
+  );
 
   const scale = useSpring(rawScale, { stiffness: 100, damping: 20 });
   const rotateZ = useSpring(rawRotate, { stiffness: 100, damping: 20 });
@@ -52,20 +77,20 @@ export default function LandingMain() {
         </div>
 
         <div className="mt-7 mb-7">
-  <h1 className="md:text-8xl md:font-medium sm:text-6xl font-medium text-5xl text-white">
-    The future of
-  </h1>
-  <h1 className="md:text-8xl md:font-medium sm:text-6xl font-medium text-5xl text-white">
-    smart moving
-  </h1>
-</div>
+          <h1 className="md:text-8xl md:font-medium sm:text-6xl font-medium text-5xl text-white">
+            The future of
+          </h1>
+          <h1 className="md:text-8xl md:font-medium sm:text-6xl font-medium text-5xl text-white">
+            smart moving
+          </h1>
+        </div>
 
 
         <div className="mb-7 w-2xl">
-  <p className="text-white text-xl">
-    We make home shifting simple and stress-free. From packing to delivery, our team ensures a smooth moving experience every time.
-  </p>
-</div>
+          <p className="text-white text-xl">
+            We make home shifting simple and stress-free. From packing to delivery, our team ensures a smooth moving experience every time.
+          </p>
+        </div>
 
 
 
@@ -102,80 +127,80 @@ export default function LandingMain() {
           src="/new.png"
           alt="Description of image"
           style={{ scale, rotateZ }}
-          className="w-[700px] h-[700px]"
+          className="w-[500px] h-[500px] lg:w-[700px] lg:h-[700px]"
         />
       </div>
 
-      <div className="relative -mt-80 w-full min-h-screen overflow-hidden">
+      <div className="relative -mt-10 lg:-mt-80 w-full min-h-screen overflow-hidden">
 
-         <div className="text-center pt-20 px-4 md:px-8 md:pb-20 pb-16 relative z-10">
-        {/* Heading */}
-        <div className="animate-fade-in-up">
-          <h2 className="text-[#19a1e5] font-extrabold md:text-5xl text-3xl mb-6">
-            Performance That Speaks
-          </h2>
-          <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-16">
-            Experience lightning-fast delivery with our cutting-edge technology 
-            and a dedicated fleet of vehicles designed for reliability and speed.
-          </p>
+        <div className="text-center pt-20 px-4 md:px-8 md:pb-20 pb-16 relative z-10">
+          {/* Heading */}
+          <div className="animate-fade-in-up">
+            <h2 className="text-[#19a1e5] font-extrabold md:text-5xl text-3xl mb-6">
+              Performance That Speaks
+            </h2>
+            <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-16">
+              Experience lightning-fast delivery with our cutting-edge technology
+              and a dedicated fleet of vehicles designed for reliability and speed.
+            </p>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+
+            {/* Successful Deliveries */}
+            <div
+              className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
+                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+              style={{ animationDelay: "0.2s" }}
+            >
+              <div className="text-[#19a1e5] text-5xl mb-4">
+                <i className="fa-solid fa-arrow-up-right-dots"></i>
+              </div>
+              <h3 className="text-gray-900 text-3xl font-bold mb-2">5,109+</h3>
+              <p className="text-gray-500 text-lg">Successful Deliveries</p>
+            </div>
+
+            {/* Miles Covered */}
+            <div
+              className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
+                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+              style={{ animationDelay: "0.4s" }}
+            >
+              <div className="text-[#19a1e5] text-5xl mb-4">
+                <i className="fa-solid fa-road"></i>
+              </div>
+              <h3 className="text-gray-900 text-3xl font-bold mb-2">100M+</h3>
+              <p className="text-gray-500 text-lg">Miles Covered</p>
+            </div>
+
+            {/* Uptime Guarantee */}
+            <div
+              className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
+                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+              style={{ animationDelay: "0.6s" }}
+            >
+              <div className="text-[#19a1e5] text-5xl mb-4">
+                <i className="fa-solid fa-bolt"></i>
+              </div>
+              <h3 className="text-gray-900 text-3xl font-bold mb-2">99.99%</h3>
+              <p className="text-gray-500 text-lg">Uptime Guarantee</p>
+            </div>
+
+            {/* Customer Rating */}
+            <div
+              className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
+                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+              style={{ animationDelay: "0.8s" }}
+            >
+              <div className="text-[#19a1e5] text-5xl mb-4">
+                <i className="fa-solid fa-star"></i>
+              </div>
+              <h3 className="text-gray-900 text-3xl font-bold mb-2">4.9★</h3>
+              <p className="text-gray-500 text-lg">Customer Rating</p>
+            </div>
+          </div>
         </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          
-          {/* Successful Deliveries */}
-          <div
-            className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
-                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-            style={{ animationDelay: "0.2s" }}
-          >
-            <div className="text-[#19a1e5] text-5xl mb-4">
-              <i className="fa-solid fa-arrow-up-right-dots"></i>
-            </div>
-            <h3 className="text-gray-900 text-3xl font-bold mb-2">5,109+</h3>
-            <p className="text-gray-500 text-lg">Successful Deliveries</p>
-          </div>
-
-          {/* Miles Covered */}
-          <div
-            className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
-                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-            style={{ animationDelay: "0.4s" }}
-          >
-            <div className="text-[#19a1e5] text-5xl mb-4">
-              <i className="fa-solid fa-road"></i>
-            </div>
-            <h3 className="text-gray-900 text-3xl font-bold mb-2">100M+</h3>
-            <p className="text-gray-500 text-lg">Miles Covered</p>
-          </div>
-
-          {/* Uptime Guarantee */}
-          <div
-            className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
-                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-            style={{ animationDelay: "0.6s" }}
-          >
-            <div className="text-[#19a1e5] text-5xl mb-4">
-              <i className="fa-solid fa-bolt"></i>
-            </div>
-            <h3 className="text-gray-900 text-3xl font-bold mb-2">99.99%</h3>
-            <p className="text-gray-500 text-lg">Uptime Guarantee</p>
-          </div>
-
-          {/* Customer Rating */}
-          <div
-            className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
-                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-            style={{ animationDelay: "0.8s" }}
-          >
-            <div className="text-[#19a1e5] text-5xl mb-4">
-              <i className="fa-solid fa-star"></i>
-            </div>
-            <h3 className="text-gray-900 text-3xl font-bold mb-2">4.9★</h3>
-            <p className="text-gray-500 text-lg">Customer Rating</p>
-          </div>
-        </div>
-      </div>
       </div>
 
     </section>

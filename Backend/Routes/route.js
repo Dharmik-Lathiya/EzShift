@@ -35,7 +35,7 @@ const getAllTrips = require("./Admin/Trips/GetAll");
 const acceptTrip = require("./Admin/Trips/AcceptTrip");
 const getAllUsers = require("./Admin/User/GetAll");
 const getAllVehicles = require("./Admin/Vehicle/GetAll");
-const paymentRoutes = require('./Admin/Payment/paymentRoutes'); 
+const { getAdminProfile, updateAdminProfile } = require("./Admin/adminProfile");
 
 // Worker Trip APIs
 const workerTripRoutes = require('./Worker/WorkerTripRoutes');
@@ -53,7 +53,9 @@ routes.get("/Admin/User/GetAll", getAllUsers);
 routes.get("/Admin/Trip/GetAll", getAllTrips);
 routes.get("/Admin/Vehicle/GetAll", getAllVehicles);
 routes.put("/Admin/Trip/Accept/:tripId", acceptTrip);
-routes.use("/Admin/Payment", paymentRoutes); // Mount payment routes
+routes.get("/Admin/Get/Profile", getAdminProfile);
+routes.put("/Admin/Edit/Profile", updateAdminProfile);
+
 
 // Vehicle APIs
 routes.post('/Vehicle/Add', createVehicle);
