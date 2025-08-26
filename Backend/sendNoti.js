@@ -1,6 +1,12 @@
 const admin = require("firebase-admin");
 
-const serviceAccount = require("./Database/firebase-service-account.json");
+let serviceAccount;
+if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
+  const decodedServiceAccount = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf8');
+  serviceAccount = JSON.parse(decodedServiceAccount);
+} else {
+  serviceAccount = require("./Database/firebase-service-account.json");
+}
 
 if (!admin.apps.length) {
   admin.initializeApp({
