@@ -1,5 +1,6 @@
+require('dotenv').config();
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://dharmik:VgcyttXGN5CfeNri@ezshift.jjevlzt.mongodb.net/?retryWrites=true&w=majority&appName=EzShift")
+mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("Database Connected!!"))
 .catch((err)=>console.log(err))
