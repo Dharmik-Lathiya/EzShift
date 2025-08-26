@@ -27,7 +27,7 @@ export default function ClientLogin() {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/Client/Login", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Client/Login`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
@@ -58,7 +58,7 @@ export default function ClientLogin() {
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/Client/SignUp", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Client/SignUp`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(formData),

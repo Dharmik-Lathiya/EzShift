@@ -18,11 +18,6 @@ app.use("/api/payu/payment", paymentRoute);
 app.use("/",routes);
 
 
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
-
-
 app.listen(port,()=>{
     console.log("Server Started!!");
 })

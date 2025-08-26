@@ -22,11 +22,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchEarnings = async () => {
       try {
-        const res = await axios("http://localhost:3000/Admin/Get/Profile");
+        const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/Admin/Get/Profile`);
         const data = res.data;
         const admin = data.data;
 
-        const trips = await axios.get("http://localhost:3000/Admin/Trip/GetAll");
+        const trips = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/Admin/Trip/GetAll`);
         const tripData = trips.data.data;
         console.log(tripData);
         

@@ -16,7 +16,7 @@ export default function WorkerTrips() {
   const fetchTrips = async () => {
     setLoading(true);
     try {
-      const url = `http://localhost:3000/Worker/Trip/GetAll/${workerId}`;
+      const url = `${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/GetAll/${workerId}`;
       const res = await axios.get(url);
       setTrips(res.data.trips || []);
       
@@ -36,7 +36,7 @@ export default function WorkerTrips() {
   const selectVehicle = async (tripId, vehicleType) => {
   try {
     const res = await axios.get(
-      `http://localhost:3000/Worker/Vehicle/Active/${workerId}?vehicleType=${vehicleType}`
+      `${import.meta.env.VITE_BACKEND_URL}/Worker/Vehicle/Active/${workerId}?vehicleType=${vehicleType}`
     );
 
     setSelectedTrip(tripId);
@@ -54,7 +54,7 @@ export default function WorkerTrips() {
 
   const handleAccept = async (vehicleId) => {
     try {
-      await axios.post(`http://localhost:3000/Worker/Trip/Accept`, {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/Accept`, {
         tripId: selectedTrip,
         workerId,
         vehicleId: vehicleId,
@@ -70,7 +70,7 @@ export default function WorkerTrips() {
 
   const handleDecline = async (tripId) => {
     try {
-      await axios.post(`http://localhost:3000/Worker/Trip/Decline`, {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/Decline`, {
         tripId,
         workerId,
       });
@@ -85,7 +85,7 @@ export default function WorkerTrips() {
   const handleStartTrip = async (tripId, vehicleId) => {
   
     try {
-      await axios.post(`http://localhost:3000/Worker/Trip/Start/${tripId}`,{
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/Start/${tripId}`,{
         workerId: workerId,
         vehicleId: vehicleId,
       });
@@ -98,7 +98,7 @@ export default function WorkerTrips() {
 
   const handleCompleteTrip = async (tripId) => {
     try {
-      await axios.post(`http://localhost:3000/Worker/Trip/Complete/${tripId}`, {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/Complete/${tripId}`, {
         workerId: workerId,
       });
       toast.success("Trip completed");

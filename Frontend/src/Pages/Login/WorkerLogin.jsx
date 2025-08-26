@@ -31,7 +31,7 @@ const handleLoginSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const response = await fetch("http://localhost:3000/Worker/Login", {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -71,7 +71,7 @@ const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/Worker/SignUp", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/SignUp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

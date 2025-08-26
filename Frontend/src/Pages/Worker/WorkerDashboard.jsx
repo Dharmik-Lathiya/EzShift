@@ -39,7 +39,7 @@ export default function WorkerDashboard() {
     if (fcmToken && !hasSentRef.current) {
       hasSentRef.current = true;
 
-      fetch(`http://localhost:3000/Worker/FCMToken/${workerId}`, {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/FCMToken/${workerId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fcmToken }),
@@ -65,7 +65,7 @@ export default function WorkerDashboard() {
     const fetchStats = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:3000/Worker/Profile/${workerId}`);
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Profile/${workerId}`);
         const data = await res.json();
         console.log(data);
         if (!ignore) {

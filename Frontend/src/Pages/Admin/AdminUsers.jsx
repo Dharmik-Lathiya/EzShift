@@ -11,7 +11,7 @@ export default function AdminUsers() {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('http://localhost:3000/Admin/User/GetAll');
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/Admin/User/GetAll`);
         if (Array.isArray(res.data.data)) {
           setUsers(res.data.data);
         } else {
