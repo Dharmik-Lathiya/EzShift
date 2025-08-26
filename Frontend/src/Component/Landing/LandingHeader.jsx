@@ -3,7 +3,7 @@ import logo from '../../assets/logo.png'
 
 export default function LandingHeader() {
   return (
-    <nav className="bg-slate-950">
+    <nav className="bg-slate-950 sticky top-0 z-50">
         <div className="h-16 p-12 w-full flex justify-between items-center px-6">
             <div className="w-fit">
                 <img className="lg:h-15 lg:w-40 h-10 w30 cursor-pointer"

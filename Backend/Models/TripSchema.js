@@ -49,8 +49,6 @@ const TripSchema = new mongoose.Schema({
     type: String
   },
   commission: { type: Number, default: 0 },
-  paymentRef: { type: String }, // link to payment gateway txn id
-  transactionId: { type: mongoose.Schema.Types.ObjectId, ref: "Transaction" },
 
 }, { timestamps: true });
 
