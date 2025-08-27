@@ -12,7 +12,7 @@ const serviceAccountJson = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE
 // Parse the JSON string into an object
 const serviceAccount = JSON.parse(serviceAccountJson);
 
-// Initialize the Firebase Admin SDK
+// Initialize the Firebase Admin
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
