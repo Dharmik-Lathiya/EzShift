@@ -72,8 +72,9 @@ exports.tripBook = async (req, res) => {
       // 5️⃣ Send FCM notifications
       const workers = await Worker.find({ _id: { $in: assignedWorkerIds } });
       for (let worker of workers) {
+        console.log(`📬 Sending notification to worker ${worker._id} (${worker.fcmToken})`);
         if (worker.fcmToken) { 
-          console.log(`📬 Sending notification to worker ${worker._id} (${worker.fcmToken})`);
+          console.log("Inside WOrker fcm");
           await sendFCMNotification(
             worker.fcmToken,
             "🚚 New Trip Assigned",

@@ -1,31 +1,4 @@
-const admin = require("firebase-admin");
-
-let serviceAccount;
-
-try {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
-    // Decode from env
-    const decoded = Buffer.from(
-      process.env.FIREBASE_SERVICE_ACCOUNT_BASE64,
-      "base64"
-    ).toString("utf8");
-    serviceAccount = JSON.parse(decoded);
-  } else {
-    // Fallback to local JSON file
-    serviceAccount = require("./Database/firebase-service-account.json");
-  }
-} catch (err) {
-  console.error("❌ Failed to load Firebase credentials:", err.message);
-  process.exit(1); // Stop app if creds are invalid
-}
-
-// Initialize Firebase only once
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-  console.log("✅ Firebase Admin initialized");
-}
+const admin = require('./Database/firebase');
 
 /**
  * Send FCM Push Notification
@@ -36,6 +9,11 @@ if (!admin.apps.length) {
  */
 async function sendFCMNotification(token, title, body, data = {}) {
   console.log("📬 Sending FCM notification...");
+  console.log("Token:", token);
+  console.log("Title:", title);
+  console.log("Body:", body);
+  console.log("Data:", data);
+  
 
   const message = {
     notification: { title, body },

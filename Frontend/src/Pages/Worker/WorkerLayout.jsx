@@ -50,7 +50,9 @@ export default function WorkerLayout() {
           <button
             className="w-full px-4 py-2 bg-red-100 text-red-600 rounded-lg font-semibold hover:bg-red-200 transition"
             onClick={() => {
-              window.location.href = '/Client/Auth';
+              window.location.href = '/Worker/Auth';
+            localStorage.setItem('workerId', '');
+            localStorage.setItem('workerIsLogin', '');
             }}
           >
             Logout
@@ -72,6 +74,7 @@ export default function WorkerLayout() {
           onClick={() => {
             window.location.href = '/Worker/Auth';
             localStorage.setItem('workerId', '');
+            localStorage.setItem('workerIsLogin', '');
           }}
         >
           Logout
