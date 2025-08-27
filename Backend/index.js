@@ -10,7 +10,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors()); 
 
-
 require("./Database/dbconnection")
 
 app.use("/api/payu/Client", clientPayRoute);
