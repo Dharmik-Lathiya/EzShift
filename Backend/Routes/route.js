@@ -24,6 +24,7 @@ const {
 // Client Routes
 const clientSignup = require("./Client/Auth/Signup");
 const clientLogin = require("./Client/Auth/Login");
+const {getClientProfile,updatedClientProfile} = require("./Client/Profile");
 const {
   tripBook,
   getClientAllTrips
@@ -47,6 +48,9 @@ routes.post("/Client/Login", clientLogin);
 routes.post("/Client/SignUp", clientSignup);
 routes.post("/Client/BookTrip", tripBook);
 routes.get("/Client/Trip/GetAll/:id", getClientAllTrips);
+routes.get("/Client/Profile/:id", getClientProfile);
+routes.put("/Client/Profile/Update/:id",updatedClientProfile);
+
 
 // Admin APIs
 routes.get("/Admin/User/GetAll", getAllUsers);

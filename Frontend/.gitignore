@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-graphhopper
+graphhopper/
 node_modules
 dist
 dist-ssr
