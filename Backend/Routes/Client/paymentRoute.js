@@ -60,10 +60,10 @@ router.post("/success", async (req, res) => {
       }
 
       console.log("✅ Payment Success:", txnid);
-     return res.redirect(`http://localhost:5173/client/history?payment=success&txnid=${txnid}`);
+     return res.redirect(`https://ezshift.vercel.app/Client/History?payment=success&txnid=${txnid}`);
     } else {
       console.log("❌ Payment Failed:", txnid);
-      return res.redirect(`http://localhost:5173/client/history?payment=failure&txnid=${txnid}`);
+      return res.redirect(`https://ezshift.vercel.app/Client/History?payment=failure&txnid=${txnid}`);
     }
   } catch (error) {
     console.error("Error in PayU callback:", error);
