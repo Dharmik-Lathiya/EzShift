@@ -1,203 +1,350 @@
-import React, { useState } from "react";
-import profilepicture from "../../../assets/profilepicture.avif";
+import React, { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 export default function ClientProfileHead() {
   const [modal, setModal] = useState(false);
-  const popUp = () => {
-    setModal(!modal);
-  };
-  
-  if(modal){
-    document.body.style.overflow = "hidden";
-  }else{
-     document.body.style.overflow = "auto";
+  const [client, setClient] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [profilePic, setProfilePic] = useState(null);
+  const clientId = localStorage.getItem("clientId"); // store clientId when login
+
+  const toggleModal = () => setModal(!modal);
+
+  useEffect(() => {
+    if (clientId) {
+      axios
+        .get(`${import.meta.env.VITE_BACKEND_URL}/Client/Profile/${clientId}`)
+        .then((res) => {
+          setClient(res.data);
+          setFormData(res.data); // prefill form data
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [clientId]);
+
+  if (!client) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600">Loading profile...</p>
+      </div>
+    );
   }
 
+  // handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name.startsWith("address.")) {
+      const key = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        address: { ...prev.address, [key]: value },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  // handle image selection
+  const handleImageChange = (e) => {
+    setProfilePic(e.target.files[0]);
+  };
+
+  // handle save (PUT request with FormData)
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      const data = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (key === "address") {
+          Object.keys(formData.address || {}).forEach((addrKey) => {
+            data.append(`address[${addrKey}]`, formData.address[addrKey]);
+          });
+        } else {
+          data.append(key, formData[key]);
+        }
+      });
+      if (profilePic) data.append("profilePic", profilePic);
+
+      const res = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/Client/Profile/Update/${clientId}`,
+        data,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setClient(res.data);
+      toast.success("Profile updated successfully!");
+      toggleModal();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update profile");
+    }
+  };
+
+
   return (
-    <section className="p-5 bg-gray-200 pb-10">
-      <div>
-        <div className="p-5 flex items-center">
-          <p className="text-3xl text-sky-900 font-semibold w-2xs md:text-4xl">
-            My Profile
-          </p>
-          <div className="border-t-1 border-gray-500 w-lg rounded-full md:w-full lg:full"></div>
-          <div className=" m-5 text-xl bg-white p-2 pl-3 pr-3 rounded-md hover:text-white hover:bg-sky-500 transition-all duration-400 ease-in-out">
-            <i class="fa-solid fa-right-from-bracket"></i>
+    <section className="p-5 bg-gray-100 pb-10">
+      <Toaster position="top-center" reverseOrder={false} />
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-semibold text-sky-900">My Profile</h1>
+        <button
+          onClick={() => {
+            localStorage.removeItem("clientId");
+            localStorage.removeItem("clientIsLogin");
+            toast.success("Logout Successfully");
+            setTimeout(() => (window.location.href = "/Client/Auth"), 800);
+          }}
+          className="text-xl bg-white p-2 px-3 rounded-md shadow hover:text-white hover:bg-sky-500 transition-all"
+        >
+          <i className="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+
+      {/* Profile Card */}
+      <div className="flex items-center bg-white rounded-lg shadow p-5">
+        <div className="h-28 w-28 relative mr-6">
+          <img
+            className="w-full h-full rounded-full object-cover"
+            src={client.profilePic || "/default-avatar.png"}
+            alt="profile"
+          />
+          <div className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow cursor-pointer hover:bg-sky-100">
+            <i className="fas fa-camera text-gray-700 text-sm"></i>
           </div>
         </div>
-        <div className="flex items-center  bg-white rounded-lg">
-          <div className="h-25 w-25 relative m-5">
-            <img
-              className="w-full h-full rounded-full object-cover"
-              src={profilepicture}
-              alt=""
-            />
-            <div className="absolute bottom-0 right-0 bg-white p-0.5 rounded-full shadow">
-              <i className="fas fa-camera text-gray-700 text-sm m-1.5"></i>
-            </div>
+        <div>
+          <p className="text-sky-700 text-xl font-medium">{client.fullName}</p>
+          <p className="text-sm text-gray-600">{client.bio || "No bio set"}</p>
+          <p className="text-sm text-gray-500">
+            Joined: {new Date(client.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+      </div>
+
+      {/* Personal Info */}
+      <div className="bg-white rounded-lg shadow p-6 mt-8">
+        <div className="flex justify-between items-center border-b pb-3 mb-4">
+          <h2 className="text-lg font-semibold text-sky-900">
+            Personal Information
+          </h2>
+          <button
+            onClick={toggleModal}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1 rounded flex items-center gap-1 text-sm"
+          >
+            <i className="fa-solid fa-pen-to-square"></i>
+            Edit
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
+          <div>
+            <p className="text-gray-400">Full Name</p>
+            <p className="text-black font-semibold">{client.fullName}</p>
           </div>
           <div>
-            <p className="text-sky-700 text-xl">Dharmik Lathiya</p>
-            <p className="text-sm">Founder, Tevron infotech</p>
-            <p className="text-sm">kirti patel nu Bheshan</p>
+            <p className="text-gray-400">Date of Birth</p>
+            <p className="text-black font-semibold">{client.dob}</p>
+          </div>
+          <div>
+            <p className="text-gray-400">Gender</p>
+            <p className="text-black font-semibold">{client.gender}</p>
+          </div>
+          <div>
+            <p className="text-gray-400">Email Address</p>
+            <p className="text-black font-semibold">{client.emailId}</p>
+          </div>
+          <div>
+            <p className="text-gray-400">Phone</p>
+            <p className="text-black font-semibold">{client.mobileNo}</p>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6 mt-10">
-          <div className="flex justify-between items-center border-b-1 border-gray-400 pb-4 mb-4">
-            <h2 className="text-lg font-semibold text-sky-900">
-              Personal Information
-            </h2>
-            <button
-              onClick={popUp}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1 rounded flex items-center gap-1 text-sm "
-            >
-              <i class="fa-solid fa-pen-to-square text-white"></i>
-              Edit
-            </button>
-            {modal && (
-              <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 pl-6 pr-6 bg-black/30 backdrop-blur-xsm ">
-                <div className="bg-white rounded-lg shadow-lg p-6 w-sm md:w-md lg:w-lg relative ">
-                  <div className="  text-right border-b-1 border-gray-400 pb-2 mb-5 ">
-                    <button onClick={popUp} className="hover:text-white hover:bg-sky-500 transition-all duration-400 ease-in-out pt-2 pb-2 pl-3 pr-3 rounded-md">
-                      <i class="fa-solid fa-xmark text-2xl "></i>
-                    </button>
-                  </div>
-                  <div className="md:grid grid-cols-2 md:gap-4">
-                    <div className="flex flex-col">
-                      <label htmlFor="FirstName" className="text-gray-400">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        id="firstName"
-                        name="FirstName"
-                        defaultValue="dharmik"
-                        className="text-black font-semibold"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <label htmlFor="LastName" className="text-gray-400">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        id="LastName"
-                        name="LastName"
-                        defaultValue="lathiya"
-                        className="text-black font-semibold"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <label htmlFor="DateOfBirth" className="text-gray-400">
-                        Date Of Birth 
-                      </label>
-                      <input
-                        type="text"
-                        id="DateOfBirth"
-                        name="DateOfBirth"
-                        defaultValue="12-07-2006"
-                        className="text-black font-semibold"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <label htmlFor="EmailAddress" className="text-gray-400">
-                        E-mail Address
-                      </label>
-                      <input
-                        type="text"
-                        id="EmailAddress"
-                        name="EmailAddress"
-                        defaultValue="dharmiklathiya@gmail.com"
-                        className="text-black font-semibold"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <label htmlFor="Phone" className="text-gray-400">
-                        Phone
-                      </label>
-                      <input
-                        type="text"
-                        id="Phone"
-                        name="Phone"
-                        defaultValue="9876543210"
-                        className="text-black font-semibold"
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label htmlFor="UserRole" className="text-gray-400">
-                        User Role
-                      </label>
-                      <input
-                        type="text"
-                        id="UserRole"
-                        name="UserRole"
-                        defaultValue="User"
-                        className="text-black font-semibold"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-y-6 md:gap-x-10 gap-x-5 gap-y-5 text-sm">
-            <div>
-              <p className="text-gray-400">Last Name</p>
-              <p className="text-black font-semibold">Lathiya</p>
-            </div>
-
-            <div>
-              <p className="text-gray-400">Last Name</p>
-              <p className="text-black font-semibold">Lathiya</p>
-            </div>
-
-            <div>
-              <p className="text-gray-400">Date Of Birth</p>
-              <p className="text-black font-semibold">12-07-2006</p>
-            </div>
-
-            <div>
-              <p className="text-gray-400">E-mail Address</p>
-              <p className="text-black font-semibold">
-                dharmiklathiya@gmail.com
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-400">Phone</p>
-              <p className="text-black font-semibold">9876543210</p>
-            </div>
-
-            <div>
-              <p className="text-gray-400">User Role</p>
-              <p className="text-black font-semibold">User</p>
-            </div>
-          </div>
-        </div>
-        <section className="p-5 bg-white mt-5 rounded-lg">
-          <div className=" items-center border-b-1 border-gray-400 pb-4 mb-4">
-            <h2 className="text-lg font-semibold text-sky-900">Address</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-y-6 md:gap-x-10 gap-x-5 gap-y-5 text-sm">
-            <div>
-              <p className="text-gray-400">Country</p>
-              <p className="text-black font-semibold">India</p>
-            </div>
-
-            <div>
-              <p className="text-gray-400">City</p>
-              <p className="text-black font-semibold">Rajkot</p>
-            </div>
-
-            <div>
-              <p className="text-gray-400">Pin code</p>
-              <p className="text-black font-semibold">360005</p>
-            </div>
-          </div>
-        </section>
       </div>
+
+      {/* Address Section */}
+      <section className="p-6 bg-white mt-6 rounded-lg shadow">
+        <h2 className="text-lg font-semibold text-sky-900 border-b pb-3 mb-4">
+          Address
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
+          <div>
+            <p className="text-gray-400">Street</p>
+            <p className="text-black font-semibold">{client.address?.street}</p>
+          </div>
+          <div>
+            <p className="text-gray-400">City</p>
+            <p className="text-black font-semibold">{client.address?.city}</p>
+          </div>
+          <div>
+            <p className="text-gray-400">State</p>
+            <p className="text-black font-semibold">{client.address?.state}</p>
+          </div>
+          <div>
+            <p className="text-gray-400">Country</p>
+            <p className="text-black font-semibold">{client.address?.country}</p>
+          </div>
+          <div>
+            <p className="text-gray-400">Postal Code</p>
+            <p className="text-black font-semibold">
+              {client.address?.postalCode}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Edit Modal */}
+      {modal && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 px-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+            <div className="flex justify-between items-center border-b pb-3 mb-5">
+              <h3 className="text-lg font-semibold text-sky-900">
+                Edit Profile
+              </h3>
+              <button
+                onClick={toggleModal}
+                className="hover:text-white hover:bg-sky-500 transition-all p-2 rounded-md"
+              >
+                <i className="fa-solid fa-xmark text-xl"></i>
+              </button>
+            </div>
+            <form
+              className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm"
+              onSubmit={handleSave}
+            >
+              <div className="md:col-span-2">
+                <label className="text-gray-500">Profile Image</label>
+                {profilePic ? (
+                  <img
+                    src={URL.createObjectURL(profilePic)}
+                    alt="preview"
+                    className="mt-2 h-20 w-20 rounded-full object-cover"
+                  />
+                ) : client.profilePic ? (
+                  <img
+                    src={client.profilePic}
+                    alt="current"
+                    className="mt-2 h-20 w-20 rounded-full object-cover"
+                  />
+                ) : null}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full border rounded px-3 py-2"
+                />
+                
+              </div>
+
+              <div>
+                <label className="text-gray-500">Full Name</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div>
+                <label className="text-gray-500">DOB</label>
+                <input
+                  type="date"
+                  name="dob"
+                  value={formData.dob || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div>
+                <label className="text-gray-500">Email</label>
+                <input
+                  type="email"
+                  name="emailId"
+                  value={formData.emailId || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div>
+                <label className="text-gray-500">Phone</label>
+                <input
+                  type="text"
+                  name="mobileNo"
+                  value={formData.mobileNo || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-gray-500">Street</label>
+                <input
+                  type="text"
+                  name="address.street"
+                  value={formData.address?.street || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div>
+                <label className="text-gray-500">City</label>
+                <input
+                  type="text"
+                  name="address.city"
+                  value={formData.address?.city || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div>
+                <label className="text-gray-500">State</label>
+                <input
+                  type="text"
+                  name="address.state"
+                  value={formData.address?.state || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div>
+                <label className="text-gray-500">Country</label>
+                <input
+                  type="text"
+                  name="address.country"
+                  value={formData.address?.country || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div>
+                <label className="text-gray-500">Postal Code</label>
+                <input
+                  type="text"
+                  name="address.postalCode"
+                  value={formData.address?.postalCode || ""}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 text-black"
+                />
+              </div>
+              <div className="md:col-span-2 flex justify-end gap-3 mt-4">
+                <button
+                  type="button"
+                  onClick={toggleModal}
+                  className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

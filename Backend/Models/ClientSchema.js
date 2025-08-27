@@ -7,6 +7,15 @@ const clientSchema = new mongoose.Schema({
   dob:String,
   emailId: { type: String, unique: true },
   password: String,
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    country: String,
+    postalCode: String,
+  },
+  profilePic: { type: String, default: "" },
+  bio: { type: String, default: "" },
   joinAt:String,
 }, { timestamps: true });
 
