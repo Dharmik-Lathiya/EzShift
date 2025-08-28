@@ -25,35 +25,37 @@ export default function ClientLogin() {
   };
 
   const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Client/Login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+  e.preventDefault();
 
-      const result = await response.json();
-
-
-      if (response.ok && result.status) {
-        toast.success("Login successful!");
-        localStorage.setItem("clientId", result.data);
-        localStorage.setItem("clientIsLogin", true);
-        setTimeout(() => {
-          window.location.href = "/Client/Dashboard";
-        }, 1000);
-      } else {
-        toast.error(result.message || "Login failed");
-      }
-    } catch (err) {
-      toast.error("Server error during login");
-      console.error(err);
+  const loginPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Client/Login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      email: formData.email,
+      password: formData.password,
+    }),
+  }).then(async (res) => {
+    const result = await res.json();
+    if (!res.ok || !result.status) {
+      throw new Error(result.message || "Login failed");
     }
-  };
+    return result;
+  });
+
+  toast.promise(loginPromise, {
+    loading: "Logging in...",
+    success: (result) => {
+      localStorage.setItem("clientId", result.data);
+      localStorage.setItem("clientIsLogin", true);
+      setTimeout(() => {
+        window.location.href = "/Client/Dashboard";
+      }, 1000);
+      return "Login successful!";
+    },
+    error: (err) => err.message || "Server error during login",
+  });
+};
+
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
