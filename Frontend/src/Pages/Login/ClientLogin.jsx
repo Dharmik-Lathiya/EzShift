@@ -27,6 +27,9 @@ export default function ClientLogin() {
   const handleLoginSubmit = async (e) => {
   e.preventDefault();
 
+  const btn = e.nativeEvent.submitter;
+  btn.disabled = true;
+
   const loginPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Client/Login`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -52,13 +55,19 @@ export default function ClientLogin() {
       }, 1000);
       return "Login successful!";
     },
-    error: (err) => err.message || "Server error during login",
+    error: (err) => {
+      btn.disabled = false;
+      return err.message || "Server error during login";
+    },
   });
 };
   
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
+
+    const btn = e.nativeEvent.submitter;
+    btn.disabled = true;
 
     const signupPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Client/SignUp`, {
       method: "POST",
@@ -82,7 +91,10 @@ export default function ClientLogin() {
         }, 1000);
         return "Signup successful!";
       },
-      error: (err) => err.message || "Server error during signup",
+      error: (err) => {
+      btn.disabled = false;
+      return err.message || "Server error during Signup";
+    },
     });
   };
 
