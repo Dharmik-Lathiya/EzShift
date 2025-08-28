@@ -4,6 +4,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
 
+
 const {
   createVehicle,
   getVehicles,
@@ -42,6 +43,11 @@ const { getAdminProfile, updateAdminProfile } = require("./Admin/adminProfile");
 const workerTripRoutes = require('./Worker/WorkerTripRoutes');
 const workerLogin = require('./Worker/Auth/Login');
 const workerSignup = require('./Worker/Auth/Signup');
+
+// Upload Profile Route
+const {uploadProfile} = require("./Upload/Profile");
+routes.post("/profile/upload/:type/:id", upload.single("image"),uploadProfile),
+
 
 // Client APIs
 routes.post("/Client/Login", clientLogin);
