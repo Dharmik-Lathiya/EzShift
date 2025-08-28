@@ -19,7 +19,9 @@ exports.getWorkerProfile = (req, res) => {
 
 exports.updateWorkerProfile = (req, res) => {
   const workerId = req.params.id;
-  const updatedData = req.body;
+  const updatedData = req.body.data || req.body; 
+
+  console.log(updatedData);
 
   Worker.findByIdAndUpdate(workerId, updatedData, { new: true })
     .then(worker => {
@@ -27,12 +29,14 @@ exports.updateWorkerProfile = (req, res) => {
         return res.status(404).json({ message: 'Worker not found' });
       }
       res.json(worker);
+      console.log(worker);
     })
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Server error' });
     });
 };
+
 
 exports.updateWorkerToken = (req, res) => {
   const workerId = req.params.id;

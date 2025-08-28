@@ -65,27 +65,70 @@ export default function WorkerProfile() {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
+    console.log("Handle Change is Called");
     const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setMessage({ type: 'error', text: 'Image size should be less than 5MB' });
-        return;
+    console.log("File is ",file);
+    
+    if (!file) return;
+  
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: "error", text: "Image size should be less than 5MB" });
+      return;
+    }
+  
+    setPreview(URL.createObjectURL(file));
+    setImageFile(file);
+  
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+  
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/profile/upload/worker/${workerId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+  
+      const result = await res.json();
+  
+      if (res.ok && result.success) {
+        setMessage({ type: "success", text: "Uploaded successfully!" });
+  
+        if (result.data && result.data.avatar) {
+          setPreview(result.data.profileImage); // <<--- overwrite with Cloudinary URL
+        }
+  
+        setImageFile(null);
+        console.log("Cloudinary URL:", result.data.profileImage);
+      } else {
+        setMessage({ type: "error", text: result.error || "Upload failed" });
       }
-      setImageFile(file);
-      setPreview(URL.createObjectURL(file));
+    } catch (err) {
+      console.error(err);
+      setMessage({ type: "error", text: "Something went wrong while uploading" });
     }
   };
+    
 
   const handleSave = async () => {
     setSaving(true);
+    let data = {
+      fullname: profile.name,
+      mobileNo: profile.phone,
+      address: profile.address,
+      city: profile.city,
+      emailId: profile.email,
+      avater: imageFile ? URL.createObjectURL(imageFile) : profile.avatar,
+    };
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Profile/Edit/${workerId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...profile,
-          avatar: imageFile ? URL.createObjectURL(imageFile) : profile.avatar,
+          data,
         }),
       });
       
