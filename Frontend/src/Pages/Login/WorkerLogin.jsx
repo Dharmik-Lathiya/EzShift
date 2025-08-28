@@ -61,37 +61,35 @@ const handleLoginSubmit = async (e) => {
 
 
 
-  const handleSignupSubmit = async (e) => {
-    e.preventDefault();
+ const handleSignupSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/SignUp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams(formData),
-      });
-
-      
-      const result = await response.json();
-
-      if (response.ok && result.status) {
-        
-      localStorage.setItem("workerId", result.data);
-      localStorage.setItem("workerIsLogin",true);
-        toast.success("Signup successful!");
-        setTimeout(() => {
-          window.location.href = "/Worker/SetupProfile";
-        }, 1000);
-      } else {
-        toast.error(result.message || "Signup failed");
-      }
-    } catch (error) {
-      toast.error("Server error during signup");
-      console.error(error);
+  const signupPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/SignUp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(formData),
+  }).then(async (res) => {
+    const result = await res.json();
+    if (!res.ok || !result.status) {
+      throw new Error(result.message || "Signup failed");
     }
-  };
+    return result;
+  });
+
+  toast.promise(signupPromise, {
+    loading: "Creating account...",
+    success: (result) => {
+      localStorage.setItem("workerId", result.data);
+      localStorage.setItem("workerIsLogin", true);
+      setTimeout(() => {
+        window.location.href = "/Worker/SetupProfile";
+      }, 1000);
+      return "Signup successful!";
+    },
+    error: (err) => err.message || "Server error during signup",
+  });
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center px-4">
