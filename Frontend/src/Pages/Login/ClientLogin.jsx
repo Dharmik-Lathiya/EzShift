@@ -37,12 +37,12 @@ export default function ClientLogin() {
       });
 
       const result = await response.json();
-      
+
 
       if (response.ok && result.status) {
         toast.success("Login successful!");
         localStorage.setItem("clientId", result.data);
-        localStorage.setItem("clientIsLogin", true);  
+        localStorage.setItem("clientIsLogin", true);
         setTimeout(() => {
           window.location.href = "/Client/Dashboard";
         }, 1000);
@@ -57,30 +57,33 @@ export default function ClientLogin() {
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Client/SignUp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData),
-      });
 
-      const result = await response.json();
+    const signupPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Client/SignUp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData),
+    }).then(async (res) => {
+      const result = await res.json();
+      if (!res.ok || !result.status) {
+        throw new Error(result.message || "Signup failed");
+      }
+      return result;
+    });
 
-      if (response.ok && result.status) {
-        toast.success("Signup successful!");
+    toast.promise(signupPromise, {
+      loading: "Creating account...",
+      success: (result) => {
         localStorage.setItem("clientId", result.data);
         localStorage.setItem("clientIsLogin", true);
         setTimeout(() => {
           window.location.href = "/Client/Dashboard";
         }, 1000);
-      } else {
-        toast.error(result.message || "Signup failed");
-      }
-    } catch (err) {
-      toast.error("Server error during signup");
-      console.error(err);
-    }
+        return "Signup successful!";
+      },
+      error: (err) => err.message || "Server error during signup",
+    });
   };
+
 
   return (
     <>
