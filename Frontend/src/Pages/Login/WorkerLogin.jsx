@@ -30,41 +30,35 @@ export default function WorkerLogin() {
 const handleLoginSubmit = async (e) => {
   e.preventDefault();
 
-  try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData), // { email, password }
-    });
+  const loginPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  }).then(async (res) => {
+    const result = await res.json();
+    if (!res.ok || !result.status) throw new Error(result.message || "Login failed");
+    return result;
+  });
 
-    const result = await response.json();
-
-    if (response.ok && result.status) {
+  toast.promise(loginPromise, {
+    loading: "Logging in...",
+    success: (result) => {
       if (result.data.role === "admin") {
         localStorage.setItem("adminId", result.data.userId);
         localStorage.setItem("adminIsLogin", true);
-        toast.success("Admin login successful!");
-        setTimeout(() => {
-          window.location.href = "/Admin";
-        }, 1000);
-      } else if (result.data.role === "worker") {
+        setTimeout(() => (window.location.href = "/Admin"), 1000);
+        return "Admin login successful!";
+      } else {
         localStorage.setItem("workerId", result.data.userId);
         localStorage.setItem("workerIsLogin", true);
-        toast.success("Worker login successful!");
-        setTimeout(() => {
-          window.location.href = "/Worker";
-        }, 1000);
+        setTimeout(() => (window.location.href = "/Worker"), 1000);
+        return "Worker login successful!";
       }
-    } else {
-      toast.error(result.message || "Login failed");
-    }
-  } catch (error) {
-    toast.error("Server error during login");
-    console.error(error);
-  }
+    },
+    error: (err) => err.message || "Login failed",
+  });
 };
+
 
 
   const handleSignupSubmit = async (e) => {
