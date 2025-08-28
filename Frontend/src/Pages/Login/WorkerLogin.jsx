@@ -21,74 +21,84 @@ export default function WorkerLogin() {
   };
 
   const handleChange = (e) => {
-  setFormData({
-    ...formData,
-    [e.target.name]: e.target.value
-  });
-};
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
-const handleLoginSubmit = async (e) => {
-  e.preventDefault();
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    const btn = e.nativeEvent.submitter;
+    btn.disabled = true;
 
-  const loginPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
-  }).then(async (res) => {
-    const result = await res.json();
-    if (!res.ok || !result.status) throw new Error(result.message || "Login failed");
-    return result;
-  });
+    const loginPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    }).then(async (res) => {
+      const result = await res.json();
+      if (!res.ok || !result.status) throw new Error(result.message || "Login failed");
+      return result;
+    });
 
-  toast.promise(loginPromise, {
-    loading: "Logging in...",
-    success: (result) => {
-      if (result.data.role === "admin") {
-        localStorage.setItem("adminId", result.data.userId);
-        localStorage.setItem("adminIsLogin", true);
-        setTimeout(() => (window.location.href = "/Admin"), 1000);
-        return "Admin login successful!";
-      } else {
-        localStorage.setItem("workerId", result.data.userId);
-        localStorage.setItem("workerIsLogin", true);
-        setTimeout(() => (window.location.href = "/Worker"), 1000);
-        return "Worker login successful!";
+    toast.promise(loginPromise, {
+      loading: "Logging in...",
+      success: (result) => {
+        if (result.data.role === "admin") {
+          localStorage.setItem("adminId", result.data.userId);
+          localStorage.setItem("adminIsLogin", true);
+          setTimeout(() => (window.location.href = "/Admin"), 1000);
+          return "Admin login successful!";
+        } else {
+          localStorage.setItem("workerId", result.data.userId);
+          localStorage.setItem("workerIsLogin", true);
+          setTimeout(() => (window.location.href = "/Worker"), 1000);
+          return "Worker login successful!";
+        }
+      },
+      error: (err) => {
+        btn.disabled = false;
+        return err.message || "Server Error during login";
+      },
+    });
+  };
+
+
+
+  const handleSignupSubmit = async (e) => {
+    e.preventDefault();
+    const btn = e.nativeEvent.submitter;
+    btn.disabled = true;
+
+    const signupPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/SignUp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData),
+    }).then(async (res) => {
+      const result = await res.json();
+      if (!res.ok || !result.status) {
+        throw new Error(result.message || "Signup failed");
       }
-    },
-    error: (err) => err.message || "Login failed",
-  });
-};
+      return result;
+    });
 
-
-
- const handleSignupSubmit = async (e) => {
-  e.preventDefault();
-
-  const signupPromise = fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/SignUp`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(formData),
-  }).then(async (res) => {
-    const result = await res.json();
-    if (!res.ok || !result.status) {
-      throw new Error(result.message || "Signup failed");
-    }
-    return result;
-  });
-
-  toast.promise(signupPromise, {
-    loading: "Creating account...",
-    success: (result) => {
-      localStorage.setItem("workerId", result.data);
-      localStorage.setItem("workerIsLogin", true);
-      setTimeout(() => {
-        window.location.href = "/Worker/SetupProfile";
-      }, 1000);
-      return "Signup successful!";
-    },
-    error: (err) => err.message || "Server error during signup",
-  });
-};
+    toast.promise(signupPromise, {
+      loading: "Creating account...",
+      success: (result) => {
+        localStorage.setItem("workerId", result.data);
+        localStorage.setItem("workerIsLogin", true);
+        setTimeout(() => {
+          window.location.href = "/Worker/SetupProfile";
+        }, 1000);
+        return "Signup successful!";
+      },
+      error: (err) => {
+        btn.disabled = false;
+        return err.message || "Server error during Signup";
+      },
+    });
+  };
 
 
   return (
