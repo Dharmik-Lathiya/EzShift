@@ -64,7 +64,6 @@ export default function ClientTripBook() {
     }
   };
 
-  // 📏 Distance calculation
   const calculateDistance = async () => {
     try {
       if (!formData.pickUp || !formData.destination) {

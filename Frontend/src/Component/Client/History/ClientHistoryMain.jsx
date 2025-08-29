@@ -14,9 +14,9 @@ const [trips, setTrips] = useState([]);
 
   useEffect(() => {
     if (paymentStatus === "success") {
-      toast.success(`Payment Successful ✅ Transaction ID: ${txnid}`);
+      toast.success(`Payment Successful Transaction ID: ${txnid}`);
     } else if (paymentStatus === "failure") {
-      toast.error(`Payment Failed ❌ Transaction ID: ${txnid}`);
+      toast.error(`Payment Failed Transaction ID: ${txnid}`);
     }
   }, [paymentStatus, txnid]);
 
@@ -87,7 +87,6 @@ const [trips, setTrips] = useState([]);
     setCompletedCurrentPage(1);
   }, [trips, completedSearchQuery]);
 
-  // ✅ Fixed handlePayment
   const handlePayment = async (trip) => {
     
 

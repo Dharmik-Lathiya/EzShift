@@ -1,18 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
-const Trip = require("../../Models/TripSchema"); // Import Admin model
+const Trip = require("../../Models/TripSchema"); 
 const Vehicle = require("../../Models/VechialSchema");
 const Worker = require("../../Models/WorkerSchema");
 
 
-const MERCHANT_KEY = "Wzipov";
-const MERCHANT_SALT = "o5gtUwZoz0SsfzlP79QZ1iiMW756hIYB";
+const MERCHANT_KEY = process.env.MERCHANT_KEY;
+const MERCHANT_SALT = process.env.MERCHANT_SALT;
 
-// ✅ PayU success callback
 router.post("/success", async (req, res) => {
     try {
-    // console.log("PayU Callback received. Body:", req.body);
 
     
     const { txnid, amount, status, productinfo, email, firstname, key, hash } = req.body;
