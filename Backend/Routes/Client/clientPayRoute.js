@@ -34,9 +34,9 @@ router.post("/pay", async (req, res) => {
       firstname,
       email,
       productinfo: productinfo,
-      surl: "http://localhost:3000/api/payu/payment/success",
-      furl: "http://localhost:3000/api/payu/payment/failure",
-      notify_url: "http://localhost:3000/api/payu/payment/callback",
+      surl: "https://ezshift.onrender.com/api/payu/payment/success",
+      furl: "https://ezshift.onrender.com/api/payu/payment/failure",
+      notify_url: "https://ezshift.onrender.com/api/payu/payment/callback",
       hash,
     },
   });
