@@ -128,7 +128,7 @@ const MapView = () => {
             <hr className="my-2" />
             <div className="text-lg font-bold flex justify-between text-blue-500">
               <span>Total:</span>
-              <span>₹{pricing?.total ?? 0}</span>
+              <span>₹{pricing?.total.toFixed(2) ?? 0}</span>
             </div>
           </div>
         </div>

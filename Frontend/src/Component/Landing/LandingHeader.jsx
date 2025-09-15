@@ -9,7 +9,7 @@ export default function LandingHeader() {
                 <img className="lg:h-15 lg:w-40 h-10 w30 cursor-pointer"
                     src={logo} alt="Logo" />
             </div>
-            <div className="md:block hidden">
+            <div className="sm:block hidden">
                 <ul className="flex justify-between text-md lg:text-lg">
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
@@ -27,10 +27,10 @@ export default function LandingHeader() {
             </div>
             <div>
                 <button
-                    className=" text-white lg:px-6 lg:py-1.5 px-3 py-0.5 rounded-md text-md cursor-pointer bg-gradient-to-r from-pink-400 to-indigo-600 transition delay-150 duration-200 ease-in-out m-1 md:m-2"
+                    className=" text-white lg:px-6 lg:py-1.5 md:px-3 md:py-0.5 px-1 py-1 rounded-md text-md cursor-pointer bg-gradient-to-r from-pink-400 to-indigo-600 transition delay-150 duration-200 ease-in-out m-1 md:m-2"
                     ><a href='/Worker/Auth'>Start As Worker</a></button>
                 <button
-                    className=" text-white lg:px-6 lg:py-1.5 px-3 py-0.5 rounded-md text-md cursor-pointer bg-gradient-to-r from-pink-400 to-indigo-600 transition delay-150 duration-200 ease-in-out m-1 md:m-2"
+                    className=" text-white lg:px-6 lg:py-1.5 md:px-3 md:py-0.5 px-1 py-1 rounded-md text-md cursor-pointer bg-gradient-to-r from-pink-400 to-indigo-600 transition delay-150 duration-200 ease-in-out m-1 md:m-2"
                     ><a href='/Client/Auth'>Get Start</a></button>
             </div>
         </div>
