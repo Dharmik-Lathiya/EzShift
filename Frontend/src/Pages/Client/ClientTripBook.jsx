@@ -212,6 +212,7 @@ export default function ClientTripBook() {
            <label className="flex flex-col flex-1 min-w-[280px]">
              <p className="text-[#111518] text-base font-medium pb-2">Preferred shifting date</p>
              <input type="date" name="date" onChange={handleChange} required
+             min={new Date().toISOString().split("T")[0]}
               className="form-input rounded-xl bg-[#f0f3f4] h-14 p-4" />
           </label>
           <label className="flex flex-col flex-1 min-w-[280px]">
@@ -245,11 +246,11 @@ export default function ClientTripBook() {
         <div className="mb-4">
           <label className="flex items-center gap-x-3">
             <input
-  type="checkbox"
-  checked={needWorkers}
-  onChange={() => setNeedWorkers(!needWorkers)}
-  className="h-5 w-5 border-[#dce2e5]"
-/>
+              type="checkbox"
+              checked={needWorkers}
+              onChange={() => setNeedWorkers(!needWorkers)}
+              className="h-5 w-5 border-[#dce2e5]"
+            />
 
             <p className="text-[#111518] text-base font-normal">Help required with loading/unloading</p>
           </label>
@@ -260,7 +261,7 @@ export default function ClientTripBook() {
             <label className="flex flex-col flex-1 min-w-[280px]">
               <p className="text-[#111518] text-base font-medium pb-2">Number of Workers</p>
               <input type="number" name="workers" onChange={handleChange} placeholder="Enter number of workers"
-                className="form-input rounded-xl bg-[#f0f3f4] h-14 p-4" />
+                className="form-input rounded-xl bg-[#f0f3f4] h-14 p-4" min={0} max={10} />
             </label>
           </div>
         )}
