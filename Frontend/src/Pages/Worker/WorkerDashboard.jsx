@@ -31,6 +31,7 @@ export default function WorkerDashboard() {
     Filler,
   });
   const [loading, setLoading] = useState(true);
+  const [trips, setTrips] = useState([]);
 
   const [fcmToken, setFcmToken] = useState(null);
   const hasSentRef = useRef(false);
@@ -68,22 +69,45 @@ export default function WorkerDashboard() {
         const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Profile/${workerId}`);
         const data = await res.json();
         console.log(data);
+        // Fallback mappings from provided user shape
+        const fullName = data.fullname || data.name || 'Shifter';
+        const locationText = [data.address, data.city].filter(Boolean).join(', ') || data.location || '';
+        const earningsValue = typeof data.earning === 'number' ? data.earning : data.earnings || 0;
+        const totalTripsCount = Array.isArray(data.trips) ? data.trips.length : data.totalTrips || 0;
         if (!ignore) {
           setStats({
             assignedTrips: data.assignedTrips || 0,
             completedTrips: data.completedTrips || 0,
-            earnings: data.earning || 0,
+            earnings: earningsValue,
             spendMonth: data.spendMonth || 0,
             totalProjects: data.totalProjects || 0,
             sales: data.sales || 0,
             lineChart: data.lineChart || [],
             barChart: data.barChart || [],
             shift: data.shift || '10:00 AM - 6:00 PM',
-            location: data.location || 'Sector 21, Mumbai',
+            location: locationText || '—',
             status: data.status || 'Available',
-            name: data.name || 'Shifter',
-            totalTrips: data.trips.length,
+            name: fullName,
+            totalTrips: totalTripsCount,
           });
+        }
+
+        // Fetch trips to build dynamic charts
+        try {
+          const tripsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/GetAll/${workerId}`);
+          const tripsData = await tripsRes.json();
+          const tripList = Array.isArray(tripsData.trips) ? tripsData.trips : [];
+          if (!ignore) {
+            setTrips(tripList);
+            const { weeklyCounts, monthlyEarnings } = buildChartsFromTrips(tripList);
+            setStats((prev) => ({
+              ...prev,
+              barChart: weeklyCounts.values,
+              lineChart: monthlyEarnings.values,
+            }));
+          }
+        } catch (e) {
+          console.error('Error fetching trips for charts', e);
         }
       } catch (err) {
         if (!ignore) {
@@ -162,11 +186,11 @@ export default function WorkerDashboard() {
 
 
   const lineChartData = {
-    labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+    labels: getLastSixMonthsLabels(),
     datasets: [
       {
-        label: 'Total Spent',
-        data: stats.lineChart.length ? stats.lineChart : [30000, 32000, 35000, 37000, 34000, 37500],
+        label: 'Monthly Earnings',
+        data: stats.lineChart.length ? stats.lineChart : [0, 0, 0, 0, 0, stats.earnings || 0],
         borderColor: '#00a73e',
         backgroundColor: 'rgba(34, 211, 238, 0.2)',
         tension: 0.4,
@@ -176,11 +200,11 @@ export default function WorkerDashboard() {
   };
 
   const barChartData = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    labels: getLastSevenDaysLabels(),
     datasets: [
       {
-        label: 'Revenue',
-        data: stats.barChart.length ? stats.barChart : [120, 135, 150, 145, 160, 170, 155],
+        label: 'Trips per day',
+        data: stats.barChart.length ? stats.barChart : [0, 0, 0, 0, 0, 0, trips.length || 0],
         backgroundColor: ['#00a73e'],
       },
     ],
@@ -231,22 +255,22 @@ export default function WorkerDashboard() {
 
       {/* Top Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <Card icon={<FaCalendarDay />} title="Today's Shift" value={stats.shift} sub={stats.location} />
-        <Card icon={<FaTasks />} title="Total Trips" value={stats.totalTrips} sub="Pickup, Drop, Confirm" />
-        <Card icon={<FaRupeeSign />} title="Earnings" value={`₹${stats.earnings.toFixed(2)}`} sub="Today" />
-        <Card icon={<FaDollarSign />} title="Spend this month" value={`₹${stats.spendMonth}`} sub="" />
-        <Card icon={<FaProjectDiagram />} title="Total Projects" value={stats.totalProjects} sub="" />
-        <Card icon={<FaChartLine />} title="Sales" value={`₹${stats.sales}`} sub="+23% since last month" />
+        <Card icon={<FaCalendarDay />} title="Shift" value={stats.shift} sub={stats.location} />
+        <Card icon={<FaTasks />} title="Total Trips" value={stats.totalTrips} sub="All time" />
+        <Card icon={<FaRupeeSign />} title="Total Earnings" value={`₹${Number(stats.earnings || 0).toFixed(2)}`} sub="All time" />
+        <Card icon={<FaDollarSign />} title="City" value={stats.location.split(', ').pop() || '—'} sub="Current location" />
+        <Card icon={<FaProjectDiagram />} title="Assigned Trips" value={stats.assignedTrips} sub="Active work" />
+        <Card icon={<FaChartLine />} title="Completed Trips" value={stats.completedTrips} sub="Finished" />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl shadow p-4">
-          <h2 className="text-lg font-semibold mb-2 text-cyan-700">Monthly Spending</h2>
+          <h2 className="text-lg font-semibold mb-2 text-cyan-700">Monthly Earnings</h2>
           <Line data={lineChartData} />
         </div>
         <div className="bg-white rounded-xl shadow p-4">
-          <h2 className="text-lg font-semibold mb-2 text-cyan-700">Weekly Revenue</h2>
+          <h2 className="text-lg font-semibold mb-2 text-cyan-700">Weekly Trips</h2>
           <Bar data={barChartData} />
         </div>
       </div>
@@ -265,4 +289,67 @@ function Card({ icon, title, value, sub }) {
       </div>
     </div>
   );
+}
+
+// Helpers
+function getLastSevenDaysLabels() {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const labels = [];
+  const now = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    labels.push(days[d.getDay()]);
+  }
+  return labels;
+}
+
+function getLastSixMonthsLabels() {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const labels = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    labels.push(months[d.getMonth()]);
+  }
+  return labels;
+}
+
+function buildChartsFromTrips(tripList) {
+  const last7 = [];
+  const now = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const from = new Date(now);
+    from.setHours(0, 0, 0, 0);
+    from.setDate(now.getDate() - i);
+    const to = new Date(from);
+    to.setDate(from.getDate() + 1);
+    const count = tripList.filter((t) => {
+      const dt = new Date(t.date);
+      return dt >= from && dt < to;
+    }).length;
+    last7.push(count);
+  }
+
+  // Monthly earnings (last 6 months)
+  const monthly = [];
+  for (let i = 5; i >= 0; i--) {
+    const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const nextMonthStart = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+    const sum = tripList.reduce((acc, t) => {
+      const dt = new Date(t.date);
+      const amount = parseFloat(t?.pricing?.total || 0);
+      const isCompleted = t.status === 'Completed' || t.status === 'Paid';
+      if (dt >= monthStart && dt < nextMonthStart && isCompleted) {
+        return acc + (isNaN(amount) ? 0 : amount);
+      }
+      return acc;
+    }, 0);
+    monthly.push(Math.round(sum));
+  }
+
+  return {
+    weeklyCounts: { values: last7 },
+    monthlyEarnings: { values: monthly },
+  };
 }
