@@ -6,7 +6,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom animations for LandingPerformance component */
 @keyframes fade-in-up {
   from {
     opacity: 0;

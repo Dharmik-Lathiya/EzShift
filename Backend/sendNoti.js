@@ -8,7 +8,7 @@ const admin = require('./Database/firebase');
  * @param {object} data - Extra payload data (optional)
  */
 async function sendFCMNotification(token, title, body, data = {}) {
-  console.log("📬 Sending FCM notification...");
+  console.log("Sending FCM notification...");
   console.log("Token:", token);
   console.log("Title:", title);
   console.log("Body:", body);
@@ -17,7 +17,7 @@ async function sendFCMNotification(token, title, body, data = {}) {
 
   const message = {
     notification: { title, body },
-    data: { ...data }, // always ensure object spread
+    data: { ...data },
     token,
   };
 

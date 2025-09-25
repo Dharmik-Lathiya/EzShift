@@ -14,8 +14,6 @@ try {
     const { type, id } = req.params;
     const imageUrl = req.file.path; 
 
-    console.log("Imahe Url ",imageUrl);
-
     let Model;
     if (type === "worker") Model = Worker;
     else if (type === "client") Model = Client;

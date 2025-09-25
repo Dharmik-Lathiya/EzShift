@@ -9,6 +9,7 @@ exports.getWorkerProfile = (req, res) => {
       if (!worker) {
         return res.status(404).json({ message: 'Worker not found' });
       }
+
       res.json(worker);
     })
     .catch(err => {
@@ -29,7 +30,6 @@ exports.updateWorkerProfile = (req, res) => {
         return res.status(404).json({ message: 'Worker not found' });
       }
       res.json(worker);
-      console.log(worker);
     })
     .catch(err => {
       console.error(err);

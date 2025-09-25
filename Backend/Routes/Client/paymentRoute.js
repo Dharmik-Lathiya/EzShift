@@ -57,19 +57,15 @@ router.post("/success", async (req, res) => {
         await vehicle.save();
       }
 
-      console.log("✅ Payment Success:", txnid);
      return res.redirect(`https://ezshift.vercel.app/Client/History?payment=success&txnid=${txnid}`);
     } else {
-      console.log("❌ Payment Failed:", txnid);
       return res.redirect(`https://ezshift.vercel.app/Client/History?payment=failure&txnid=${txnid}`);
     }
   } catch (error) {
-    console.error("Error in PayU callback:", error);
     res.status(500).send("Internal Server Error");
   }
 });
 
-// ✅ PayU failure callback
 router.post("/failure", (req, res) => {
   const { txnid, status } = req.body;
 

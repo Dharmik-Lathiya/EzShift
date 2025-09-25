@@ -11,9 +11,8 @@ module.exports = async (req, res) => {
       return res.status(404).json({ success: false, message: "Trip not found" });
     }
 
-    // ✅ Find an available vehicle of the requested type
     const availableVehicle = await Vehicle.findOne({
-      vehicleType: trip.vehicleType, // Make sure this exists in your TripSchema
+      vehicleType: trip.vehicleType, 
       status: "Available"
     });
 
@@ -29,11 +28,9 @@ module.exports = async (req, res) => {
     trip.isAccept = true;
     await trip.save();
 
-    // ✅ Mark vehicle as busy
     availableVehicle.status = "Busy";
     await availableVehicle.save();
 
-    // ✅ Return updated trip
     const populatedTrip = await Trip.findById(trip._id).populate("vehicle");
 
     return res.status(200).json({
