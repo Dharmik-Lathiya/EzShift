@@ -8,8 +8,19 @@ const useSendWorkerNoti = create(
       notifications: [],
       setTripId: (tripId) => set({ tripId }),
       addNotification: (notification) =>
+        set((state) => {
+          const next = [{ ...notification, seen: false }, ...state.notifications];
+          return { notifications: next.slice(0, 5) };
+        }),
+      markSeen: (id, seen = true) =>
         set((state) => ({
-          notifications: [notification, ...state.notifications],
+          notifications: state.notifications.map((n) =>
+            n.id === id ? { ...n, seen } : n
+          ),
+        })),
+      markAllSeen: () =>
+        set((state) => ({
+          notifications: state.notifications.map((n) => ({ ...n, seen: true })),
         })),
       clearNotifications: () => set({ notifications: [] }),
     }),

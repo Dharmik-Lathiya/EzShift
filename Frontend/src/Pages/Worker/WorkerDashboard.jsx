@@ -58,7 +58,7 @@ export default function WorkerDashboard() {
 
   const [showNotifications, setShowNotifications] = useState(false);
   // Global state for notifications
-  const { notifications, addNotification, setTripId } = useSendWorkerNotification();
+  const { notifications, addNotification, setTripId, markSeen } = useSendWorkerNotification();
   
   useEffect(() => {
     let ignore = false;
@@ -235,16 +235,30 @@ export default function WorkerDashboard() {
 
             {/* Notification Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border z-50">
-                <div className="p-3 font-semibold border-b">Notifications</div>
-                <ul>
+              <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border z-50">
+                <div className="p-3 font-semibold border-b flex items-center justify-between">
+                  <span>Notifications</span>
+                  <span className="text-xs text-gray-500">{notifications.length}/5</span>
+                </div>
+                <ul className="max-h-96 overflow-auto">
                   {notifications.map((n) => (
-                    <li key={n.id} className="p-2 hover:bg-gray-100 text-sm">
-                      <p className="font-semibold">{n.title}</p>
-                      <p className="text-gray-600">{n.body}</p>
+                    <li key={n.id} className={`p-3 text-sm flex items-start gap-2 ${n.seen ? 'bg-gray-50' : 'bg-white'}`}>
+                      <div className="flex-1">
+                        <p className={`font-semibold ${n.seen ? 'text-gray-700' : 'text-gray-900'}`}>{n.title}</p>
+                        <p className={`${n.seen ? 'text-gray-500' : 'text-gray-700'}`}>{n.body}</p>
+                      </div>
+                      <button
+                        className={`ml-2 px-2 py-1 rounded text-xs border ${n.seen ? 'bg-gray-200 text-gray-700 border-gray-300' : 'bg-blue-600 text-white border-blue-600'}`}
+                        onClick={() => markSeen(n.id, !n.seen)}
+                        title={n.seen ? 'Mark as new' : 'Mark as seen'}
+                      >
+                        {n.seen ? 'Seen' : 'New'}
+                      </button>
                     </li>
                   ))}
-
+                  {notifications.length === 0 && (
+                    <li className="p-3 text-sm text-gray-500">No notifications</li>
+                  )}
                 </ul>
               </div>
             )}

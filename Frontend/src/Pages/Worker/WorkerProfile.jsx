@@ -96,13 +96,15 @@ export default function WorkerProfile() {
   
       if (res.ok && result.success) {
         setMessage({ type: "success", text: "Uploaded successfully!" });
-  
-        if (result.data && result.data.avatar) {
-          setPreview(result.data.profileImage); // <<--- overwrite with Cloudinary URL
+
+        if (result.data && (result.data.avatar || result.data.profilePic)) {
+          const url = result.data.avatar || result.data.profilePic;
+          setPreview(url);
+          setProfile((p) => ({ ...p, avatar: url }));
+          console.log("Cloudinary URL:", url);
         }
-  
+
         setImageFile(null);
-        console.log("Cloudinary URL:", result.data.profileImage);
       } else {
         setMessage({ type: "error", text: result.error || "Upload failed" });
       }
@@ -121,7 +123,7 @@ export default function WorkerProfile() {
       address: profile.address,
       city: profile.city,
       emailId: profile.email,
-      avater: imageFile ? URL.createObjectURL(imageFile) : profile.avatar,
+      avatar: profile.avatar,
     };
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Profile/Edit/${workerId}`, {

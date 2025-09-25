@@ -6,9 +6,6 @@ exports.getClientProfile = async (req,res) => {
         
       const client = await Client.findById(id);
 
-
-      
-        
         res.status(200).json(client);
         } catch (error) {
         res.status(500).json({ message: error.message });

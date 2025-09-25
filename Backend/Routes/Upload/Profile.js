@@ -28,9 +28,10 @@ try {
     
 
 
+    const updateField = type === "worker" ? { avatar: cloudinaryImg } : { profilePic: cloudinaryImg };
     const updatedUser = await Model.findByIdAndUpdate(
       id,
-      { avatar: cloudinaryImg },
+      updateField,
       { new: true }
     );
 

@@ -73,8 +73,8 @@ export default function FourthSetup() {
     formData.append("vehicleType", vehicleType);
     formData.append('vehicleNumber', vehicleNumber);
     formData.append('drivingLicenseNumber', drivingLicenseNumber);
-    formData.append("drivingLicense", URL.createObjectURL(drivingLicense));
-    formData.append("vehicleDocument", URL.createObjectURL(vehicleDocument));
+    formData.append("drivingLicense", drivingLicense);
+    formData.append("vehicleDocument", vehicleDocument);
     formData.append("ownerId", ownerId);
 
     console.log('Submitted:', {

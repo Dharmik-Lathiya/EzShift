@@ -1,29 +1,91 @@
 const log = require('node-dev/lib/log');
 const Vehicle = require('../../../Models/VechialSchema');
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
 
 
 exports.createVehicle = async (req, res) => {
   try {
-    if (!req.body.vehicleNumber || req.body.vehicleNumber.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "Vehicle number is required."
+    const {
+      vehicleOwner,
+      vehicleName,
+      vehicleCompany,
+      vehicleModel,
+      vehicleNumber,
+      drivingLicenseNumber,
+      ownerId,
+      vehicleType
+    } = req.body;
+
+    // Basic required validations
+    if (!vehicleOwner || !vehicleName || !vehicleCompany || !vehicleModel || !vehicleNumber || !drivingLicenseNumber || !ownerId || !vehicleType) {
+      return res.status(400).json({ success: false, message: 'All fields are required.' });
+    }
+
+    // Format validations
+    const vehicleNumberRegex = /^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}$/;
+    if (!vehicleNumberRegex.test((vehicleNumber || '').toString().toUpperCase())) {
+      return res.status(400).json({ success: false, message: 'Invalid vehicle number format.' });
+    }
+
+    const dlRegex = /^[A-Z]{2}[0-9]{2}[0-9]{4}[0-9]{7}$/;
+    if (!dlRegex.test((drivingLicenseNumber || '').toString().toUpperCase())) {
+      return res.status(400).json({ success: false, message: 'Invalid driving license number format.' });
+    }
+
+    const modelYearRegex = /^[0-9]{4}$/;
+    if (!modelYearRegex.test((vehicleModel || '').toString())) {
+      return res.status(400).json({ success: false, message: 'Invalid vehicle model year format.' });
+    }
+
+    // Check duplicate number
+    const exists = await Vehicle.findOne({ vehicleNumber: vehicleNumber.trim().toUpperCase() });
+    if (exists) {
+      return res.status(400).json({ success: false, message: 'Vehicle number already exists.' });
+    }
+
+    // Cloudinary config (only if we need to upload files)
+    if (process.env.CLOUD_NAME && process.env.CLOUD_API_KEY && process.env.CLOUD_API_SECRET) {
+      cloudinary.config({
+        cloud_name: process.env.CLOUD_NAME,
+        api_key: process.env.CLOUD_API_KEY,
+        api_secret: process.env.CLOUD_API_SECRET,
       });
     }
 
-    const exists = await Vehicle.findOne({
-      vehicleNumber: req.body.vehicleNumber.trim()
-    });
-    if (exists) {
-      return res.status(400).json({
-        success: false,
-        message: "Vehicle number already exists."
-      });
+    // Handle file uploads if files are provided via multer.fields
+    let drivingLicenseUrl = req.body.drivingLicense || '';
+    let vehicleDocumentUrl = req.body.vehicleDocument || '';
+
+    const hasFiles = req.files && (req.files.drivingLicense?.length || req.files.vehicleDocument?.length);
+    if (hasFiles) {
+      try {
+        if (req.files.drivingLicense?.[0]?.path) {
+          const up = await cloudinary.uploader.upload(req.files.drivingLicense[0].path, { resource_type: 'auto' });
+          drivingLicenseUrl = up.secure_url;
+          fs.unlinkSync(req.files.drivingLicense[0].path);
+        }
+        if (req.files.vehicleDocument?.[0]?.path) {
+          const up2 = await cloudinary.uploader.upload(req.files.vehicleDocument[0].path, { resource_type: 'auto' });
+          vehicleDocumentUrl = up2.secure_url;
+          fs.unlinkSync(req.files.vehicleDocument[0].path);
+        }
+      } catch (e) {
+        return res.status(500).json({ success: false, message: 'Failed to upload documents', error: e.message });
+      }
     }
 
     const vehicle = new Vehicle({
-      ...req.body,
-      vehicleNumber: req.body.vehicleNumber.trim()
+      vehicleOwner,
+      vehicleName,
+      vehicleCompany,
+      vehicleModel,
+      vehicleType,
+      vehicleNumber: vehicleNumber.trim().toUpperCase(),
+      drivingLicenseNumber: drivingLicenseNumber.trim().toUpperCase(),
+      drivingLicense: drivingLicenseUrl,
+      vehicleDocument: vehicleDocumentUrl,
+      ownerId,
     });
 
     await vehicle.save();

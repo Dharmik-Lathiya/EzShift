@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import LandingHeader from '../../Component/Landing/LandingHeader';
+import LandingFooter from '../../Component/Landing/LandingFooter';
 
 export default function WorkerLogin() {
   const [isLogin, setIsLogin] = useState(true);
@@ -102,6 +104,8 @@ export default function WorkerLogin() {
 
 
   return (
+    <>
+    <LandingHeader/>
     <div className="min-h-screen bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center px-4">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 sm:p-10">
@@ -220,5 +224,7 @@ export default function WorkerLogin() {
         </p>
       </div>
     </div>
+    <LandingFooter/>
+    </>
   );
 }
