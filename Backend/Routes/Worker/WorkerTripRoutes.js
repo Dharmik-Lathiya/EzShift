@@ -8,13 +8,12 @@ router.get('/Pending/:id', async (req, res) => {
   try {
     const workerId = req.params.id;
 
-    // Find trips with status "Pending" where workers array contains this workerId
     const trips = await Trip.find({
       status: 'Pending',
       workers: workerId
     })
-      .populate("clientId", "name email")   // if you want client details
-      .populate("vehicleId", "type number"); // if you want vehicle details
+      .populate("clientId", "name email")   
+      .populate("vehicleId", "type number");
 
     res.status(200).json({ success: true, trips });
   } catch (error) {

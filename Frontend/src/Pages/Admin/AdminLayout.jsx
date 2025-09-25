@@ -6,7 +6,10 @@ const navItems = [
   { name: 'Dashboard', path: '/Admin' },
   { name: 'Trips', path: '/Admin/Trips' },
   { name: 'Vehicles', path: '/Admin/Vehicles' },
+  { name: 'Workers', path: '/Admin/Workers' },
+  
   { name: 'Users', path: '/Admin/Users' },
+
 ];
 
 export default function AdminLayout() {

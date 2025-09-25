@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import profilepicture from "../../../Assets/profilepicture.avif";
+
 
 export default function ClientProfileHead() {
   const [modal, setModal] = useState(false);
@@ -16,6 +18,8 @@ export default function ClientProfileHead() {
       axios
         .get(`${import.meta.env.VITE_BACKEND_URL}/Client/Profile/${clientId}`)
         .then((res) => {
+          console.log(res.data);
+          
           setClient(res.data);
           setFormData(res.data); // prefill form data
         })
@@ -66,6 +70,8 @@ export default function ClientProfileHead() {
       });
       if (profilePic) data.append("profilePic", profilePic);
 
+      console.log(...data);
+      
       const res = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/Client/Profile/Update/${clientId}`,
         data,
@@ -107,7 +113,7 @@ export default function ClientProfileHead() {
         <div className="h-28 w-28 relative mr-6">
           <img
             className="w-full h-full rounded-full object-cover"
-            src={client.profilePic || "/default-avatar.png"}
+            src={client.profilePic || profilepicture}
             alt="profile"
           />
           <div className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow cursor-pointer hover:bg-sky-100">
@@ -116,9 +122,9 @@ export default function ClientProfileHead() {
         </div>
         <div>
           <p className="text-sky-700 text-xl font-medium">{client.fullName}</p>
-          <p className="text-sm text-gray-600">{client.bio || "No bio set"}</p>
+          {/* <p className="text-sm text-gray-600">{client.bio || "No bio set"}</p> */}
           <p className="text-sm text-gray-500">
-            Joined: {new Date(client.createdAt).toLocaleDateString()}
+            Joined: {new Date(client.createdAt).toLocaleDateString('en-GB')}
           </p>
         </div>
       </div>

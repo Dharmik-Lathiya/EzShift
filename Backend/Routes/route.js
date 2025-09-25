@@ -36,6 +36,8 @@ const {
 const getAllTrips = require("./Admin/Trips/GetAll");
 const acceptTrip = require("./Admin/Trips/AcceptTrip");
 const getAllUsers = require("./Admin/User/GetAll");
+const getAllWorkers = require("./Admin/Worker/GetAll");
+
 const getAllVehicles = require("./Admin/Vehicle/GetAll");
 const { getAdminProfile, updateAdminProfile } = require("./Admin/adminProfile");
 

@@ -140,6 +140,25 @@ const [trips, setTrips] = useState([]);
     form.submit();
   }
 
+  const formatCurrency = (value) => {
+    const number = Number(value) || 0;
+    try {
+      return new Intl.NumberFormat(undefined, { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(number);
+    } catch {
+      return `₹${number.toLocaleString()}`;
+    }
+  };
+
+  const renderStatusPill = (status) => {
+    const normalized = (status || "").toLowerCase();
+    let classes = "bg-gray-100 text-gray-700";
+    if (normalized === "pending") classes = "bg-yellow-100 text-yellow-800";
+    else if (normalized === "assigned" || normalized === "inprogress" || normalized === "on the way" || normalized === "ontheway") classes = "bg-blue-100 text-blue-800";
+    else if (normalized === "completed" || normalized === "paid") classes = "bg-green-100 text-green-800";
+    else if (normalized === "cancelled" || normalized === "canceled") classes = "bg-red-100 text-red-800";
+    return <span className={`px-2 py-1 rounded-full text-xs font-medium ${classes}`}>{status}</span>;
+  };
+
   const totalInProgressPages = Math.ceil(
     inProgressTrips.length / inProgressRowsPerPage
   );
@@ -161,7 +180,7 @@ const [trips, setTrips] = useState([]);
   );
 
   const goToPage = (page, table) => {
-    if (table === "inProgress" || table === "Pending" || table === "Assigned" || table === "OnTheWay") {
+    if (table === "inProgress") {
       if (page < 1) page = 1;
       else if (page > totalInProgressPages) page = totalInProgressPages;
       setInProgressCurrentPage(page);
@@ -178,13 +197,20 @@ const [trips, setTrips] = useState([]);
         <h1 className="text-4xl font-semibold">My moves</h1>
       </div>
       {paymentStatus && (
-        <p>
-          Payment Status: <strong>{paymentStatus}</strong> <br />
-          Transaction ID: <strong>{txnid}</strong>
-        </p>
+        <div className={`mb-6 rounded-md border p-4 ${paymentStatus === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"}`}>
+          <p className="font-medium">
+            Payment {paymentStatus === "success" ? "Successful" : "Failed"}
+          </p>
+          <p className="text-sm mt-1">Transaction ID: <span className="font-mono">{txnid}</span></p>
+        </div>
       )}
       {loading ? (
-        <div>Loading...</div>
+        <div className="space-y-6">
+          <div className="h-10 w-64 bg-gray-100 animate-pulse rounded" />
+          <div className="h-40 w-full bg-gray-100 animate-pulse rounded" />
+          <div className="h-10 w-64 bg-gray-100 animate-pulse rounded" />
+          <div className="h-40 w-full bg-gray-100 animate-pulse rounded" />
+        </div>
       ) : (
         <>
           <div className="mb-10">
@@ -226,54 +252,64 @@ const [trips, setTrips] = useState([]);
                   </tr>
                 </thead>
                 <tbody className="divide-y-1 ">
-                  {displayedInProgressTrips.map((trip, index) => (
-                    <tr key={index} className="hover:bg-gray-100">
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.pickupAddress}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.dropAddress}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.vehicleType}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.timeSlot}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.status}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.pricing?.total}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.note.substring(0, 30)}...</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{new Date(trip.date).toLocaleDateString()}</td>
+                  {displayedInProgressTrips.length === 0 ? (
+                    <tr>
+                      <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
+                        No trips found.
+                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    displayedInProgressTrips.map((trip) => (
+                      <tr key={trip._id || `${trip.pickupAddress}-${trip.date}` } className="hover:bg-gray-100">
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.pickupAddress || "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.dropAddress || "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.vehicleType || "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.timeSlot || "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{renderStatusPill(trip.status)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{formatCurrency(trip.pricing?.total)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{(trip.note || "").length > 0 ? `${(trip.note || "").substring(0, 30)}${(trip.note || "").length > 30 ? "..." : ""}` : "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.date ? new Date(trip.date).toLocaleDateString() : "-"}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
-            <div className="mt-4 flex justify-center gap-2">
-              <button
-                className="px-3 py-1 border rounded"
-                onClick={() => goToPage(1, 'inProgress')}
-                disabled={inProgressCurrentPage === 1}
-              >
-                First
-              </button>
-              <button
-                className="px-3 py-1 border rounded"
-                onClick={() => goToPage(inProgressCurrentPage - 1, 'inProgress')}
-                disabled={inProgressCurrentPage === 1}
-              >
-                Prev
-              </button>
-              <span className="px-3 py-1 border rounded">
-                Page {inProgressCurrentPage} of {totalInProgressPages}
-              </span>
-              <button
-                className="px-3 py-1 border rounded"
-                onClick={() => goToPage(inProgressCurrentPage + 1, 'inProgress')}
-                disabled={inProgressCurrentPage === totalInProgressPages}
-              >
-                Next
-              </button>
-              <button
-                className="px-3 py-1 border rounded"
-                onClick={() => goToPage(totalInProgressPages, 'inProgress')}
-                disabled={inProgressCurrentPage === totalInProgressPages}
-              >
-                Last
-              </button>
-            </div>
+            {totalInProgressPages > 1 && (
+              <div className="mt-4 flex justify-center gap-2">
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => goToPage(1, 'inProgress')}
+                  disabled={inProgressCurrentPage === 1}
+                >
+                  First
+                </button>
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => goToPage(inProgressCurrentPage - 1, 'inProgress')}
+                  disabled={inProgressCurrentPage === 1}
+                >
+                  Prev
+                </button>
+                <span className="px-3 py-1 border rounded">
+                  Page {inProgressCurrentPage} of {totalInProgressPages}
+                </span>
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => goToPage(inProgressCurrentPage + 1, 'inProgress')}
+                  disabled={inProgressCurrentPage === totalInProgressPages}
+                >
+                  Next
+                </button>
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => goToPage(totalInProgressPages, 'inProgress')}
+                  disabled={inProgressCurrentPage === totalInProgressPages}
+                >
+                  Last
+                </button>
+              </div>
+            )}
           </div>
 
           <div>
@@ -316,65 +352,76 @@ const [trips, setTrips] = useState([]);
                   </tr>
                 </thead>
                 <tbody className="divide-y-1 ">
-                  {displayedCompletedTrips.map((trip, index) => (
-                    <tr key={index} className="hover:bg-gray-100">
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.pickupAddress}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.dropAddress}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.vehicleType}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.timeSlot}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.status}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.pricing?.total}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.note.substring(0, 30)}...</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{new Date(trip.date).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">
-                        {
-                          trip.isPaid ? (
-                            <button className="text-blue-500 hover:underline">View</button>
-                          ) : (
-                            <button className="text-slate-500 bg-gray-200 p-2" 
-                              onClick={() => handlePayment(trip)}
-                            >Pay</button>
-                          )
-                        }
+                  {displayedCompletedTrips.length === 0 ? (
+                    <tr>
+                      <td colSpan="9" className="px-6 py-8 text-center text-gray-500">
+                        No trips found.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    displayedCompletedTrips.map((trip) => (
+                      <tr key={trip._id || `${trip.pickupAddress}-${trip.date}` } className="hover:bg-gray-100">
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.pickupAddress || "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.dropAddress || "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.vehicleType || "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.timeSlot || "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{renderStatusPill(trip.status)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{formatCurrency(trip.pricing?.total)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{(trip.note || "").length > 0 ? `${(trip.note || "").substring(0, 30)}${(trip.note || "").length > 30 ? "..." : ""}` : "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.date ? new Date(trip.date).toLocaleDateString() : "-"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">
+                          {trip.isPaid ? (
+                            <button className="text-blue-600 hover:underline">View</button>
+                          ) : (
+                            <button
+                              className="px-3 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700"
+                              onClick={() => handlePayment(trip)}
+                            >
+                              Pay {formatCurrency(trip.pricing?.total)}
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
-            <div className="mt-4 flex justify-center gap-2">
-              <button
-                className="px-3 py-1 border rounded"
-                onClick={() => goToPage(1, 'completed')}
-                disabled={completedCurrentPage === 1}
-              >
-                First
-              </button>
-              <button
-                className="px-3 py-1 border rounded"
-                onClick={() => goToPage(completedCurrentPage - 1, 'completed')}
-                disabled={completedCurrentPage === 1}
-              >
-                Prev
-              </button>
-              <span className="px-3 py-1 border rounded">
-                Page {completedCurrentPage} of {totalCompletedPages}
-              </span>
-              <button
-                className="px-3 py-1 border rounded"
-                onClick={() => goToPage(completedCurrentPage + 1, 'completed')}
-                disabled={completedCurrentPage === totalCompletedPages}
-              >
-                Next
-              </button>
-              <button
-                className="px-3 py-1 border rounded"
-                onClick={() => goToPage(totalCompletedPages, 'completed')}
-                disabled={completedCurrentPage === totalCompletedPages}
-              >
-                Last
-              </button>
-            </div>
+            {totalCompletedPages > 1 && (
+              <div className="mt-4 flex justify-center gap-2">
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => goToPage(1, 'completed')}
+                  disabled={completedCurrentPage === 1}
+                >
+                  First
+                </button>
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => goToPage(completedCurrentPage - 1, 'completed')}
+                  disabled={completedCurrentPage === 1}
+                >
+                  Prev
+                </button>
+                <span className="px-3 py-1 border rounded">
+                  Page {completedCurrentPage} of {totalCompletedPages}
+                </span>
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => goToPage(completedCurrentPage + 1, 'completed')}
+                  disabled={completedCurrentPage === totalCompletedPages}
+                >
+                  Next
+                </button>
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => goToPage(totalCompletedPages, 'completed')}
+                  disabled={completedCurrentPage === totalCompletedPages}
+                >
+                  Last
+                </button>
+              </div>
+            )}
           </div>
         </>
       )}

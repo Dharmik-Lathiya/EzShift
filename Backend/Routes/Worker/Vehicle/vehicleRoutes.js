@@ -84,10 +84,9 @@ exports.updateVehicleStatus = async (req, res) => {
   }
 };
 
-// route: GET /Worker/Vehicle/Active/:id?vehicleType=Truck
 exports.getActiveVehicles = async (req, res) => {
   try {
-    const vehicle = req.query.vehicleType; // from query
+    const vehicle = req.query.vehicleType; 
     const vehicles = await Vehicle.find({
       ownerId: req.params.id,
       vehicleType: vehicle,

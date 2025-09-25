@@ -27,6 +27,7 @@ import ThirdSetup from './Component/Worker/SetupProfile/ThirdSetup';
 import FourthSetup from './Component/Worker/SetupProfile/FourthSetup';
 import FifthSetup from './Component/Worker/SetupProfile/FifthSetup';
 import WorkerProfile from './Pages/Worker/WorkerProfile';
+import AdminWorkers from './Pages/Admin/AdminWorkers';
 
 function App() {
 
@@ -51,8 +52,6 @@ function App() {
         <Route path="/Client/Auth" element={<ClientLogin />} />
         <Route path="/Worker/Auth" element={<WorkerLogin />} />
 
-
-
         <Route
           path="/Client"
           element={clientIsLogin ? <ClientLayout /> : <Navigate to="/Client/Auth" />}>
@@ -70,6 +69,7 @@ function App() {
         <Route path="/Admin" element={ adminIsLogin ? <AdminLayout /> : <Navigate to="/Worker/Auth" />}>
           <Route index element={<AdminDashboard />} />
           <Route path="Trips" element={<AdminTrips />} />
+          <Route path="Workers" element={<AdminWorkers />} />
           <Route path="Users" element={<AdminUsers />} />
           <Route path="Vehicles" element={<AdminVehicles />} />
         </Route>

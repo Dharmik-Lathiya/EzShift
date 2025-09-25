@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaCalendarDay, FaTasks, FaRupeeSign, FaChartLine, FaDollarSign, FaProjectDiagram, FaBell } from 'react-icons/fa';
+import { FaCalendarDay, FaTasks, FaRupeeSign, FaChartLine, FaDollarSign, FaProjectDiagram, FaBell, FaMap, FaMapMarked } from 'react-icons/fa';
 import { Line, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend } from 'chart.js';
 import { requestFCMToken, listenForMessages } from '../../../public/firebase';
@@ -92,7 +92,6 @@ export default function WorkerDashboard() {
           });
         }
 
-        // Fetch trips to build dynamic charts
         try {
           const tripsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/GetAll/${workerId}`);
           const tripsData = await tripsRes.json();
@@ -258,7 +257,7 @@ export default function WorkerDashboard() {
         <Card icon={<FaCalendarDay />} title="Shift" value={stats.shift} sub={stats.location} />
         <Card icon={<FaTasks />} title="Total Trips" value={stats.totalTrips} sub="All time" />
         <Card icon={<FaRupeeSign />} title="Total Earnings" value={`₹${Number(stats.earnings || 0).toFixed(2)}`} sub="All time" />
-        <Card icon={<FaDollarSign />} title="City" value={stats.location.split(', ').pop() || '—'} sub="Current location" />
+        <Card icon={<FaMapMarked />} title="City" value={stats.location.split(', ').pop() || '—'} sub="Current location" />
         <Card icon={<FaProjectDiagram />} title="Assigned Trips" value={stats.assignedTrips} sub="Active work" />
         <Card icon={<FaChartLine />} title="Completed Trips" value={stats.completedTrips} sub="Finished" />
       </div>

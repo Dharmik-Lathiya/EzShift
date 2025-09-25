@@ -1,6 +1,5 @@
 const Worker = require('../../Models/WorkerSchema');
 
-// Get admin profile
 exports.getAdminProfile = async (req, res) => {
   try {
     const admin = await Worker.findById("68a321456a9e1d3bf6346bcd");
