@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../assets/logo.png";
-import profilepicture from "../../assets/profilepicture.avif";
+import logo from "../../Assets/logo.png";
+import profilepicture from "../../Assets/profilepicture.avif";
 import { Link } from "react-router";
 import axios from "axios";
 
