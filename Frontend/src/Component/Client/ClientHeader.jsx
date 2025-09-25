@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../Assets/logo.png";
-import profilepicture from "../../Assets/profilepicture.avif";
 import { Link } from "react-router";
 import axios from "axios";
 
@@ -37,7 +35,7 @@ export default function ClientHeader() {
           </button>
           <img
             className="h-10 w-auto lg:h-14 cursor-pointer"
-            src={logo}
+            src={'/favicon.png'}
             alt="Logo"
           />
         </div>
@@ -61,10 +59,10 @@ export default function ClientHeader() {
           <a href="Profile" className="block h-11 w-11">
             <img
               className="h-11 w-11 rounded-full object-cover border border-white/20 shadow-sm"
-              src={avatarUrl || profilepicture}
+              src={avatarUrl || '/favicon.png'}
               alt="profile"
               onError={(e) => {
-                e.currentTarget.src = profilepicture;
+                e.currentTarget.src = '/favicon.png';
               }}
             />
           </a>
