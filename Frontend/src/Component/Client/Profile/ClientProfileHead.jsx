@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-import profilepicture from "../../../Assets/profilepicture.avif";
+// Using public fallback to avoid bundler path issues
 
 
 export default function ClientProfileHead() {
@@ -121,7 +121,7 @@ export default function ClientProfileHead() {
         <div className="h-28 w-28 relative mr-6">
           <img
             className="w-full h-full rounded-full object-cover"
-            src={client.profilePic || profilepicture}
+            src={client.profilePic || '/favicon.png'}
             alt="profile"
           />
           <div className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow cursor-pointer hover:bg-sky-100">
@@ -240,7 +240,13 @@ export default function ClientProfileHead() {
                     alt="current"
                     className="mt-2 h-20 w-20 rounded-full object-cover"
                   />
-                ) : null}
+                ) : (
+                  <img
+                    src={'/favicon.png'}
+                    alt="fallback"
+                    className="mt-2 h-20 w-20 rounded-full object-cover"
+                  />
+                )}
                 <input
                   type="file"
                   accept="image/*"
