@@ -66,16 +66,29 @@ exports.tripBook = async (req, res) => {
       
 
       const workers = await Worker.find({ _id: { $in: assignedWorkerIds } });
+      const notifyResults = { success: [], failed: [] };
       for (let worker of workers) {
         console.log(`📬 Sending notification to worker ${worker._id} (${worker.fcmToken})`);
-        if (worker.fcmToken) { 
-          console.log("Inside WOrker fcm");
-          await sendFCMNotification(
-            worker.fcmToken,
-            "New Trip Assigned",
-            `Pickup: ${pickupAddress} → Drop: ${dropAddress}`,
-            { tripId: trip._id.toString() }
-          );
+        if (!worker.fcmToken) {
+          notifyResults.failed.push({ workerId: worker._id.toString(), code: 'no-token' });
+          continue;
+        }
+
+        const result = await sendFCMNotification(
+          worker.fcmToken,
+          "New Trip Assigned",
+          `Pickup: ${pickupAddress} → Drop: ${dropAddress}`,
+          { tripId: trip._id.toString() }
+        );
+
+        if (result && result.success) {
+          notifyResults.success.push(worker._id.toString());
+        } else {
+          const code = result?.code || 'unknown';
+          notifyResults.failed.push({ workerId: worker._id.toString(), code });
+          if (code === 'messaging/registration-token-not-registered') {
+            await Worker.findByIdAndUpdate(worker._id, { $unset: { fcmToken: "" } });
+          }
         }
       }
     }

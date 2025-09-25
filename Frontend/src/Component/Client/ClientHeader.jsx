@@ -1,10 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../assets/logo.png";
 import profilepicture from "../../assets/profilepicture.avif";
 import { Link } from "react-router";
+import axios from "axios";
 
 export default function ClientHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const clientId = localStorage.getItem("clientId");
+
+  useEffect(() => {
+    if (!clientId) return;
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/Client/Profile/${clientId}`)
+      .then((res) => {
+        setAvatarUrl(res.data?.profilePic || "");
+      })
+      .catch(() => {
+        setAvatarUrl("");
+      });
+  }, [clientId]);
   if (menuOpen) {
     document.body.style.overflow = "hidden";
   } else {
@@ -43,7 +58,16 @@ export default function ClientHeader() {
           </ul>
         </div>
         <div className="h-11 w-11">
-          <a href="Profile"><img className="rounded-full" src={profilepicture} alt="" /></a>
+          <a href="Profile" className="block h-11 w-11">
+            <img
+              className="h-11 w-11 rounded-full object-cover border border-white/20 shadow-sm"
+              src={avatarUrl || profilepicture}
+              alt="profile"
+              onError={(e) => {
+                e.currentTarget.src = profilepicture;
+              }}
+            />
+          </a>
         </div>
       </div>
       {menuOpen && (

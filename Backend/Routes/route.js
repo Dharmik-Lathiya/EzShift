@@ -36,7 +36,9 @@ const {
 const getAllTrips = require("./Admin/Trips/GetAll");
 const acceptTrip = require("./Admin/Trips/AcceptTrip");
 const getAllUsers = require("./Admin/User/GetAll");
+const deleteUser = require("./Admin/User/DeleteUser");
 const getAllWorkers = require("./Admin/Worker/GetAll");
+const deleteWorker = require("./Admin/Worker/DeleteWorker");
 
 const getAllVehicles = require("./Admin/Vehicle/GetAll");
 const { getAdminProfile, updateAdminProfile } = require("./Admin/adminProfile");
@@ -46,9 +48,11 @@ const workerTripRoutes = require('./Worker/WorkerTripRoutes');
 const workerLogin = require('./Worker/Auth/Login');
 const workerSignup = require('./Worker/Auth/Signup');
 
-// Upload Profile Route
+// Upload Routes
 const {uploadProfile} = require("./Upload/Profile");
-routes.post("/profile/upload/:type/:id", upload.single("image"),uploadProfile),
+const {uploadDocument} = require("./Upload/Document");
+routes.post("/profile/upload/:type/:id", upload.single("image"), uploadProfile),
+routes.post("/upload/document", upload.single("file"), uploadDocument),
 
 
 // Client APIs
@@ -62,11 +66,14 @@ routes.put("/Client/Profile/Update/:id",updatedClientProfile);
 
 // Admin APIs
 routes.get("/Admin/User/GetAll", getAllUsers);
+routes.delete("/Admin/User/Delete/:id", deleteUser);
 routes.get("/Admin/Trip/GetAll", getAllTrips);
 routes.get("/Admin/Vehicle/GetAll", getAllVehicles);
+routes.get("/Admin/Worker/GetAll", getAllWorkers);
 routes.put("/Admin/Trip/Accept/:tripId", acceptTrip);
 routes.get("/Admin/Get/Profile", getAdminProfile);
 routes.put("/Admin/Edit/Profile", updateAdminProfile);
+routes.delete("/Admin/Worker/Delete/:id", deleteWorker);
 
 
 // Vehicle APIs

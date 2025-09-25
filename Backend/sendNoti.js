@@ -24,10 +24,11 @@ async function sendFCMNotification(token, title, body, data = {}) {
   try {
     const response = await admin.messaging().send(message);
     console.log("✅ Notification sent:", response);
-    return response;
+    return { success: true, response };
   } catch (error) {
+    const code = error?.errorInfo?.code || error.code || "unknown";
     console.error("❌ Error sending notification:", error.message);
-    throw error;
+    return { success: false, code, message: error.message };
   }
 }
 

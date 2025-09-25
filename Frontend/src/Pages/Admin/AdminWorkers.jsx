@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function AdminWorkers() {
   const [users, setWorkers] = useState([]);
@@ -11,7 +12,7 @@ export default function AdminWorkers() {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/Admin/User/GetAll`);
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/Admin/Worker/GetAll`);
         if (Array.isArray(res.data.data)) {
           setWorkers(res.data.data);
           console.log(res.data.data);
@@ -34,6 +35,20 @@ export default function AdminWorkers() {
   const startIndex = (currentPage - 1) * rowsPerPage;
   const displayedUsers = users.slice(startIndex, startIndex + rowsPerPage);
 
+  const handleDelete = async (id) => {
+    try {
+      const res = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/Admin/Worker/Delete/${id}`);
+      if (res.data?.success) {
+        setWorkers((prev) => prev.filter((u) => u._id !== id));
+        toast.success('Worker deleted successfully');
+      } else {
+        toast.error(res.data?.message || 'Failed to delete worker');
+      }
+    } catch (e) {
+      toast.error(e?.response?.data?.message || 'Failed to delete worker');
+    }
+  };
+
   const goToPage = (page) => {
     if (page < 1) page = 1;
     else if (page > totalPages) page = totalPages;
@@ -43,7 +58,7 @@ export default function AdminWorkers() {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">All Registered Users</h1>
-
+      <Toaster position="top-center" reverseOrder={false} />
       {/* Rows per page selector */}
       <div className="mb-4 flex items-center gap-4">
         <label className="font-semibold">Rows per page:</label>
@@ -76,7 +91,6 @@ export default function AdminWorkers() {
                   <th className="border px-4 py-2">Full Name</th>
                   <th className="border px-4 py-2">Email</th>
                   <th className="border px-4 py-2">Mobile</th>
-                  <th className="border px-4 py-2">Role</th>
                   <th className="border px-4 py-2">Created At</th>
                   <th className="border px-4 py-2">Profile</th>
                   <th className="border px-4 py-2">Actions</th>
@@ -86,17 +100,23 @@ export default function AdminWorkers() {
                 {displayedUsers.map((worker) => (
                   <tr key={worker._id} className="hover:bg-gray-50">
                     <td className="border px-4 py-2">{worker._id}</td>
-                    <td className="border px-4 py-2">{worker.fullName}</td>
+                    <td className="border px-4 py-2">{worker.fullname}</td>
                     <td className="border px-4 py-2">{worker.emailId}</td>
                     <td className="border px-4 py-2">{worker.mobileNo}</td>
-                    <td className="border px-4 py-2">{worker.role || 'Worker'}</td>
                     <td className="border px-4 py-2">
                       {new Date(worker.createdAt).toLocaleDateString()}
                     </td>
                     <td className='border px-4 py-2' >
                       <img src={worker.avatar} alt="Profile" className="h-10 w-10 rounded-full object-cover" />
                     </td>
-                    <td className='border px-4 py-2' >Delete</td>
+                    <td className='border px-4 py-2'>
+                      <button
+                        onClick={() => handleDelete(worker._id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

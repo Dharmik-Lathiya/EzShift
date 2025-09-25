@@ -9,7 +9,7 @@ export default function ClientProfileHead() {
   const [client, setClient] = useState(null);
   const [formData, setFormData] = useState({});
   const [profilePic, setProfilePic] = useState(null);
-  const clientId = localStorage.getItem("clientId"); // store clientId when login
+  const clientId = localStorage.getItem("clientId");
 
   const toggleModal = () => setModal(!modal);
 
@@ -21,7 +21,7 @@ export default function ClientProfileHead() {
           console.log(res.data);
           
           setClient(res.data);
-          setFormData(res.data); // prefill form data
+          setFormData(res.data); 
         })
         .catch((err) => console.error(err));
     }
@@ -35,7 +35,6 @@ export default function ClientProfileHead() {
     );
   }
 
-  // handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name.startsWith("address.")) {
@@ -49,33 +48,42 @@ export default function ClientProfileHead() {
     }
   };
 
-  // handle image selection
   const handleImageChange = (e) => {
     setProfilePic(e.target.files[0]);
   };
 
-  // handle save (PUT request with FormData)
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const data = new FormData();
-      Object.keys(formData).forEach((key) => {
-        if (key === "address") {
-          Object.keys(formData.address || {}).forEach((addrKey) => {
-            data.append(`address[${addrKey}]`, formData.address[addrKey]);
-          });
-        } else {
-          data.append(key, formData[key]);
-        }
-      });
-      if (profilePic) data.append("profilePic", profilePic);
+      // 1) Upload photo if selected
+      if (profilePic) {
+        const photoData = new FormData();
+        photoData.append("image", profilePic);
+        await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/profile/upload/client/${clientId}`,
+          photoData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+      }
 
-      console.log(...data);
-      
+      const body = {
+        fullName: formData.fullName || "",
+        dob: formData.dob || "",
+        gender: formData.gender || "",
+        emailId: formData.emailId || "",
+        mobileNo: formData.mobileNo || "",
+        address: {
+          street: formData.address?.street || "",
+          city: formData.address?.city || "",
+          state: formData.address?.state || "",
+          country: formData.address?.country || "",
+          postalCode: formData.address?.postalCode || "",
+        },
+      };
+
       const res = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/Client/Profile/Update/${clientId}`,
-        data,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        body
       );
 
       setClient(res.data);
