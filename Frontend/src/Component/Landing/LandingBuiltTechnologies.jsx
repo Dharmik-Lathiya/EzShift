@@ -5,7 +5,7 @@ import { FiBox, FiMapPin } from "react-icons/fi";
 
 export default function EzShiftTools() {
   return (
-    <section className="bg-white text-black py-16 px-6 md:px-12">
+    <section id="Tool-Section" className="bg-white text-black py-16 px-6 md:px-12">
       {/* Heading */}
       <div className="text-center max-w-3xl mx-auto">
         <motion.h2

@@ -13,16 +13,16 @@ export default function LandingHeader() {
                 <ul className="flex justify-between text-md lg:text-lg">
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-                        features</li>
+                        <a href="/#Features-Section">Features</a></li>
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-                        technologies</li>
+                        <a href="/#Tool-Section">Tools</a></li>
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-                        contact us</li>
+                         <a href="/ContectUs">Contact us</a></li>
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-                        about us</li>
+                        <a href="/AboutUs">About us</a></li>
                 </ul>
             </div>
             <div>

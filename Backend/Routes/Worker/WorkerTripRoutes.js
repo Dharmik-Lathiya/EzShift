@@ -136,7 +136,7 @@ router.post('/Start/:id', async (req, res) => {
 
     const worker = await Worker.findByIdAndUpdate(
       workerId,
-      { $push: { trips: tripId } },
+      { $addToSet: { trips: tripId } },
       { new: true }
     );
 
