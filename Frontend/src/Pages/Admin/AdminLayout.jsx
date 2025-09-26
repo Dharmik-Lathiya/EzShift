@@ -36,7 +36,7 @@ export default function AdminLayout() {
   );
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50">
       {/* Mobile Navbar */}
       <header className="md:hidden flex justify-between items-center bg-white shadow px-4 py-3">
         <div className="text-xl font-bold text-blue-600">EzShift Admin</div>
@@ -81,7 +81,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
         <Outlet />
       </main>
     </div>

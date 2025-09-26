@@ -25,3 +25,10 @@ dist-ssr
 *.sw?
 
 Backend/Database/firebase-service-account.json
+
+/graphhopper/maps/
+/graphhopper/files/
+/graphhopper/data/
+/graphhopper/graph-cache/
+/graphhopper/logs/
+

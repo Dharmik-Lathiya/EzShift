@@ -28,6 +28,8 @@ import FourthSetup from './Component/Worker/SetupProfile/FourthSetup';
 import FifthSetup from './Component/Worker/SetupProfile/FifthSetup';
 import WorkerProfile from './Pages/Worker/WorkerProfile';
 import AdminWorkers from './Pages/Admin/AdminWorkers';
+import LandingContentPage from './Pages/LandingContentPage';
+import LandingAboutPage from './Pages/LandningAboutPage';
 
 function App() {
 
@@ -47,10 +49,11 @@ function App() {
   return (
     <>
       <Routes>
-
         <Route index element={<LandingPage />} />
         <Route path="/Client/Auth" element={<ClientLogin />} />
         <Route path="/Worker/Auth" element={<WorkerLogin />} />
+        <Route path="/ContectUs" element={<LandingContentPage />} />
+        <Route path="/AboutUs" element={<LandingAboutPage />} />
 
         <Route
           path="/Client"

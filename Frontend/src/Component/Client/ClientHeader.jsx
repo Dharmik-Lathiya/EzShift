@@ -35,7 +35,7 @@ export default function ClientHeader() {
           </button>
           <img
             className="h-10 w-auto lg:h-14 cursor-pointer"
-            src={'/favicon.png'}
+            src={'/logo.png'}
             alt="Logo"
           />
         </div>

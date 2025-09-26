@@ -9,7 +9,8 @@ export default function LandingFeatures() {
   };
 
   return (
-    <section className="relative w-full text-center bg-white py-20">
+    <section id="Features-Section" className="relative w-full text-center bg-white py-20">
+      
       <div className="max-w-6xl mx-auto px-6">
         {/* Heading */}
         <motion.div
