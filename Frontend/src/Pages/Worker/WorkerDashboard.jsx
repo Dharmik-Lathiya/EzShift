@@ -32,7 +32,8 @@ export default function WorkerDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [trips, setTrips] = useState([]);
-
+  const [completedTrips, setCompletedTrips] = useState(0);
+  const [vehicleCount, setVehicleCount] = useState(0);
   const [fcmToken, setFcmToken] = useState(null);
   const hasSentRef = useRef(false);
 
@@ -63,12 +64,18 @@ export default function WorkerDashboard() {
   useEffect(() => {
     let ignore = false;
 
+    const fetchVehicleCounter = async () => {
+      const vehicleCounter = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Vehicle/Fetch/${workerId}`);
+      const vehicleData = await vehicleCounter.json();
+
+      setVehicleCount(vehicleData.vehicles.length);
+    };
+    fetchVehicleCounter();
     const fetchStats = async () => {
       setLoading(true);
       try {
         const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Profile/${workerId}`);
         const data = await res.json();
-        console.log(data);
         // Fallback mappings from provided user shape
         const fullName = data.fullname || data.name || 'Shifter';
         const locationText = [data.address, data.city].filter(Boolean).join(', ') || data.location || '';
@@ -95,6 +102,13 @@ export default function WorkerDashboard() {
         try {
           const tripsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/GetAll/${workerId}`);
           const tripsData = await tripsRes.json();
+
+          tripsData.trips.forEach(trip => {
+            if (trip.status === 'Completed' || trip.status === 'Paid') {
+              setCompletedTrips(prev => prev + 1);
+            }
+          });
+
           const tripList = Array.isArray(tripsData.trips) ? tripsData.trips : [];
           if (!ignore) {
             setTrips(tripList);
@@ -272,8 +286,8 @@ export default function WorkerDashboard() {
         <Card icon={<FaTasks />} title="Total Trips" value={stats.totalTrips} sub="All time" />
         <Card icon={<FaRupeeSign />} title="Total Earnings" value={`₹${Number(stats.earnings || 0).toFixed(2)}`} sub="All time" />
         <Card icon={<FaMapMarked />} title="City" value={stats.location.split(', ').pop() || '—'} sub="Current location" />
-        <Card icon={<FaProjectDiagram />} title="Assigned Trips" value={stats.assignedTrips} sub="Active work" />
-        <Card icon={<FaChartLine />} title="Completed Trips" value={stats.completedTrips} sub="Finished" />
+        <Card icon={<FaProjectDiagram />} title="Total Vehicles" value={vehicleCount} sub="Active work" />
+        <Card icon={<FaChartLine />} title="Completed Trips" value={completedTrips} sub="Finished" />
       </div>
 
       {/* Charts */}
