@@ -6,7 +6,7 @@ const VehicleSchema = new mongoose.Schema({
   vehicleType: { type: String, required: true },
   vehicleNumber: { type: String, required: true, unique: true, trim: true, uppercase: true },
   vehicleModel: { type: String, required: true },
-  drivingLicenseNumber:{ type: String, required: true },
+  drivingLicenseNumber:{ type: String, required: false, default: "" },
   drivingLicense:{ type: String, default: "" },
   assignedDate: { type: Date, default: Date.now },
 

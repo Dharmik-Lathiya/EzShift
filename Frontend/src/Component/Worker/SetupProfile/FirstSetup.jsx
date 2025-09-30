@@ -14,7 +14,7 @@ export default function FirstSetup() {
         
         <div>
           <h1 className="text-3xl font-bold mb-6">
-            Hey Rhona. Ready for your next big opportunity?
+            Hey Worker. Ready for your next big opportunity?
           </h1>
           <ul className="space-y-4 mb-8">
             <li className="flex items-center text-lg">
@@ -45,8 +45,8 @@ export default function FirstSetup() {
           <div className="bg-white rounded-full w-24 h-24 flex items-center justify-center shadow mb-4">
             <span className="text-4xl">👤</span>
           </div>
-          <h2 className="text-xl font-bold">Ambika M.</h2>
-          <p className="text-gray-500 mb-2">Market Researcher</p>
+          <h2 className="text-xl font-bold">Dharmik Lathiya</h2>
+          <p className="text-gray-500 mb-2">CEO at Tevron Infotech</p>
           <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 mb-4">
             <span className="flex items-center"><span className="text-yellow-500">⭐</span> 5.0</span>
             <span>$100.00/hr</span>

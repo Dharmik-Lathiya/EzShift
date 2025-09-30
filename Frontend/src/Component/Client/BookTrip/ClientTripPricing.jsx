@@ -1,7 +1,7 @@
 import React from 'react';
 import useTripStore from '../../../store/useTripStore';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast, Toaster } from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
 export default function ClientTripPricing() {
@@ -23,19 +23,14 @@ export default function ClientTripPricing() {
 
   if (!pricing || Object.keys(pricing).length === 0) return null;
 
-const handleBooking = async () => {
-  if (!clientId) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Booking failed',
-      text: 'Please log in to book a trip.',
-      confirmButtonText: 'OK'
-    });
-    return;
-  }
+  const handleBooking = async () => {
+    if (!clientId) {
+      toast.error('Client ID is required.');
+      return;
+    }
 
-  try {
-    const response = await axios.post(
+
+    const bookingPromise = axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/Client/BookTrip/`,
       {
         clientId,
@@ -52,32 +47,34 @@ const handleBooking = async () => {
       },
       {
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         }
       }
     );
 
-    await Swal.fire({
-      icon: 'success',
-      title: 'Trip booked successfully!',
-      showConfirmButton: false,
-      timer: 1500
-    });
-  } catch (error) {
-    console.error('Booking failed:', error);
+    toast.promise(
+      bookingPromise,
+      {
+        loading: "Booking your trip...",
+        success: "Trip booked successfully!",
+        error: "Booking failed. Please try again later."
+      }
+    );
 
-    await Swal.fire({
-      icon: 'error',
-      title: 'Booking failed',
-      text: 'Please try again later.',
-      confirmButtonText: 'OK'
-    });
-  }
-};
+    try {
+
+      await bookingPromise;
+    } catch (error) {
+      console.error('Booking failed:', error);
+
+    }
+  };
 
 
   return (
     <div className="mt-6 p-4 bg-[#f0f3f4] rounded-xl max-w-md">
+      <Toaster position="top-center" reverseOrder={false} />
+
       <h3 className="text-lg font-bold text-[#111518] mb-2">Trip Pricing Breakdown</h3>
       <p>Distance: <strong>{distance} km</strong></p>
       <p>Base Charge: ₹{pricing?.base.toFixed(2) ?? 0}</p>

@@ -20,6 +20,8 @@ export default function WorkerTrips() {
       const url = `${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/GetAll/${workerId}`;
       const res = await axios.get(url);
       setTrips(res.data.trips || []);
+      console.log(res.data.trips);
+      
       
     } catch (error) {
       console.error("Error fetching trips:", error);

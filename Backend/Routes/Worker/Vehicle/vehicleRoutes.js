@@ -12,13 +12,22 @@ exports.createVehicle = async (req, res) => {
       vehicleCompany,
       vehicleModel,
       vehicleNumber,
-      drivingLicenseNumber,
       ownerId,
       vehicleType
     } = req.body;
+    
+    // Use mutable variables for optional fields
+    let { drivingLicenseNumber, drivingLicense } = req.body;
+
+    console.log(req.body);
+    
+
+    if (!drivingLicenseNumber) drivingLicenseNumber = "";
+    if (!drivingLicense) drivingLicense = "";
+
 
     // Basic required validations
-    if (!vehicleOwner || !vehicleName || !vehicleCompany || !vehicleModel || !vehicleNumber || !drivingLicenseNumber || !ownerId || !vehicleType) {
+    if (!vehicleOwner || !vehicleName || !vehicleCompany || !vehicleModel || !vehicleNumber || !ownerId || !vehicleType) {
       return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
 
@@ -28,10 +37,6 @@ exports.createVehicle = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid vehicle number format.' });
     }
 
-    const dlRegex = /^[A-Z]{2}[0-9]{2}[0-9]{4}[0-9]{7}$/;
-    if (!dlRegex.test((drivingLicenseNumber || '').toString().toUpperCase())) {
-      return res.status(400).json({ success: false, message: 'Invalid driving license number format.' });
-    }
 
     const modelYearRegex = /^[0-9]{4}$/;
     if (!modelYearRegex.test((vehicleModel || '').toString())) {
@@ -82,7 +87,7 @@ exports.createVehicle = async (req, res) => {
       vehicleModel,
       vehicleType,
       vehicleNumber: vehicleNumber.trim().toUpperCase(),
-      drivingLicenseNumber: drivingLicenseNumber.trim().toUpperCase(),
+      drivingLicenseNumber: (drivingLicenseNumber || "").toString().trim().toUpperCase(),
       drivingLicense: drivingLicenseUrl,
       vehicleDocument: vehicleDocumentUrl,
       ownerId,
@@ -91,7 +96,7 @@ exports.createVehicle = async (req, res) => {
     await vehicle.save();
     res.status(201).json({ success: true, vehicle });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error creating vehicle', error });
+    res.status(500).json({ success: false, message: 'Error creating vehicle', error: error?.message || error });
   }
 };
 

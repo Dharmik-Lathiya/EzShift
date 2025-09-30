@@ -17,8 +17,6 @@ export default function WorkerVehicle() {
   const [vehicleCompany, setVehicleCompany] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
-  const [drivingLicenseNumber, setDrivingLicenseNumber] = useState("");
-  const [drivingLicense, setDrivingLicense] = useState(null);
   const [vehicleDocument, setVehicleDocument] = useState(null);
   const [vehicleType, setVehicleType] = useState("");
 
@@ -98,7 +96,9 @@ export default function WorkerVehicle() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!vehicleName || !vehicleNumber || !vehicleOwner) {
+
+
+    if (!vehicleName || !vehicleNumber || !vehicleOwner || !vehicleType || !vehicleModel || !vehicleCompany || !vehicleDocument) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -111,10 +111,8 @@ export default function WorkerVehicle() {
     formData.append("vehicleModel", vehicleModel);
     formData.append("vehicleType", vehicleType);
     formData.append("vehicleNumber", vehicleNumber);
-    formData.append("drivingLicenseNumber", drivingLicenseNumber);
     formData.append("ownerId", localStorage.getItem("workerId"));
-    if (drivingLicense) formData.append("drivingLicense", drivingLicense);
-    if (vehicleDocument) formData.append("vehicleDocument", vehicleDocument);
+    formData.append("vehicleDocument", vehicleDocument);
 
     setSubmitting(true);
     await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Vehicle/Add`, {
@@ -129,8 +127,6 @@ export default function WorkerVehicle() {
     setVehicleModel("");
     setVehicleType("");
     setVehicleNumber("");
-    setDrivingLicenseNumber("");
-    setDrivingLicense(null);
     setVehicleDocument(null);
     setShowForm(false);
 
@@ -180,9 +176,7 @@ export default function WorkerVehicle() {
         setVehicleModel(data.vehicle.vehicleModel);
         setVehicleType(data.vehicle.vehicleType);
         setVehicleNumber(data.vehicle.vehicleNumber);
-        setDrivingLicenseNumber(data.vehicle.drivingLicenseNumber);
-        setDrivingLicense(null);
-        setVehicleDocument(null);
+        setVehicleDocument(data.vehicle.vehicleDocument);
       } else {
         throw new Error("Failed to fetch vehicle details");
       }
@@ -209,9 +203,7 @@ export default function WorkerVehicle() {
         vehicleModel: vehicleModel,
         vehicleType: vehicleType,
         vehicleNumber: vehicleNumber,
-        drivingLicenseNumber: drivingLicenseNumber,
-        drivingLicense: URL.createObjectURL(drivingLicense),
-        vehicleDocument: URL.createObjectURL(vehicleDocument),
+        vehicleDocument: vehicleDocument,
       })
     });
 
@@ -226,8 +218,7 @@ export default function WorkerVehicle() {
       setVehicleModel("");
       setVehicleType("");
       setVehicleNumber("");
-      setDrivingLicenseNumber("");
-      setDrivingLicense(null);
+     
       setVehicleDocument(null);
 
       setIsEditing(false);
@@ -349,30 +340,6 @@ export default function WorkerVehicle() {
                 />
               </div>
 
-              <div>
-                <label className="block font-medium mb-1">Driving License Number</label>
-                <input
-                  type="text"
-                  placeholder="e.g. GJ05202100012345"
-                  value={drivingLicenseNumber}
-                  onChange={(e) => setDrivingLicenseNumber(e.target.value)}
-                  className="w-full border rounded p-2"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block font-medium mb-1">Driving License File</label>
-                <input
-                  type="file"
-                  accept="image/*,.pdf"
-                  onChange={(e) => setDrivingLicense(e.target.files[0])}
-                  className="w-full border rounded p-2"
-                />
-                {drivingLicense && (
-                  <p className="text-sm mt-1 text-green-700">Selected: {drivingLicense.name}</p>
-                )}
-              </div>
-
               <div className="md:col-span-2">
                 <label className="block font-medium mb-1">Vehicle Document</label>
                 <input
@@ -382,7 +349,10 @@ export default function WorkerVehicle() {
                   className="w-full border rounded p-2"
                 />
                 {vehicleDocument && (
-                  <p className="text-sm mt-1 text-green-700">Selected: {vehicleDocument.name}</p>
+                  <div>
+                    <p className="text-sm mt-1 text-green-700">Selected:</p>
+                    <img src={vehicleDocument} height="100" width={100} />
+                  </div>
                 )}
               </div>
             </div>
