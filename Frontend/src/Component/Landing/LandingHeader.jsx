@@ -1,5 +1,6 @@
 import React from 'react'
 import logo from '../../assets/logo.png'
+import { Link } from 'react-router-dom'
 
 export default function LandingHeader() {
   return (
@@ -13,25 +14,25 @@ export default function LandingHeader() {
                 <ul className="flex justify-between text-md lg:text-lg">
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-                        <a href="/#Features-Section">Features</a></li>
+                        <Link to="/#Features-Section">Features</Link></li>
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-                        <a href="/#Tool-Section">Tools</a></li>
+                        <Link to="/#Tool-Section">Tools</Link></li>
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-                         <a href="/ContectUs">Contact us</a></li>
+                         <Link to="/ContectUs">Contact us</Link></li>
                     <li
                         className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-                        <a href="/AboutUs">About us</a></li>
+                        <Link to="/AboutUs">About us</Link></li>
                 </ul>
             </div>
             <div>
                 <button
                     className=" text-white lg:px-6 lg:py-1.5 md:px-3 md:py-0.5 px-1 py-1 rounded-md text-md cursor-pointer bg-gradient-to-r from-pink-400 to-indigo-600 transition delay-150 duration-200 ease-in-out m-1 md:m-2"
-                    ><a href='/Worker/Auth'>Start As Worker</a></button>
+                    ><Link to='/Worker/Auth'>Start As Worker</Link></button>
                 <button
                     className=" text-white lg:px-6 lg:py-1.5 md:px-3 md:py-0.5 px-1 py-1 rounded-md text-md cursor-pointer bg-gradient-to-r from-pink-400 to-indigo-600 transition delay-150 duration-200 ease-in-out m-1 md:m-2"
-                    ><a href='/Client/Auth'>Get Start</a></button>
+                    ><Link to='/Client/Auth'>Get Start</Link></button>
             </div>
         </div>
     </nav>
