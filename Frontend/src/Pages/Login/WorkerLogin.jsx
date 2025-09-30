@@ -11,6 +11,55 @@ export default function WorkerLogin() {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState({});
+
+  const validateEmail = (email) => {
+    // Simple email regex
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validateMobile = (mobileno) => {
+    // 10 digit number
+    return /^\d{10}$/.test(mobileno);
+  };
+
+  const validateSignup = () => {
+    const newErrors = {};
+    if (!formData.fullname.trim()) {
+      newErrors.fullname = "Full name is required";
+    }
+    if (!formData.mobileno.trim()) {
+      newErrors.mobileno = "Mobile number is required";
+    } else if (!validateMobile(formData.mobileno)) {
+      newErrors.mobileno = "Mobile number must be 10 digits";
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateLogin = () => {
+    const newErrors = {};
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleModeSwitch = () => {
     setIsLogin(!isLogin);
@@ -20,6 +69,7 @@ export default function WorkerLogin() {
       email: "",
       password: "",
     });
+    setErrors({});
   };
 
   const handleChange = (e) => {
@@ -27,10 +77,13 @@ export default function WorkerLogin() {
       ...formData,
       [e.target.name]: e.target.value
     });
+    setErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
   };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+    if (!validateLogin()) return;
+
     const btn = e.nativeEvent.submitter;
     btn.disabled = true;
 
@@ -66,10 +119,10 @@ export default function WorkerLogin() {
     });
   };
 
-
-
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
+    if (!validateSignup()) return;
+
     const btn = e.nativeEvent.submitter;
     btn.disabled = true;
 
@@ -102,129 +155,147 @@ export default function WorkerLogin() {
     });
   };
 
-
   return (
     <>
-    <LandingHeader/>
-    <div className="min-h-screen bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center px-4">
-      <Toaster position="top-center" reverseOrder={false} />
-      <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 sm:p-10">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          {isLogin ? "Worker Login" : "Worker Sign Up"}
-        </h2>
+      <LandingHeader/>
+      <div className="min-h-screen bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center px-4">
+        <Toaster position="top-center" reverseOrder={false} />
+        <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 sm:p-10">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+            {isLogin ? "Worker Login" : "Worker Sign Up"}
+          </h2>
 
-        {isLogin ? (
-          <form className="space-y-4" onSubmit={handleLoginSubmit}>
-            <div>
-              <label className="block text-gray-600 mb-1">Email</label>
-              <input
-                type="email"
-                placeholder="Enter Email"
-                name="email"
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
+          {isLogin ? (
+            <form className="space-y-4" onSubmit={handleLoginSubmit} noValidate>
+              <div>
+                <label className="block text-gray-600 mb-1">Email</label>
+                <input
+                  type="email"
+                  placeholder="Enter Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full border ${errors.email ? "border-red-500" : "border-gray-300"} rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500`}
+                  required
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-gray-600 mb-1">Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter Password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-gray-600 mb-1">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`w-full border ${errors.password ? "border-red-500" : "border-gray-300"} rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500`}
+                  required
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                )}
+              </div>
 
+              <button
+                type="submit"
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold transition duration-200"
+              >
+                Login
+              </button>
+            </form>
+          ) : (
+            <form className="space-y-4" onSubmit={handleSignupSubmit} noValidate>
+              <div>
+                <label className="block text-gray-600 mb-1">Full Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter Name"
+                  name="fullname"
+                  value={formData.fullname}
+                  onChange={handleChange}
+                  className={`w-full border ${errors.fullname ? "border-red-500" : "border-gray-300"} rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500`}
+                  required
+                />
+                {errors.fullname && (
+                  <p className="text-red-500 text-xs mt-1">{errors.fullname}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">Mobile No</label>
+                <input
+                  type="tel"
+                  maxLength={10}
+                  inputMode="numeric"
+                  name="mobileno"
+                  placeholder="Enter Mobile No"
+                  value={formData.mobileno}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d{0,10}$/.test(value)) {
+                      handleChange(e);
+                    }
+                  }}
+                  className={`w-full border ${errors.mobileno ? "border-red-500" : "border-gray-300"} rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500`}
+                  required
+                />
+                {errors.mobileno && (
+                  <p className="text-red-500 text-xs mt-1">{errors.mobileno}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">Email</label>
+                <input
+                  type="email"
+                  placeholder="Enter Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full border ${errors.email ? "border-red-500" : "border-gray-300"} rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500`}
+                  required
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`w-full border ${errors.password ? "border-red-500" : "border-gray-300"} rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500`}
+                  required
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                )}
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold transition duration-200"
+              >
+                Sign Up
+              </button>
+            </form>
+          )}
+
+          <p className="text-center text-sm text-gray-500 mt-6">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold transition duration-200"
+              onClick={handleModeSwitch}
+              className="text-green-600 hover:underline font-medium"
             >
-              Login
+              {isLogin ? "Sign Up" : "Login"}
             </button>
-          </form>
-        ) : (
-          <form className="space-y-4" onSubmit={handleSignupSubmit}>
-            <div>
-              <label className="block text-gray-600 mb-1">Full Name</label>
-              <input
-                type="text"
-                placeholder="Enter Name"
-                name="fullname"
-                value={formData.fullname}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-600 mb-1">Mobile No</label>
-              <input
-                type="tel"
-                maxLength={10}
-                inputMode="numeric"
-                name="mobileno"
-                placeholder="Enter Mobile No"
-                value={formData.mobileno}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d{0,10}$/.test(value)) {
-                    handleChange(e);
-                  }
-                }}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-600 mb-1">Email</label>
-              <input
-                type="email"
-                placeholder="Enter Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-600 mb-1">Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter Password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold transition duration-200"
-            >
-              Sign Up
-            </button>
-          </form>
-        )}
-
-        <p className="text-center text-sm text-gray-500 mt-6">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button
-            onClick={handleModeSwitch}
-            className="text-green-600 hover:underline font-medium"
-          >
-            {isLogin ? "Sign Up" : "Login"}
-          </button>
-        </p>
+          </p>
+        </div>
       </div>
-    </div>
-    <LandingFooter/>
+      <LandingFooter/>
     </>
   );
 }
