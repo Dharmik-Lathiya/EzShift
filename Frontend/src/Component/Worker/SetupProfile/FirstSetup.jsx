@@ -45,7 +45,10 @@ export default function FirstSetup() {
           <div className="bg-white rounded-full w-24 h-24 flex items-center justify-center shadow mb-4">
             <span className="text-4xl">👤</span>
           </div>
-          <h2 className="text-xl font-bold">Dharmik Lathiya</h2>
+          <h2 className="text-xl font-bold">
+            <p>Dharmik Lathiya</p>
+            <p>Vipul Sisodiya</p>
+          </h2>
           <p className="text-gray-500 mb-2">CEO at Tevron Infotech</p>
           <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 mb-4">
             <span className="flex items-center"><span className="text-yellow-500">⭐</span> 5.0</span>
