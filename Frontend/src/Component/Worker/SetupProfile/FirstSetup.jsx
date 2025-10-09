@@ -46,8 +46,8 @@ export default function FirstSetup() {
             <span className="text-4xl">👤</span>
           </div>
           <h2 className="text-xl font-bold">
-            <p>Dharmik Lathiya</p>
             <p>Vipul Sisodiya</p>
+            <p>Dharmik Lathiya</p>
           </h2>
           <p className="text-gray-500 mb-2">CEO at Tevron Infotech</p>
           <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 mb-4">
