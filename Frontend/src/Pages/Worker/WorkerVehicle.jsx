@@ -96,10 +96,42 @@ export default function WorkerVehicle() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
-
+    // Frontend validation to match backend rules
     if (!vehicleName || !vehicleNumber || !vehicleOwner || !vehicleType || !vehicleModel || !vehicleCompany || !vehicleDocument) {
       toast.error("Please fill all required fields");
+      return;
+    }
+
+    // Vehicle number format: e.g. GJ01AB1234
+    const vehicleNumberRegex = /^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}$/;
+    if (!vehicleNumberRegex.test((vehicleNumber || '').toString().toUpperCase())) {
+      toast.error("Invalid vehicle number format");
+      return;
+    }
+
+    // Model year: 4 digits
+    const modelYearRegex = /^[0-9]{4}$/;
+    if (!modelYearRegex.test((vehicleModel || '').toString())) {
+      toast.error("Invalid vehicle model year format");
+      return;
+    }
+
+    // File validation: max 5MB, JPG/PNG only
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ["image/jpeg", "image/png"];
+
+    if (!vehicleDocument) {
+      toast.error("Please upload vehicle document image");
+      return;
+    }
+
+    if (vehicleDocument.size > MAX_SIZE) {
+      toast.error("File size should not exceed 5MB.");
+      return;
+    }
+
+    if (!allowedTypes.includes(vehicleDocument.type)) {
+      toast.error("Only JPG and PNG images are allowed.");
       return;
     }
 
@@ -114,24 +146,44 @@ export default function WorkerVehicle() {
     formData.append("ownerId", localStorage.getItem("workerId"));
     formData.append("vehicleDocument", vehicleDocument);
 
-    setSubmitting(true);
-    await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Vehicle/Add`, {
-      method: "POST",
-      body: formData,
-    });
-    toast.success("Vehicle added successfully!");
+    try {
+      setSubmitting(true);
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Vehicle/Add`, {
+        method: "POST",
+        body: formData,
+      });
 
-    setVehicleOwner("");
-    setVehicleName("");
-    setVehicleCompany("");
-    setVehicleModel("");
-    setVehicleType("");
-    setVehicleNumber("");
-    setVehicleDocument(null);
-    setShowForm(false);
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
 
-    fetchVehicles();
-    setSubmitting(false);
+      if (!res.ok || data.success === false) {
+        const msg = data.message || "Failed to add vehicle";
+        toast.error(msg);
+        return;
+      }
+
+      toast.success("Vehicle added successfully!");
+
+      setVehicleOwner("");
+      setVehicleName("");
+      setVehicleCompany("");
+      setVehicleModel("");
+      setVehicleType("");
+      setVehicleNumber("");
+      setVehicleDocument(null);
+      setShowForm(false);
+
+      fetchVehicles();
+    } catch (err) {
+      console.error("Error adding vehicle:", err);
+      toast.error(err?.message || "Error adding vehicle.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleDeleteVehicle = async (vehicleId) => {
@@ -344,7 +396,7 @@ export default function WorkerVehicle() {
                 <label className="block font-medium mb-1">Vehicle Document</label>
                 <input
                   type="file"
-                  accept="image/*,.pdf"
+                  accept="image/png, image/jpeg"
                   onChange={(e) => setVehicleDocument(e.target.files[0])}
                   className="w-full border rounded p-2"
                 />

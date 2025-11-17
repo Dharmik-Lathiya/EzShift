@@ -25,6 +25,7 @@ router.get('/Pending/:id', async (req, res) => {
 router.post('/Complete/:id', async (req, res) => {
   try {
     const tripId = req.params.id;
+    const { workerId } = req.body;
 
     const trip = await Trip.findByIdAndUpdate(
       tripId,
@@ -34,6 +35,24 @@ router.post('/Complete/:id', async (req, res) => {
 
     if (!trip) {
       return res.status(404).json({ success: false, message: 'Trip not found' });
+    }
+
+    // Increment worker trip counter only when the trip is completed
+    try {
+      if (workerId) {
+        await Worker.findByIdAndUpdate(
+          workerId,
+          { $addToSet: { trips: trip._id } },
+          { new: true }
+        );
+      } else if (Array.isArray(trip.workers) && trip.workers.length) {
+        await Worker.updateMany(
+          { _id: { $in: trip.workers } },
+          { $addToSet: { trips: trip._id } }
+        );
+      }
+    } catch (workerErr) {
+      console.error("Error updating worker trips on completion:", workerErr);
     }
 
     res.status(200).json({ success: true, trip });
@@ -134,12 +153,7 @@ router.post('/Start/:id', async (req, res) => {
 
     const vehicle = await Vehicle.findByIdAndUpdate(vehicleId, { status: 'In Use' }, { new: true });
 
-    const worker = await Worker.findByIdAndUpdate(
-      workerId,
-      { $addToSet: { trips: tripId } },
-      { new: true }
-    );
-
+    // Do not increment worker trip counters on start; this is handled when the trip is completed.
 
     res.status(200).json({ success: true, trip });
   } catch (err) {

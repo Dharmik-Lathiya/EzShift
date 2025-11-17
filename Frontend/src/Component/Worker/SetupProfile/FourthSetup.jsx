@@ -1,4 +1,4 @@
-import React, { use } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router';
 import useVehicleStore from '../../../store/useVehicleStore';
 import toast, { Toaster } from 'react-hot-toast';
@@ -59,7 +59,20 @@ export default function FourthSetup() {
       return;
     }
 
-    console.log("Done",URL.createObjectURL(drivingLicense), vehicleDocument);
+    // File validation: max 5MB, only JPG/PNG
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ['image/jpeg', 'image/png'];
+
+    if (drivingLicense.size > MAX_SIZE || vehicleDocument.size > MAX_SIZE) {
+      toast.error('File size should not exceed 5MB.');
+      return;
+    }
+
+    if (!allowedTypes.includes(drivingLicense.type) || !allowedTypes.includes(vehicleDocument.type)) {
+      toast.error('Only JPG and PNG images are allowed.');
+      return;
+    }
+
     console.log("Vehicle Type:", vehicleType);
 
     let ownerId = localStorage.getItem("workerId");
@@ -204,7 +217,7 @@ export default function FourthSetup() {
           <label className="block font-medium mb-2">Driving License File</label>
           <input
             type="file"
-            accept="image/*,.pdf"
+            accept="image/png, image/jpeg"
             onChange={(e) => setDrivingLicense(e.target.files[0])}
             className="w-full border rounded p-2"
           />
@@ -220,7 +233,7 @@ export default function FourthSetup() {
           <label className="block font-medium mb-2">Vehicle Document</label>
           <input
             type="file"
-            accept="image/*,.pdf"
+            accept="image/png, image/jpeg"
             onChange={(e) => setVehicleDocument(e.target.files[0])}
             className="w-full border rounded p-2"
           />

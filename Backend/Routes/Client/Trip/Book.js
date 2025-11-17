@@ -56,10 +56,7 @@ exports.tripBook = async (req, res) => {
       trip.workers = assignedWorkerIds;
       await trip.save();
 
-      await Worker.updateMany(
-        { _id: { $in: assignedWorkerIds } },
-        { $addToSet: { trips: trip._id } }
-      );
+      // Do not increment worker trip counters here; this is handled when the trip is completed.
 
       console.log("Workers assigned to trip:", assignedWorkerIds.length);
       console.log();
