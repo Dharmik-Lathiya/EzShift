@@ -51,18 +51,18 @@ exports.tripBook = async (req, res) => {
     console.log("Unique workers (vehicle owners) to notify:", ownerIds);
 
     if (ownerIds.length > 0) {
-      const assignedWorkerIds = ownerIds.slice(0, numWorkers || ownerIds.length);
+      const candidateWorkerIds = ownerIds;
 
-      trip.workers = assignedWorkerIds;
+      trip.workers = candidateWorkerIds;
       await trip.save();
 
       // Do not increment worker trip counters here; this is handled when the trip is completed.
 
-      console.log("Workers assigned to trip:", assignedWorkerIds.length);
+      console.log("Workers notified for trip:", candidateWorkerIds.length);
       console.log();
       
 
-      const workers = await Worker.find({ _id: { $in: assignedWorkerIds } });
+      const workers = await Worker.find({ _id: { $in: candidateWorkerIds } });
       const notifyResults = { success: [], failed: [] };
       for (let worker of workers) {
         console.log(`📬 Sending notification to worker ${worker._id} (${worker.fcmToken})`);
