@@ -6,6 +6,7 @@ export default function SecondSetup() {
   const [selectedCity, setSelectedCity] = useState("");
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
   const cities = [
@@ -21,7 +22,7 @@ export default function SecondSetup() {
     city.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!selectedCity) {
@@ -29,8 +30,39 @@ export default function SecondSetup() {
       return;
     }
 
-    console.log("Selected city:", selectedCity);
-    navigate("/Worker/SetupProfile/VehicleType");
+    const workerId = localStorage.getItem("workerId");
+    if (!workerId) {
+      alert("Worker not found. Please log in again.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Profile/Edit/${workerId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            city: selectedCity,
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        console.error("Failed to save city", await res.text());
+        alert("Failed to save city. Please try again.");
+        setSaving(false);
+        return;
+      }
+
+      console.log("Selected city saved:", selectedCity);
+      navigate("/Worker/SetupProfile/VehicleType");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while saving your city.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
