@@ -113,8 +113,12 @@ export default function FourthSetup() {
       toast.success('Vehicle details submitted successfully.');
       navigate('/Worker/SetupProfile/Welcome');
     } catch (err) {
-      toast.error(err);
-      console.error(err); 
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        'Something went wrong while submitting vehicle details.';
+      toast.error(message);
+      console.error(err);
     }
     
     setVehicleOwner("");
