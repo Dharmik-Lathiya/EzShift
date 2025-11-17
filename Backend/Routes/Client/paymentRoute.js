@@ -19,9 +19,10 @@ router.post("/success", async (req, res) => {
     const calculatedHash = crypto.createHash("sha512").update(hashString).digest("hex");
 
     if (hash !== calculatedHash) {
-      console.log("❌ Invalid Hash in PayU callback");
+      console.log("Invalid Hash in PayU callback");
       return res.status(400).send("Invalid Hash");
     }
+    
 
     const trip = await Trip.findById(productinfo).populate("clientId").populate("workers").populate("vehicleId");
     if (!trip) {
