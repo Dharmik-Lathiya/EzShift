@@ -1,13 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaCalendarDay, FaTasks, FaRupeeSign, FaChartLine, FaDollarSign, FaProjectDiagram, FaBell, FaMap, FaMapMarked } from 'react-icons/fa';
 import { Line, Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Filler } from 'chart.js';
 import { requestFCMToken, listenForMessages } from '../../../public/firebase';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { messaging } from '../../firebase-config.js';
-import { Filler } from "chart.js";
 import useSendWorkerNotification from '../../store/useSendWorkerNotification.jsx';
-
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Filler);
 
@@ -55,8 +52,6 @@ export default function WorkerDashboard() {
     }
   }, [fcmToken, workerId]);
 
-
-
   const [showNotifications, setShowNotifications] = useState(false);
   // Global state for notifications
   const { notifications, addNotification, setTripId, markSeen } = useSendWorkerNotification();
@@ -65,12 +60,18 @@ export default function WorkerDashboard() {
     let ignore = false;
 
     const fetchVehicleCounter = async () => {
-      const vehicleCounter = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Vehicle/Fetch/${workerId}`);
-      const vehicleData = await vehicleCounter.json();
-
-      setVehicleCount(vehicleData.vehicles.length);
+      try {
+        const vehicleCounter = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Vehicle/Fetch/${workerId}`);
+        const vehicleData = await vehicleCounter.json();
+        if (vehicleData.vehicles) {
+          setVehicleCount(vehicleData.vehicles.length);
+        }
+      } catch (e) {
+        console.error("Error fetching vehicles", e);
+      }
     };
     fetchVehicleCounter();
+
     const fetchStats = async () => {
       setLoading(true);
       try {
@@ -103,21 +104,23 @@ export default function WorkerDashboard() {
           const tripsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Worker/Trip/GetAll/${workerId}`);
           const tripsData = await tripsRes.json();
 
-          tripsData.trips.forEach(trip => {
-            if (trip.status === 'Completed' || trip.status === 'Paid') {
-              setCompletedTrips(prev => prev + 1);
+          let compTrips = 0;
+          if (tripsData.trips && Array.isArray(tripsData.trips)) {
+            tripsData.trips.forEach(trip => {
+              if (trip.status === 'Completed' || trip.status === 'Paid') {
+                compTrips++;
+              }
+            });
+            if (!ignore) {
+              setCompletedTrips(compTrips);
+              setTrips(tripsData.trips);
+              const { weeklyCounts, monthlyEarnings } = buildChartsFromTrips(tripsData.trips);
+              setStats((prev) => ({
+                ...prev,
+                barChart: weeklyCounts.values,
+                lineChart: monthlyEarnings.values,
+              }));
             }
-          });
-
-          const tripList = Array.isArray(tripsData.trips) ? tripsData.trips : [];
-          if (!ignore) {
-            setTrips(tripList);
-            const { weeklyCounts, monthlyEarnings } = buildChartsFromTrips(tripList);
-            setStats((prev) => ({
-              ...prev,
-              barChart: weeklyCounts.values,
-              lineChart: monthlyEarnings.values,
-            }));
           }
         } catch (e) {
           console.error('Error fetching trips for charts', e);
@@ -196,18 +199,20 @@ export default function WorkerDashboard() {
   }, [setTripId, addNotification]);
 
 
-
-
   const lineChartData = {
     labels: getLastSixMonthsLabels(),
     datasets: [
       {
         label: 'Monthly Earnings',
         data: stats.lineChart.length ? stats.lineChart : [0, 0, 0, 0, 0, stats.earnings || 0],
-        borderColor: '#00a73e',
-        backgroundColor: 'rgba(34, 211, 238, 0.2)',
+        borderColor: '#19a1e5',
+        backgroundColor: 'rgba(25, 161, 229, 0.1)',
         tension: 0.4,
         fill: true,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: '#19a1e5',
+        pointBorderWidth: 2,
+        pointRadius: 4,
       },
     ],
   };
@@ -218,30 +223,52 @@ export default function WorkerDashboard() {
       {
         label: 'Trips per day',
         data: stats.barChart.length ? stats.barChart : [0, 0, 0, 0, 0, 0, trips.length || 0],
-        backgroundColor: ['#00a73e'],
+        backgroundColor: '#19a1e5',
+        borderRadius: 4,
       },
     ],
   };
 
-  if (loading) return <div className="p-6 text-lg">Loading dashboard...</div>;
+  const chartOptions = {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      y: { border: { display: false }, grid: { color: '#f3f4f6' }, beginAtZero: true },
+      x: { border: { display: false }, grid: { display: false } },
+    }
+  };
+
+  if (loading) return (
+    <div className="flex h-full items-center justify-center">
+      <div className="text-gray-500 font-medium flex items-center gap-2">
+        <i className="fa-solid fa-circle-notch fa-spin text-primary"></i> Loading dashboard...
+      </div>
+    </div>
+  );
 
   return (
-    <div className="p-6 from-cyan-50 to-blue-100 min-h-screen">
+    <div className="min-h-full">
       {/* Top Bar */}
-      <div className="flex justify-between items-center mb-6 relative">
-        <h1 className="text-2xl font-semibold text-cyan-800">Welcome, {stats.name}</h1>
-        <div className="flex items-center gap-6">
-          <span className="text-gray-600">
-            Status: <span className="text-green-600 font-semibold">{stats.status}</span>
-          </span>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-8 gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Welcome, {stats.name}</h1>
+          <p className="text-gray-500 mt-1">Here's an overview of your activity and earnings.</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+            <div className={`w-2.5 h-2.5 rounded-full ${stats.status === 'Available' ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+            <span className="text-sm font-medium text-gray-700">{stats.status}</span>
+          </div>
           <div className="relative">
             <button
-              className="relative text-green-600 text-xl"
+              className="relative w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
               onClick={() => setShowNotifications(!showNotifications)}
             >
-              <FaBell />
+              <i className="fa-regular fa-bell"></i>
               {notifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full border-2 border-white">
                   {notifications.length}
                 </span>
               )}
@@ -249,29 +276,29 @@ export default function WorkerDashboard() {
 
             {/* Notification Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border z-50">
-                <div className="p-3 font-semibold border-b flex items-center justify-between">
-                  <span>Notifications</span>
-                  <span className="text-xs text-gray-500">{notifications.length}/5</span>
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 z-50 overflow-hidden">
+                <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                  <span className="font-semibold text-gray-900">Notifications</span>
+                  <span className="text-xs font-medium text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">{notifications.length}</span>
                 </div>
-                <ul className="max-h-96 overflow-auto">
+                <ul className="max-h-[300px] overflow-auto">
                   {notifications.map((n) => (
-                    <li key={n.id} className={`p-3 text-sm flex items-start gap-2 ${n.seen ? 'bg-gray-50' : 'bg-white'}`}>
+                    <li key={n.id} className={`p-4 text-sm flex items-start gap-3 border-b border-gray-50 ${n.seen ? 'bg-white' : 'bg-primary-light/30'}`}>
+                      <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${n.seen ? 'bg-gray-300' : 'bg-primary'}`}></div>
                       <div className="flex-1">
-                        <p className={`font-semibold ${n.seen ? 'text-gray-700' : 'text-gray-900'}`}>{n.title}</p>
-                        <p className={`${n.seen ? 'text-gray-500' : 'text-gray-700'}`}>{n.body}</p>
+                        <p className={`font-semibold mb-0.5 ${n.seen ? 'text-gray-700' : 'text-gray-900'}`}>{n.title}</p>
+                        <p className={`text-xs ${n.seen ? 'text-gray-500' : 'text-gray-600'}`}>{n.body}</p>
                       </div>
                       <button
-                        className={`ml-2 px-2 py-1 rounded text-xs border ${n.seen ? 'bg-gray-200 text-gray-700 border-gray-300' : 'bg-blue-600 text-white border-blue-600'}`}
+                        className={`ml-2 text-xs font-medium transition-colors ${n.seen ? 'text-gray-400 hover:text-gray-600' : 'text-primary hover:text-blue-700'}`}
                         onClick={() => markSeen(n.id, !n.seen)}
-                        title={n.seen ? 'Mark as new' : 'Mark as seen'}
                       >
-                        {n.seen ? 'Seen' : 'New'}
+                        {n.seen ? 'Mark unread' : 'Mark read'}
                       </button>
                     </li>
                   ))}
                   {notifications.length === 0 && (
-                    <li className="p-3 text-sm text-gray-500">No notifications</li>
+                    <li className="p-6 text-sm text-gray-500 text-center">You're all caught up.</li>
                   )}
                 </ul>
               </div>
@@ -281,38 +308,52 @@ export default function WorkerDashboard() {
       </div>
 
       {/* Top Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <Card icon={<FaCalendarDay />} title="Shift" value={stats.shift} sub={stats.location} />
-        <Card icon={<FaTasks />} title="Total Trips" value={stats.totalTrips} sub="All time" />
-        <Card icon={<FaRupeeSign />} title="Total Earnings" value={`₹${Number(stats.earnings || 0).toFixed(2)}`} sub="All time" />
-        <Card icon={<FaMapMarked />} title="City" value={stats.location.split(', ').pop() || '—'} sub="Current location" />
-        <Card icon={<FaProjectDiagram />} title="Total Vehicles" value={vehicleCount} sub="Active work" />
-        <Card icon={<FaChartLine />} title="Completed Trips" value={completedTrips} sub="Finished" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <Card icon="fa-clock" iconColor="text-orange-500" bgColor="bg-orange-50" title="Current Shift" value={stats.shift} sub={stats.location} />
+        <Card icon="fa-route" iconColor="text-primary" bgColor="bg-primary-light" title="Total Trips" value={stats.totalTrips} sub="Lifetime" />
+        <Card icon="fa-wallet" iconColor="text-green-600" bgColor="bg-green-50" title="Total Earnings" value={`₹${Number(stats.earnings || 0).toFixed(2)}`} sub="Lifetime" />
+        <Card icon="fa-location-dot" iconColor="text-purple-500" bgColor="bg-purple-50" title="Primary City" value={stats.location.split(', ').pop() || '—'} sub="Operational area" />
+        <Card icon="fa-truck" iconColor="text-indigo-500" bgColor="bg-indigo-50" title="Active Vehicles" value={vehicleCount} sub="Registered" />
+        <Card icon="fa-check-circle" iconColor="text-teal-500" bgColor="bg-teal-50" title="Completed Trips" value={completedTrips} sub="Successfully delivered" />
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow p-4">
-          <h2 className="text-lg font-semibold mb-2 text-cyan-700">Monthly Earnings</h2>
-          <Line data={lineChartData} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+          <div className="mb-4">
+            <h2 className="text-lg font-bold text-gray-900">Monthly Earnings</h2>
+            <p className="text-sm text-gray-500">Your revenue over the last 6 months</p>
+          </div>
+          <div className="h-[300px]">
+             <Line data={lineChartData} options={chartOptions} />
+          </div>
         </div>
-        <div className="bg-white rounded-xl shadow p-4">
-          <h2 className="text-lg font-semibold mb-2 text-cyan-700">Weekly Trips</h2>
-          <Bar data={barChartData} />
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+          <div className="mb-4">
+            <h2 className="text-lg font-bold text-gray-900">Weekly Trips</h2>
+            <p className="text-sm text-gray-500">Trips completed in the last 7 days</p>
+          </div>
+          <div className="h-[300px]">
+             <Bar data={barChartData} options={chartOptions} />
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function Card({ icon, title, value, sub }) {
+function Card({ icon, iconColor, bgColor, title, value, sub }) {
   return (
-    <div className="bg-white p-4 rounded-xl shadow flex items-center space-x-4 border-l-4 border-green-600">
-      <div className="text-2xl text-green-600">{icon}</div>
+    <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col transition-shadow hover:shadow-md">
+      <div className="flex justify-between items-start mb-4">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${bgColor}`}>
+          <i className={`fa-solid ${icon} text-xl ${iconColor}`}></i>
+        </div>
+        {sub && <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">{sub}</span>}
+      </div>
       <div>
-        <h3 className="text-sm text-gray-500">{title}</h3>
-        <p className="text-lg font-semibold text-gray-800">{value}</p>
-        {sub && <p className="text-xs text-gray-400">{sub}</p>}
+        <h3 className="text-sm font-semibold text-gray-500 mb-1">{title}</h3>
+        <p className="text-2xl font-bold text-gray-900 tracking-tight">{value}</p>
       </div>
     </div>
   );

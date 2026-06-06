@@ -247,15 +247,15 @@ export default function ClientDashboardHeroSection() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
+    <div className="min-h-screen bg-gray-50/50">
       {/* Hero Section */}
       <motion.div 
-        className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white"
+        className="relative overflow-hidden bg-white border-b border-gray-200 text-gray-900"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-transparent"></div>
         {/* <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div> */}
         
         <div className="relative px-10 py-20 lg:py-32">
@@ -274,17 +274,17 @@ export default function ClientDashboardHeroSection() {
 
             <motion.h1 
               variants={itemVariants}
-              className="text-4xl lg:text-6xl xl:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent"
+              className="text-4xl lg:text-6xl xl:text-7xl font-bold mb-6 text-gray-900"
             >
               Move with
-              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+              <span className="block text-primary">
                 EzShift
               </span>
             </motion.h1>
 
             <motion.p 
               variants={itemVariants}
-              className="text-xl lg:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto leading-relaxed"
+              className="text-xl lg:text-2xl mb-8 text-gray-600 max-w-3xl mx-auto leading-relaxed"
             >
               Experience seamless relocation with our comprehensive house shifting service. 
               From packing to unpacking, we handle every detail with care and precision.
@@ -295,14 +295,14 @@ export default function ClientDashboardHeroSection() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
             >
               <motion.button
-                className="px-8 py-4 bg-white text-blue-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                className="px-8 py-4 bg-primary text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >
                 Get Free Quote
               </motion.button>
               <motion.button
-                className="px-8 py-4 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-blue-600 transition-all duration-300"
+                className="px-8 py-4 border-2 border-white text-gray-900 font-bold rounded-full hover:bg-primary hover:text-white transition-all duration-300"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -318,8 +318,8 @@ export default function ClientDashboardHeroSection() {
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className="text-2xl mb-2">{stat.icon}</div>
-                  <div className="text-2xl lg:text-3xl font-bold text-yellow-300">{stat.number}</div>
-                  <div className="text-sm text-blue-100">{stat.label}</div>
+                  <div className="text-2xl lg:text-3xl font-bold text-primary font-bold">{stat.number}</div>
+                  <div className="text-sm text-gray-600">{stat.label}</div>
                 </div>
               ))}
             </motion.div>
@@ -390,14 +390,14 @@ export default function ClientDashboardHeroSection() {
         >
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center px-4 py-2 mb-6 bg-blue-100 text-blue-600 rounded-full border border-blue-200"
+            className="inline-flex items-center px-4 py-2 mb-6 bg-blue-100 text-primary rounded-full border border-blue-200"
           >
             <span className="text-sm font-semibold">Why Choose Us</span>
           </motion.div>
 
           <motion.h2 
             variants={itemVariants}
-            className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent"
+            className="text-4xl lg:text-5xl font-bold mb-6 text-gray-900"
           >
             Why Choose EzShift?
           </motion.h2>
@@ -435,7 +435,7 @@ export default function ClientDashboardHeroSection() {
               </motion.div>
               
               <div className="relative z-10">
-                <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-primary transition-colors duration-300">
                   {feature.title}
                 </h3>
                 <p className="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
@@ -494,8 +494,8 @@ export default function ClientDashboardHeroSection() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-3 rounded-full font-medium transition-all duration-300 capitalize ${
                     activeTab === tab
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'text-gray-600 hover:text-blue-600'
+                      ? 'bg-primary text-white shadow-lg'
+                      : 'text-gray-600 hover:text-primary'
                   }`}
                 >
                   {tab}
@@ -521,15 +521,15 @@ export default function ClientDashboardHeroSection() {
                   whileHover={{ y: -5 }}
                 >
                   <div className="text-4xl mb-4">{service.icon}</div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-primary transition-colors">
                     {service.title}
                   </h3>
                   <p className="text-gray-600 mb-4 leading-relaxed">
                     {service.description}
                   </p>
                   <div className="flex justify-between items-center">
-                    <span className="text-lg font-bold text-blue-600">{service.price}</span>
-                    <button className="text-blue-600 hover:text-blue-700 font-medium">
+                    <span className="text-lg font-bold text-primary">{service.price}</span>
+                    <button className="text-primary hover:text-blue-700 font-medium">
                       Learn More →
                     </button>
                   </div>
@@ -542,7 +542,7 @@ export default function ClientDashboardHeroSection() {
 
       {/* How It Works Section */}
       <motion.div 
-        className="bg-gradient-to-br from-gray-50 to-blue-50/30 px-10 py-20"
+        className="bg-white px-10 py-20"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -588,7 +588,7 @@ export default function ClientDashboardHeroSection() {
                 whileHover={{ y: -5 }}
               >
                 <div className="text-4xl mb-4">{step.icon}</div>
-                <div className="absolute top-4 right-4 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                <div className="absolute top-4 right-4 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold">
                   {step.step}
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">{step.title}</h3>
@@ -662,7 +662,7 @@ export default function ClientDashboardHeroSection() {
                 key={index}
                 onClick={() => setActiveTestimonial(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  activeTestimonial === index ? 'bg-blue-600' : 'bg-gray-300'
+                  activeTestimonial === index ? 'bg-primary' : 'bg-gray-300'
                 }`}
               />
             ))}
@@ -672,7 +672,7 @@ export default function ClientDashboardHeroSection() {
 
       {/* CTA Section */}
       <motion.div 
-        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-20"
+        className="bg-gradient-to-r from-blue-600 to-purple-600 text-gray-900 px-10 py-20"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -688,7 +688,7 @@ export default function ClientDashboardHeroSection() {
             Ready to Move? Let's Get Started!
           </motion.h2>
           <motion.p 
-            className="text-xl mb-8 text-blue-100"
+            className="text-xl mb-8 text-gray-600"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -704,14 +704,14 @@ export default function ClientDashboardHeroSection() {
             viewport={{ once: true }}
           >
             <motion.button
-              className="px-10 py-4 bg-white text-blue-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+              className="px-10 py-4 bg-primary text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
               whileHover={{ scale: 1.05, y: -3 }}
               whileTap={{ scale: 0.95 }}
             >
               Get Free Quote Now
             </motion.button>
             <motion.button
-              className="px-10 py-4 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-blue-600 transition-all duration-300"
+              className="px-10 py-4 border-2 border-white text-gray-900 font-bold rounded-full hover:bg-primary hover:text-white transition-all duration-300"
               whileHover={{ scale: 1.05, y: -3 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -729,17 +729,17 @@ export default function ClientDashboardHeroSection() {
             <div className="text-center">
               <div className="text-2xl mb-2">📞</div>
               <div className="font-bold">Call Us</div>
-              <div className="text-blue-100">+91 98765-43210</div>
+              <div className="text-gray-600">+91 98765-43210</div>
             </div>
             <div className="text-center">
               <div className="text-2xl mb-2">📧</div>
               <div className="font-bold">Email Us</div>
-              <div className="text-blue-100">info@ezshift.com</div>
+              <div className="text-gray-600">info@ezshift.com</div>
             </div>
             <div className="text-center">
               <div className="text-2xl mb-2">💬</div>
               <div className="font-bold">WhatsApp</div>
-              <div className="text-blue-100">+91 98765-43210</div>
+              <div className="text-gray-600">+91 98765-43210</div>
             </div>
           </motion.div>
         </div>
@@ -747,7 +747,7 @@ export default function ClientDashboardHeroSection() {
 
       {/* FAQ Section */}
       <motion.div 
-        className="bg-gray-50 px-10 py-20"
+        className="bg-gray-50/50 px-10 py-20"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -879,7 +879,7 @@ export default function ClientDashboardHeroSection() {
             ].map((area, index) => (
               <motion.div
                 key={index}
-                className="text-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors duration-300 group"
+                className="text-center p-6 bg-gray-50/50 rounded-xl hover:bg-primary-light transition-colors duration-300 group"
                 variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
               >
@@ -898,7 +898,7 @@ export default function ClientDashboardHeroSection() {
             viewport={{ once: true }}
           >
             <p className="text-gray-600 mb-4">Don't see your city? We're expanding rapidly!</p>
-            <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 transition-colors">
+            <button className="px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-colors">
               Check Service Availability
             </button>
           </motion.div>
@@ -995,8 +995,8 @@ export default function ClientDashboardHeroSection() {
                 <div className="flex items-start space-x-4">
                   <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{tip.icon}</div>
                   <div>
-                    <div className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-2">{tip.category}</div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                    <div className="text-xs font-medium text-primary uppercase tracking-wide mb-2">{tip.category}</div>
+                    <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-primary transition-colors">
                       {tip.title}
                     </h3>
                     <p className="text-gray-600 text-sm leading-relaxed">{tip.tip}</p>

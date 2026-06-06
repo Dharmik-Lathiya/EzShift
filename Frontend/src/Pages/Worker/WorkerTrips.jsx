@@ -142,7 +142,7 @@ export default function WorkerTrips() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`${isActive ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"} inline-flex items-center gap-2 px-4 py-2 rounded-md transition`}
+                  className={`${isActive ? "bg-primary text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"} inline-flex items-center gap-2 px-4 py-2 rounded-md transition`}
                 >
                   <span className="font-medium">{tab}</span>
                   <span className={`${isActive ? "bg-white/20" : "bg-gray-200"} text-xs px-2 py-0.5 rounded-full`}>{count}</span>
@@ -243,7 +243,7 @@ export default function WorkerTrips() {
                     {trip.status === "Assigned" && (
                       <button
                         onClick={() => handleStartTrip(trip._id, trip.vehicleId._id)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-60"
+                        className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-hover disabled:opacity-60"
                         disabled={submitting}
                       >
                         Start Trip
@@ -301,7 +301,7 @@ export default function WorkerTrips() {
                       )}
                     </div>
                     <button
-                      className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 disabled:opacity-60"
+                      className="bg-primary text-white px-3 py-1.5 rounded-md hover:bg-primary-hover disabled:opacity-60"
                       onClick={() => handleAccept(vehicle._id)}
                       disabled={submitting}
                     >

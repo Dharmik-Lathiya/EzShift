@@ -101,7 +101,7 @@ export default function AdminTrips() {
                       ) : trip.status === "Assigned" ? (
                         <span className="text-green-600 font-semibold">Assigned</span>
                       ) : trip.status === "InProgress" || trip.status === "Completed" || trip.status === "Paid" ? (
-                        <span className="text-blue-600 font-semibold">{trip.status}</span>
+                        <span className="text-primary font-semibold">{trip.status}</span>
                       ) : (
                         <span className="text-red-600 font-semibold">Rejected</span>
                       )}

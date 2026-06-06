@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
+import { Menu, X } from "lucide-react";
 
 export default function ClientHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
+  const location = useLocation();
   const clientId = localStorage.getItem("clientId");
 
   useEffect(() => {
@@ -18,77 +20,114 @@ export default function ClientHeader() {
         setAvatarUrl("");
       });
   }, [clientId]);
-  if (menuOpen) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "auto";
-  }
+
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [menuOpen]);
+
+  const navLinks = [
+    { name: "Home", path: "/Client/Dashboard" },
+    { name: "Book Trip", path: "/Client/BookTrip" },
+    { name: "Map", path: "/Client/Map" },
+    { name: "History", path: "/Client/History" },
+  ];
+
   return (
-    <nav>
-      <div className="h-20 w-full bg-slate-900 flex justify-between items-center px-4 sm:px-6 z-50">
-        <div className="flex items-center space-x-8">
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 h-20">
+        <div className="flex items-center gap-6">
           <button
-            className="md:hidden text-white text-2xl"
+            className="md:hidden text-gray-700 hover:text-primary transition-colors"
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            <i className="fa-solid fa-bars"></i>
+            {menuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
-          <img
-            className="h-10 w-auto lg:h-14 cursor-pointer"
-            src={'/logo.png'}
-            alt="Logo"
-          />
+          <Link to="/Client/Dashboard" className="flex items-center">
+            <img
+              className="h-10 lg:h-12 w-auto"
+              src={'/logo.png'}
+              alt="EzShift Logo"
+            />
+          </Link>
         </div>
-        <div className="md:block hidden mx-auto">
-          <ul className="flex justify-between text-md lg:text-lg">
-            <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              <Link to="Dashboard">Home</Link>
-            </li>
-            <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              <Link to="BookTrip">Book Trip</Link>
-            </li>
-            <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              <Link to="Map">Map</Link>
-            </li>
-            <li className="text-white cursor-pointer px-6 py-1.5 hover:rounded-md hover:text-md hover:bg-transparent hover:shadow-md shadow-pink-300/50 ... transition delay-150 duration-200 ease-in-out">
-              <Link to="History">History</Link>
-            </li>
+        
+        <div className="hidden md:flex items-center justify-center flex-1 mx-8">
+          <ul className="flex items-center space-x-1 lg:space-x-2">
+            {navLinks.map((link) => (
+              <li key={link.name}>
+                <Link 
+                  to={link.path}
+                  className={`px-5 py-2.5 rounded-lg text-sm lg:text-base font-semibold transition-all duration-200 ${
+                    location.pathname.includes(link.path)
+                      ? "bg-primary-light text-primary"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
-        <div className="h-11 w-11">
-          <a href="Profile" className="block h-11 w-11">
-            <img
-              className="h-11 w-11 rounded-full object-cover border border-white/20 shadow-sm"
-              src={avatarUrl || '/favicon.png'}
-              alt="profile"
-              onError={(e) => {
-                e.currentTarget.src = '/favicon.png';
-              }}
-            />
-          </a>
+
+        <div className="flex items-center gap-4">
+          <Link to="/Client/Profile" className="block relative group">
+            <div className="h-11 w-11 rounded-full overflow-hidden border-2 border-gray-200 group-hover:border-primary transition-colors">
+              <img
+                className="h-full w-full object-cover"
+                src={avatarUrl || '/favicon.png'}
+                alt="profile"
+                onError={(e) => {
+                  e.currentTarget.src = '/favicon.png';
+                }}
+              />
+            </div>
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+          </Link>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
       {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 z-6000 h-[100dvh] bg-black/30 w-60 "
-        >
-          <div
-            className={`fixed top-20 left-0 h-full inset-0 p-10 pl-15 pr-15 rounded-r-lg transform transition-transform duration-300 ease-in-out ${menuOpen ? "translate-x-0" : "-translate-x-full"
-              }`}
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden" onClick={() => setMenuOpen(false)}>
+          <div 
+            className="absolute top-0 left-0 h-full w-72 bg-white shadow-xl flex flex-col transform transition-transform duration-300"
+            onClick={(e) => e.stopPropagation()}
           >
-            <ul className="z-6000 flex flex-col space-y-5 text-white text-lg">
-              <li className="cursor-pointer hover:text-yellow-600 transition">
-                <Link to="Dashboard">Home</Link>
-              </li>
-              <li className="cursor-pointer hover:text-yellow-600 transition">
-                <Link to="BookTrip">Book Trip</Link>
-              </li>
-              <li className="cursor-pointer hover:text-yellow-600 transition">
-                <Link to="Map">Map</Link>
-              </li>
-              <li className="cursor-pointer hover:text-yellow-600 transition">
-                <Link to="History">History</Link>
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+              <img className="h-8 w-auto" src={'/logo.png'} alt="Logo" />
+              <button onClick={() => setMenuOpen(false)} className="text-gray-500 hover:text-gray-800">
+                <X size={24} />
+              </button>
+            </div>
+            <ul className="flex flex-col py-4">
+              {navLinks.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    to={link.path}
+                    onClick={() => setMenuOpen(false)}
+                    className={`block px-6 py-4 text-base font-semibold border-l-4 transition-colors ${
+                      location.pathname.includes(link.path)
+                        ? "border-primary bg-primary-light text-primary"
+                        : "border-transparent text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+              <li className="mt-4 border-t border-gray-100 pt-4">
+                 <Link 
+                    to="/Client/Profile"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-6 py-4 text-base font-semibold text-gray-700 hover:bg-gray-50"
+                  >
+                    My Profile
+                  </Link>
               </li>
             </ul>
           </div>
