@@ -83,11 +83,11 @@ export default function ClientTripPricing() {
         <p>Worker Cost ({numWorkers} x ₹200): ₹{pricing?.workers ?? 0}</p>
       )}
       <hr className="my-2" />
-      <div className="font-bold flex justify-between text-[#19a1e5] text-lg">
+      <div className="font-bold flex justify-between text-primary text-lg">
         <div>Total: ₹{pricing?.total.toFixed(2) ?? 0}</div>
         <div>
           <button
-            className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+            className="bg-primary-light0 text-white px-4 py-1 rounded hover:bg-primary-hover"
             onClick={handleBooking}
           >
             Book Trip

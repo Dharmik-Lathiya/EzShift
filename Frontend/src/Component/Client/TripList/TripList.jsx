@@ -113,7 +113,7 @@ const TripList = () => {
           </div>
           <button
             onClick={loadTrips}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-hover transition-colors"
           >
             Refresh
           </button>
@@ -132,7 +132,7 @@ const TripList = () => {
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="text-blue-600 hover:text-blue-800 mt-2"
+              className="text-primary hover:text-blue-800 mt-2"
             >
               Clear search
             </button>

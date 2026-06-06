@@ -138,7 +138,7 @@ const MapView = () => {
           <div className="space-y-4">
             {steps.map((step, index) => (
               <div key={index} className="bg-white p-4 rounded-lg shadow flex items-start space-x-4">
-                <div className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+                <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary-light0 text-white flex items-center justify-center font-bold">
                   {index + 1}
                 </div>
                 <div>

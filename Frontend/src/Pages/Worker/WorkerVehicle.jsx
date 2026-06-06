@@ -298,7 +298,7 @@ export default function WorkerVehicle() {
               Total: <span className="font-semibold">{vehicles.length}</span>
             </div>
             <button
-              className={`px-4 py-2 rounded shadow text-white ${showForm ? "bg-gray-600 hover:bg-gray-700" : "bg-blue-600 hover:bg-blue-700"} transition`}
+              className={`px-4 py-2 rounded shadow text-white ${showForm ? "bg-gray-600 hover:bg-gray-700" : "bg-primary hover:bg-primary-hover"} transition`}
               onClick={() => {
                 setShowForm(!showForm);
                 if (showForm) {
@@ -430,7 +430,7 @@ export default function WorkerVehicle() {
                     ? handleEditVehicle(e, editingVehicleId)
                     : handleSubmit(e);
                 }}
-                className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition disabled:opacity-60"
+                className="bg-primary text-white py-2 px-4 rounded hover:bg-primary-hover transition disabled:opacity-60"
                 disabled={submitting}
               >
                 {submitting ? (isEditing ? "Updating..." : "Submitting...") : isEditing ? "Update" : "Submit"}
@@ -487,7 +487,7 @@ export default function WorkerVehicle() {
                           <div className="flex flex-wrap gap-2">
                             <button
                               aria-label={`Edit ${vehicle.vehicleName}`}
-                              className="bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 text-xs font-semibold"
+                              className="bg-primary text-white px-3 py-1.5 rounded hover:bg-primary-hover text-xs font-semibold"
                               onClick={() => handleGetData(vehicle._id)}
                             >
                               Edit

@@ -1,4 +1,12 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #19a1e5;
+  --color-primary-hover: #1480b8;
+  --color-primary-light: #e8f5fd;
+  --color-secondary: #0f172a; /* standard slate-900 as secondary */
+}
+
 :root {
   font-synthesis: none;
   text-rendering: optimizeLegibility;

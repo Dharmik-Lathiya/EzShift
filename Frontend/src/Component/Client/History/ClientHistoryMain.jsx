@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSearchParams } from "react-router-dom";
+import { Search, ChevronLeft, ChevronRight, CheckCircle, Clock, Truck } from "lucide-react";
 
 export default function ClientHistoryMain() {
 
@@ -88,8 +89,6 @@ const [trips, setTrips] = useState([]);
   }, [trips, completedSearchQuery]);
 
   const handlePayment = async (trip) => {
-    
-
   const txnid = `TXN${Date.now()}`;
   const paymentDetails = {
     amount: trip.pricing.total,
@@ -106,12 +105,8 @@ const [trips, setTrips] = useState([]);
       paymentDetails
     );
 
-
     if (res.data.success) {
       redirectToPayU(res.data.data);
-      
-
-
     } else {
       toast.error("Payment initialization failed.");
     }
@@ -119,7 +114,6 @@ const [trips, setTrips] = useState([]);
     console.error(error);
     toast.error("Error processing payment.");
   }
-  console.log("Done");
 };
 
 
@@ -152,32 +146,37 @@ const [trips, setTrips] = useState([]);
   const renderStatusPill = (status) => {
     const normalized = (status || "").toLowerCase();
     let classes = "bg-gray-100 text-gray-700";
-    if (normalized === "pending") classes = "bg-yellow-100 text-yellow-800";
-    else if (normalized === "assigned" || normalized === "inprogress" || normalized === "on the way" || normalized === "ontheway") classes = "bg-blue-100 text-blue-800";
-    else if (normalized === "completed" || normalized === "paid") classes = "bg-green-100 text-green-800";
-    else if (normalized === "cancelled" || normalized === "canceled") classes = "bg-red-100 text-red-800";
-    return <span className={`px-2 py-1 rounded-full text-xs font-medium ${classes}`}>{status}</span>;
+    let icon = null;
+    
+    if (normalized === "pending") {
+      classes = "bg-yellow-50 text-yellow-700 border-yellow-200";
+      icon = <Clock size={12} className="mr-1" />;
+    }
+    else if (normalized === "assigned" || normalized === "inprogress" || normalized === "on the way" || normalized === "ontheway") {
+      classes = "bg-blue-50 text-blue-700 border-blue-200";
+      icon = <Clock size={12} className="mr-1" />;
+    }
+    else if (normalized === "completed" || normalized === "paid") {
+      classes = "bg-green-50 text-green-700 border-green-200";
+      icon = <CheckCircle size={12} className="mr-1" />;
+    }
+    else if (normalized === "cancelled" || normalized === "canceled") {
+      classes = "bg-red-50 text-red-700 border-red-200";
+    }
+    return (
+      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${classes}`}>
+        {icon} {status}
+      </span>
+    );
   };
 
-  const totalInProgressPages = Math.ceil(
-    inProgressTrips.length / inProgressRowsPerPage
-  );
-  const startIndexInProgress =
-    (inProgressCurrentPage - 1) * inProgressRowsPerPage;
-  const displayedInProgressTrips = inProgressTrips.slice(
-    startIndexInProgress,
-    startIndexInProgress + inProgressRowsPerPage
-  );
+  const totalInProgressPages = Math.ceil(inProgressTrips.length / inProgressRowsPerPage);
+  const startIndexInProgress = (inProgressCurrentPage - 1) * inProgressRowsPerPage;
+  const displayedInProgressTrips = inProgressTrips.slice(startIndexInProgress, startIndexInProgress + inProgressRowsPerPage);
 
-  const totalCompletedPages = Math.ceil(
-    completedTrips.length / completedRowsPerPage
-  );
-  const startIndexCompleted =
-    (completedCurrentPage - 1) * completedRowsPerPage;
-  const displayedCompletedTrips = completedTrips.slice(
-    startIndexCompleted,
-    startIndexCompleted + completedRowsPerPage
-  );
+  const totalCompletedPages = Math.ceil(completedTrips.length / completedRowsPerPage);
+  const startIndexCompleted = (completedCurrentPage - 1) * completedRowsPerPage;
+  const displayedCompletedTrips = completedTrips.slice(startIndexCompleted, startIndexCompleted + completedRowsPerPage);
 
   const goToPage = (page, table) => {
     if (table === "inProgress") {
@@ -191,240 +190,233 @@ const [trips, setTrips] = useState([]);
     }
   };
 
-  return (
-    <section className="py-20 px-10">
-      <div className="mb-5">
-        <h1 className="text-4xl font-semibold">My moves</h1>
-      </div>
-      {paymentStatus && (
-        <div className={`mb-6 rounded-md border p-4 ${paymentStatus === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"}`}>
-          <p className="font-medium">
-            Payment {paymentStatus === "success" ? "Successful" : "Failed"}
-          </p>
-          <p className="text-sm mt-1">Transaction ID: <span className="font-mono">{txnid}</span></p>
-        </div>
-      )}
-      {loading ? (
-        <div className="space-y-6">
-          <div className="h-10 w-64 bg-gray-100 animate-pulse rounded" />
-          <div className="h-40 w-full bg-gray-100 animate-pulse rounded" />
-          <div className="h-10 w-64 bg-gray-100 animate-pulse rounded" />
-          <div className="h-40 w-full bg-gray-100 animate-pulse rounded" />
-        </div>
-      ) : (
-        <>
-          <div className="mb-10">
-            <h2 className="text-2xl font-semibold mb-3">Current Trips</h2>
-            <div className=" flex items-center w-full ">
-              <div className="bg-sky-100 mb-5 rounded-lg p-1 text-lg w-full flex items-center" >
-                <i className="fa-solid fa-magnifying-glass m-3"></i>
-                <input type="text" name="" id="" placeholder="Search by address" className="flex-1 bg-transparent focus:outline-none px-2 py-1" value={inProgressSearchQuery} onChange={(e) => setInProgressSearchQuery(e.target.value)} />
-              </div>
-            </div>
-            <div className="mb-4 flex items-center gap-4">
-              <label className="font-semibold">Rows per page:</label>
-              <select
-                value={inProgressRowsPerPage}
-                onChange={(e) => {
-                  setInProgressRowsPerPage(parseInt(e.target.value));
-                  setInProgressCurrentPage(1);
-                }}
-                className="border px-2 py-1 rounded"
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={15}>15</option>
-                <option value={20}>20</option>
-              </select>
-            </div>
-            <div className="border-1 border-black rounded-lg overflow-x-auto">
-              <table className="w-full divide-y divide-gray-300">
-                <thead className="text-left">
-                  <tr className="bg-sky-100">
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Pickup Address</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Drop Address</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Vehicle Type</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Time Slot</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Status</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Total Price</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Note</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y-1 ">
-                  {displayedInProgressTrips.length === 0 ? (
-                    <tr>
-                      <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
-                        No trips found.
-                      </td>
-                    </tr>
-                  ) : (
-                    displayedInProgressTrips.map((trip) => (
-                      <tr key={trip._id || `${trip.pickupAddress}-${trip.date}` } className="hover:bg-gray-100">
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.pickupAddress || "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.dropAddress || "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.vehicleType || "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.timeSlot || "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{renderStatusPill(trip.status)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{formatCurrency(trip.pricing?.total)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{(trip.note || "").length > 0 ? `${(trip.note || "").substring(0, 30)}${(trip.note || "").length > 30 ? "..." : ""}` : "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.date ? new Date(trip.date).toLocaleDateString() : "-"}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-            {totalInProgressPages > 1 && (
-              <div className="mt-4 flex justify-center gap-2">
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => goToPage(1, 'inProgress')}
-                  disabled={inProgressCurrentPage === 1}
-                >
-                  First
-                </button>
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => goToPage(inProgressCurrentPage - 1, 'inProgress')}
-                  disabled={inProgressCurrentPage === 1}
-                >
-                  Prev
-                </button>
-                <span className="px-3 py-1 border rounded">
-                  Page {inProgressCurrentPage} of {totalInProgressPages}
-                </span>
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => goToPage(inProgressCurrentPage + 1, 'inProgress')}
-                  disabled={inProgressCurrentPage === totalInProgressPages}
-                >
-                  Next
-                </button>
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => goToPage(totalInProgressPages, 'inProgress')}
-                  disabled={inProgressCurrentPage === totalInProgressPages}
-                >
-                  Last
-                </button>
-              </div>
-            )}
-          </div>
+  const TableHeader = ({ headers }) => (
+    <thead className="bg-gray-50 border-b border-gray-200">
+      <tr>
+        {headers.map((h, i) => (
+          <th key={i} className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+            {h}
+          </th>
+        ))}
+      </tr>
+    </thead>
+  );
 
-          <div>
-            <h2 className="text-2xl font-semibold mb-3">Completed Trips</h2>
-            <div className=" flex items-center w-full ">
-              <div className="bg-sky-100 mb-5 rounded-lg p-1 text-lg w-full flex items-center" >
-                <i className="fa-solid fa-magnifying-glass m-3"></i>
-                <input type="text" name="" id="" placeholder="Search by address" className="flex-1 bg-transparent focus:outline-none px-2 py-1" value={completedSearchQuery} onChange={(e) => setCompletedSearchQuery(e.target.value)} />
-              </div>
+  return (
+    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-10">
+        
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Trip History</h1>
+          <p className="mt-2 text-gray-600">Track your active trips and view your past booking records.</p>
+        </div>
+
+        {paymentStatus && (
+          <div className={`p-4 rounded-xl border flex items-center justify-between shadow-sm ${paymentStatus === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"}`}>
+            <div>
+              <p className="font-semibold">
+                Payment {paymentStatus === "success" ? "Successful" : "Failed"}
+              </p>
+              <p className="text-sm mt-1 opacity-90">Transaction ID: <span className="font-mono bg-white/50 px-2 py-0.5 rounded ml-1">{txnid}</span></p>
             </div>
-            <div className="mb-4 flex items-center gap-4">
-              <label className="font-semibold">Rows per page:</label>
-              <select
-                value={completedRowsPerPage}
-                onChange={(e) => {
-                  setCompletedRowsPerPage(parseInt(e.target.value));
-                  setCompletedCurrentPage(1);
-                }}
-                className="border px-2 py-1 rounded"
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={15}>15</option>
-                <option value={20}>20</option>
-              </select>
-            </div>
-            <div className="border-1 border-black rounded-lg overflow-x-auto">
-              <table className="w-full divide-y divide-gray-300">
-                <thead className="text-left">
-                  <tr className="bg-sky-100">
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Pickup Address</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Drop Address</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Vehicle Type</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Time Slot</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Status</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Total Price</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Note</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Date</th>
-                    <th className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y-1 ">
-                  {displayedCompletedTrips.length === 0 ? (
-                    <tr>
-                      <td colSpan="9" className="px-6 py-8 text-center text-gray-500">
-                        No trips found.
-                      </td>
-                    </tr>
-                  ) : (
-                    displayedCompletedTrips.map((trip) => (
-                      <tr key={trip._id || `${trip.pickupAddress}-${trip.date}` } className="hover:bg-gray-100">
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.pickupAddress || "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.dropAddress || "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.vehicleType || "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.timeSlot || "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{renderStatusPill(trip.status)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{formatCurrency(trip.pricing?.total)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{(trip.note || "").length > 0 ? `${(trip.note || "").substring(0, 30)}${(trip.note || "").length > 30 ? "..." : ""}` : "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">{trip.date ? new Date(trip.date).toLocaleDateString() : "-"}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-md text-sky-700">
-                          {trip.isPaid ? (
-                            <button className="text-blue-600 hover:underline">View</button>
-                          ) : (
-                            <button
-                              className="px-3 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700"
-                              onClick={() => handlePayment(trip)}
-                            >
-                              Pay {formatCurrency(trip.pricing?.total)}
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-            {totalCompletedPages > 1 && (
-              <div className="mt-4 flex justify-center gap-2">
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => goToPage(1, 'completed')}
-                  disabled={completedCurrentPage === 1}
-                >
-                  First
-                </button>
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => goToPage(completedCurrentPage - 1, 'completed')}
-                  disabled={completedCurrentPage === 1}
-                >
-                  Prev
-                </button>
-                <span className="px-3 py-1 border rounded">
-                  Page {completedCurrentPage} of {totalCompletedPages}
-                </span>
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => goToPage(completedCurrentPage + 1, 'completed')}
-                  disabled={completedCurrentPage === totalCompletedPages}
-                >
-                  Next
-                </button>
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => goToPage(totalCompletedPages, 'completed')}
-                  disabled={completedCurrentPage === totalCompletedPages}
-                >
-                  Last
-                </button>
-              </div>
-            )}
+            {paymentStatus === "success" && <CheckCircle size={24} className="opacity-80" />}
           </div>
-        </>
-      )}
-    </section>
+        )}
+
+        {loading ? (
+          <div className="space-y-6">
+            <div className="h-10 w-64 bg-gray-200 animate-pulse rounded-lg" />
+            <div className="h-64 w-full bg-gray-200 animate-pulse rounded-2xl" />
+          </div>
+        ) : (
+          <>
+            {/* Active Trips Section */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 className="text-xl font-bold text-gray-900">Active Trips</h2>
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <div className="relative w-full sm:w-72">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search size={16} className="text-gray-400" />
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="Search active trips..." 
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-primary outline-none transition-all text-sm"
+                      value={inProgressSearchQuery} 
+                      onChange={(e) => setInProgressSearchQuery(e.target.value)} 
+                    />
+                  </div>
+                  <select
+                    value={inProgressRowsPerPage}
+                    onChange={(e) => {
+                      setInProgressRowsPerPage(parseInt(e.target.value));
+                      setInProgressCurrentPage(1);
+                    }}
+                    className="w-full sm:w-auto border border-gray-300 px-3 py-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-primary-light outline-none"
+                  >
+                    <option value={5}>5 per page</option>
+                    <option value={10}>10 per page</option>
+                    <option value={20}>20 per page</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <TableHeader headers={["Date", "Pickup", "Dropoff", "Vehicle", "Time", "Price", "Status"]} />
+                    <tbody className="divide-y divide-gray-100">
+                      {displayedInProgressTrips.length === 0 ? (
+                        <tr>
+                          <td colSpan="7" className="px-6 py-12 text-center text-gray-500 bg-gray-50/50">
+                            <div className="flex flex-col items-center justify-center">
+                              <Truck size={32} className="text-gray-300 mb-2" />
+                              <p className="font-medium">No active trips found.</p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        displayedInProgressTrips.map((trip) => (
+                          <tr key={trip._id} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{trip.date ? new Date(trip.date).toLocaleDateString() : "-"}</td>
+                            <td className="px-6 py-4 text-sm text-gray-600 max-w-[200px] truncate" title={trip.pickupAddress}>{trip.pickupAddress || "-"}</td>
+                            <td className="px-6 py-4 text-sm text-gray-600 max-w-[200px] truncate" title={trip.dropAddress}>{trip.dropAddress || "-"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.vehicleType || "-"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{trip.timeSlot || "-"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{formatCurrency(trip.pricing?.total)}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{renderStatusPill(trip.status)}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                
+                {totalInProgressPages > 1 && (
+                  <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
+                    <span className="text-sm text-gray-500">Page {inProgressCurrentPage} of {totalInProgressPages}</span>
+                    <div className="flex gap-2">
+                      <button
+                        className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        onClick={() => goToPage(inProgressCurrentPage - 1, 'inProgress')}
+                        disabled={inProgressCurrentPage === 1}
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      <button
+                        className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        onClick={() => goToPage(inProgressCurrentPage + 1, 'inProgress')}
+                        disabled={inProgressCurrentPage === totalInProgressPages}
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Completed Trips Section */}
+            <div className="space-y-4 pt-8 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 className="text-xl font-bold text-gray-900">Completed Trips</h2>
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <div className="relative w-full sm:w-72">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search size={16} className="text-gray-400" />
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="Search past trips..." 
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-primary outline-none transition-all text-sm"
+                      value={completedSearchQuery} 
+                      onChange={(e) => setCompletedSearchQuery(e.target.value)} 
+                    />
+                  </div>
+                  <select
+                    value={completedRowsPerPage}
+                    onChange={(e) => {
+                      setCompletedRowsPerPage(parseInt(e.target.value));
+                      setCompletedCurrentPage(1);
+                    }}
+                    className="w-full sm:w-auto border border-gray-300 px-3 py-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-primary-light outline-none"
+                  >
+                    <option value={5}>5 per page</option>
+                    <option value={10}>10 per page</option>
+                    <option value={20}>20 per page</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <TableHeader headers={["Date", "Pickup", "Dropoff", "Vehicle", "Price", "Status", "Action"]} />
+                    <tbody className="divide-y divide-gray-100">
+                      {displayedCompletedTrips.length === 0 ? (
+                        <tr>
+                          <td colSpan="7" className="px-6 py-12 text-center text-gray-500 bg-gray-50/50">
+                            <div className="flex flex-col items-center justify-center">
+                              <CheckCircle size={32} className="text-gray-300 mb-2" />
+                              <p className="font-medium">No completed trips found.</p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        displayedCompletedTrips.map((trip) => (
+                          <tr key={trip._id} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{trip.date ? new Date(trip.date).toLocaleDateString() : "-"}</td>
+                            <td className="px-6 py-4 text-sm text-gray-600 max-w-[200px] truncate" title={trip.pickupAddress}>{trip.pickupAddress || "-"}</td>
+                            <td className="px-6 py-4 text-sm text-gray-600 max-w-[200px] truncate" title={trip.dropAddress}>{trip.dropAddress || "-"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.vehicleType || "-"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{formatCurrency(trip.pricing?.total)}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{renderStatusPill(trip.status)}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              {trip.isPaid || trip.status === "Paid" ? (
+                                <span className="text-green-600 font-semibold flex items-center gap-1"><CheckCircle size={14}/> Paid</span>
+                              ) : (
+                                <button
+                                  className="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors shadow-sm"
+                                  onClick={() => handlePayment(trip)}
+                                >
+                                  Pay Now
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                
+                {totalCompletedPages > 1 && (
+                  <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
+                    <span className="text-sm text-gray-500">Page {completedCurrentPage} of {totalCompletedPages}</span>
+                    <div className="flex gap-2">
+                      <button
+                        className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        onClick={() => goToPage(completedCurrentPage - 1, 'completed')}
+                        disabled={completedCurrentPage === 1}
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      <button
+                        className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        onClick={() => goToPage(completedCurrentPage + 1, 'completed')}
+                        disabled={completedCurrentPage === totalCompletedPages}
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

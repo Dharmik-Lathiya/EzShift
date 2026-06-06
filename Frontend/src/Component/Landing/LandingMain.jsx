@@ -131,74 +131,20 @@ export default function LandingMain() {
         />
       </div>
 
-      <div className="relative -mt-10 lg:-mt-80 w-full min-h-screen overflow-hidden">
-
-        <div className="text-center pt-20 px-4 md:px-8 md:pb-20 pb-16 relative z-10">
-          {/* Heading */}
-          <div className="animate-fade-in-up">
-            <h2 className="text-[#19a1e5] font-extrabold md:text-5xl text-3xl mb-6">
-              Performance That Speaks
-            </h2>
-            <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-16">
-              Experience lightning-fast delivery with our cutting-edge technology
-              and a dedicated fleet of vehicles designed for reliability and speed.
-            </p>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-
-            {/* Successful Deliveries */}
-            <div
-              className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
-                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-              style={{ animationDelay: "0.2s" }}
-            >
-              <div className="text-[#19a1e5] text-5xl mb-4">
-                <i className="fa-solid fa-arrow-up-right-dots"></i>
+      <div className="relative w-full bg-white z-20 pt-16 pb-16 px-6 -mt-10 lg:-mt-20 rounded-t-3xl border-t border-gray-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 border-t border-b border-gray-100 py-12">
+            {[
+              { count: "5,100+", label: "Successful deliveries this year" },
+              { count: "100M+", label: "Miles covered across the country" },
+              { count: "99.9%", label: "On-time delivery rate" },
+              { count: "4.9/5", label: "Average rating from reviews" },
+            ].map((stat, idx) => (
+              <div key={idx} className="text-center lg:text-left">
+                <h3 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-2 tracking-tight">{stat.count}</h3>
+                <p className="text-gray-600 font-medium">{stat.label}</p>
               </div>
-              <h3 className="text-gray-900 text-3xl font-bold mb-2">5,109+</h3>
-              <p className="text-gray-500 text-lg">Successful Deliveries</p>
-            </div>
-
-            {/* Miles Covered */}
-            <div
-              className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
-                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-              style={{ animationDelay: "0.4s" }}
-            >
-              <div className="text-[#19a1e5] text-5xl mb-4">
-                <i className="fa-solid fa-road"></i>
-              </div>
-              <h3 className="text-gray-900 text-3xl font-bold mb-2">100M+</h3>
-              <p className="text-gray-500 text-lg">Miles Covered</p>
-            </div>
-
-            {/* Uptime Guarantee */}
-            <div
-              className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
-                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-              style={{ animationDelay: "0.6s" }}
-            >
-              <div className="text-[#19a1e5] text-5xl mb-4">
-                <i className="fa-solid fa-bolt"></i>
-              </div>
-              <h3 className="text-gray-900 text-3xl font-bold mb-2">99.99%</h3>
-              <p className="text-gray-500 text-lg">Uptime Guarantee</p>
-            </div>
-
-            {/* Customer Rating */}
-            <div
-              className="bg-white border border-gray-200 rounded-xl p-8 shadow-md hover:shadow-xl 
-                       transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-              style={{ animationDelay: "0.8s" }}
-            >
-              <div className="text-[#19a1e5] text-5xl mb-4">
-                <i className="fa-solid fa-star"></i>
-              </div>
-              <h3 className="text-gray-900 text-3xl font-bold mb-2">4.9★</h3>
-              <p className="text-gray-500 text-lg">Customer Rating</p>
-            </div>
+            ))}
           </div>
         </div>
       </div>

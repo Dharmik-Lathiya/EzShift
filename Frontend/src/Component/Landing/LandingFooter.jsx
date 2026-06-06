@@ -2,72 +2,69 @@ import React from "react";
 
 export default function LandingFooter() {
   return (
-    <footer className="bg-slate-900 text-white px-6 py-12 md:px-12">
-      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-        {/* Logo + About */}
-        <div>
-          <div className="flex items-center gap-3 mb-5">
-            <span className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-rose-400 to-pink-700 rounded-md text-2xl">
-              <i className="fa-solid fa-truck"></i>
-            </span>
-            <p className="bg-gradient-to-r from-pink-600 to-sky-400 bg-clip-text text-transparent text-3xl font-bold">
-              EzShift
+    <footer className="bg-white pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-16">
+          <div className="col-span-2 lg:col-span-2">
+            <div className="flex items-center gap-2 mb-6">
+              <i className="fa-solid fa-truck-fast text-primary text-xl"></i>
+              <span className="text-xl font-bold text-gray-900 tracking-tight">EzShift</span>
+            </div>
+            <p className="text-gray-600 mb-6 max-w-sm">
+              Making shifting easier, faster, and more transparent. The modern platform for all your logistics needs.
             </p>
+            <div className="flex gap-4">
+              <a href="#" className="text-gray-400 hover:text-gray-900 transition-colors">
+                <i className="fa-brands fa-twitter text-lg"></i>
+              </a>
+              <a href="#" className="text-gray-400 hover:text-gray-900 transition-colors">
+                <i className="fa-brands fa-linkedin text-lg"></i>
+              </a>
+              <a href="#" className="text-gray-400 hover:text-gray-900 transition-colors">
+                <i className="fa-brands fa-github text-lg"></i>
+              </a>
+            </div>
           </div>
-          <p className="text-gray-400 leading-6">
-            EzShift makes shifting easier! From mini-trucks to container trucks, 
-            with professional workers and real-time tracking — we handle your 
-            move with care, speed, and affordability.
-          </p>
-        </div>
 
-        {/* Quick Links */}
-        <div>
-          <h5 className="text-xl mb-4 font-semibold">Quick Links</h5>
-          <ul className="space-y-2 text-gray-400">
-            <li><a href="/" className="hover:text-sky-400">Home</a></li>
-            <li><a href="/about" className="hover:text-sky-400">About Us</a></li>
-            <li><a href="/services" className="hover:text-sky-400">Our Services</a></li>
-            <li><a href="/pricing" className="hover:text-sky-400">Pricing</a></li>
-            <li><a href="/contact" className="hover:text-sky-400">Contact</a></li>
-          </ul>
-        </div>
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
+            <ul className="space-y-3">
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Features</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Pricing</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Tracking</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">API</a></li>
+            </ul>
+          </div>
 
-        {/* Services */}
-        <div>
-          <h5 className="text-xl mb-4 font-semibold">Our Services</h5>
-          <ul className="space-y-2 text-gray-400">
-            <li>Household Shifting</li>
-            <li>Office Relocation</li>
-            <li>Vehicle Transport</li>
-            <li>Workers for Loading/Unloading</li>
-            <li>Real-time Tracking</li>
-            <li>Affordable Packages</li>
-          </ul>
-        </div>
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">Company</h3>
+            <ul className="space-y-3">
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">About</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Blog</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Careers</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Contact</a></li>
+            </ul>
+          </div>
 
-        {/* Contact */}
-        <div>
-          <h5 className="text-xl mb-4 font-semibold">Get In Touch</h5>
-          <p className="text-gray-400 mb-3">
-            Have questions? Reach out to us anytime!
-          </p>
-          <p className="text-gray-400"><i className="fa-solid fa-phone mr-2"></i> +91 98765 43210</p>
-          <p className="text-gray-400"><i className="fa-solid fa-envelope mr-2"></i> support@ezshift.com</p>
-          <p className="text-gray-400"><i className="fa-solid fa-location-dot mr-2"></i> Ahmedabad, India</p>
-          <div className="flex gap-4 mt-4 text-xl">
-            <a href="#"><i className="fa-brands fa-facebook hover:text-sky-400"></i></a>
-            <a href="#"><i className="fa-brands fa-instagram hover:text-sky-400"></i></a>
-            <a href="#"><i className="fa-brands fa-linkedin hover:text-sky-400"></i></a>
-            <a href="#"><i className="fa-brands fa-twitter hover:text-sky-400"></i></a>
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">Legal</h3>
+            <ul className="space-y-3">
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Terms of Service</a></li>
+            </ul>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-700 mt-10 pt-5 text-center text-gray-400 text-sm">
-        <p>Made with <i className="fa-solid fa-heart text-red-500"></i> by EzShift Team</p>
-        <p>© {new Date().getFullYear()} EzShift. All Rights Reserved.</p>
+        <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-gray-500 text-sm">
+            © {new Date().getFullYear()} EzShift Inc. All rights reserved.
+          </p>
+          <div className="flex gap-6">
+            <span className="text-gray-500 text-sm flex items-center gap-1">
+              <i className="fa-solid fa-globe"></i> English (US)
+            </span>
+          </div>
+        </div>
       </div>
     </footer>
   );

@@ -66,76 +66,88 @@ export default function SecondSetup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+    <div className="flex-1 flex items-center justify-center p-6">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
+        className="bg-white p-10 rounded-2xl shadow-sm border border-gray-200 w-full max-w-lg"
       >
-        <h2 className="text-2xl font-semibold mb-6 text-center">Select Your City</h2>
+        <div className="mb-8 text-center">
+          <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+            <FaCity className="text-xl" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Where are you based?</h2>
+          <p className="text-gray-500 text-sm">Select your primary city of operation to find relevant trips.</p>
+        </div>
 
         {/* Custom Dropdown */}
-        <div className="relative mb-4">
+        <div className="relative mb-8">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
           <button
             type="button"
             onClick={() => setOpen(!open)}
-            className="flex items-center justify-between w-full border border-gray-300 bg-white rounded-lg px-4 py-2 text-gray-700 shadow-sm hover:border-blue-400 focus:ring-2 focus:ring-blue-500 transition"
+            className={`flex items-center justify-between w-full border ${open ? 'border-primary ring-2 ring-blue-50' : 'border-gray-300'} bg-white rounded-lg px-4 py-3 text-gray-700 shadow-sm transition-all focus:outline-none`}
           >
             <span className="flex items-center gap-2">
-              <FaCity className="text-blue-500" />
-              {selectedCity || "-- Choose a city --"}
+              {selectedCity ? (
+                <span className="font-medium text-gray-900">{selectedCity}</span>
+              ) : (
+                <span className="text-gray-400">Select a city...</span>
+              )}
             </span>
             <FaChevronDown
-              className={`ml-2 transition-transform ${open ? "rotate-180" : ""}`}
+              className={`text-gray-400 transition-transform ${open ? "rotate-180 text-primary" : ""}`}
             />
           </button>
 
           {open && (
             <div className="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-72 overflow-y-auto">
               {/* Search box */}
-              <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 sticky top-0 bg-white">
+              <div className="flex items-center gap-2 px-3 py-3 border-b border-gray-100 sticky top-0 bg-white">
                 <FaSearch className="text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search city..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full outline-none text-gray-700"
+                  className="w-full outline-none text-gray-700 text-sm"
                 />
               </div>
 
-              {filteredCities.length > 0 ? (
-                filteredCities.map((city) => (
-                  <div
-                    key={city}
-                    onClick={() => {
-                      setSelectedCity(city);
-                      setOpen(false);
-                      setSearch("");
-                    }}
-                    className={`px-4 py-2 cursor-pointer flex items-center gap-2 hover:bg-blue-100 ${
-                      selectedCity === city
-                        ? "bg-blue-50 text-blue-600 font-medium"
-                        : ""
-                    }`}
-                  >
-                    <FaCity className="text-gray-500" />
-                    {city}
+              <div className="py-1">
+                {filteredCities.length > 0 ? (
+                  filteredCities.map((city) => (
+                    <div
+                      key={city}
+                      onClick={() => {
+                        setSelectedCity(city);
+                        setOpen(false);
+                        setSearch("");
+                      }}
+                      className={`px-4 py-2.5 cursor-pointer flex items-center text-sm transition-colors ${
+                        selectedCity === city
+                          ? "bg-primary-light text-primary font-semibold"
+                          : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      {city}
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-4 py-3 text-gray-500 text-sm text-center">
+                    No cities found
                   </div>
-                ))
-              ) : (
-                <div className="px-4 py-2 text-gray-500 text-sm">
-                  No cities found
-                </div>
-              )}
+                )}
+              </div>
             </div>
           )}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-all"
+          disabled={saving}
+          className="w-full bg-primary text-white font-semibold py-3 rounded-lg hover:bg-primary-hover transition-colors shadow-sm disabled:opacity-70"
         >
-          Continue
+          {saving ? 'Saving...' : 'Continue'}
         </button>
       </form>
     </div>

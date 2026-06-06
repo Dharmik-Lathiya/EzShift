@@ -109,7 +109,7 @@ export default function AdminDashboard() {
 function Card({ icon, title, value, sub }) {
   return (
     <div className="bg-white p-4 rounded-xl shadow flex items-center space-x-4 border-l-4 border-blue-600">
-      <div className="text-2xl text-blue-600">{icon}</div>
+      <div className="text-2xl text-primary">{icon}</div>
       <div>
         <h3 className="text-sm text-gray-500">{title}</h3>
         <p className="text-lg font-semibold text-gray-800">{value}</p>

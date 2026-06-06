@@ -12,14 +12,13 @@ import {
 } from 'react-icons/fa';
 
 const vehicleOptions = [
-  { value: 'miniTruck', name: 'Mini Truck', icon: <FaTruckMoving size={28} /> }, 
-  { value: 'smallVan', name: 'Small Van', icon: <FaShuttleVan size={28} /> },
-  { value: 'pickupTruck', name: 'Pickup Truck', icon: <FaTruckPickup size={28} /> },
-  { value: 'mediumDutyTruck', name: 'Medium Duty Truck', icon: <FaTruckMonster size={28} /> },
-  { value: 'containerTruck', name: 'Container Truck', icon: <FaTruckLoading size={28} /> }, 
-  { value: 'openBodyTruck', name: 'Open Body Truck', icon: <FaTruck size={28} /> }, 
+  { value: 'miniTruck', name: 'Mini Truck', icon: <FaTruckMoving size={24} /> }, 
+  { value: 'smallVan', name: 'Small Van', icon: <FaShuttleVan size={24} /> },
+  { value: 'pickupTruck', name: 'Pickup Truck', icon: <FaTruckPickup size={24} /> },
+  { value: 'mediumDutyTruck', name: 'Medium Duty Truck', icon: <FaTruckMonster size={24} /> },
+  { value: 'containerTruck', name: 'Container Truck', icon: <FaTruckLoading size={24} /> }, 
+  { value: 'openBodyTruck', name: 'Open Body Truck', icon: <FaTruck size={24} /> }, 
 ];
-
 
 export default function ThirdSetup() {
   const { vehicleType } = useVehicleStore();
@@ -44,31 +43,42 @@ export default function ThirdSetup() {
   };
 
   return (
-    <div className="flex items-center justify-center p-6">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Choose Your Vehicle</h2>
+    <div className="flex-1 flex items-center justify-center p-6">
+      <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-200 w-full max-w-2xl">
+        <div className="mb-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Choose Your Vehicle</h2>
+          <p className="text-gray-500 text-sm">Select the type of vehicle you will use for shifts.</p>
+        </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {vehicleOptions.map((vehicle, index) => (
             <button
               key={index}
               onClick={() => handleSelect(vehicle.value)}
-              className={`border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-gray-100 transition ${
-                selected === vehicle.value ? 'border-green-600 bg-green-50' : 'border-gray-300'
+              className={`border rounded-xl p-5 flex flex-col items-center justify-center transition-all ${
+                selected === vehicle.value 
+                ? 'border-primary bg-primary-light text-primary shadow-sm ring-1 ring-primary' 
+                : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
               }`}
             >
-              <div className="mb-2">{vehicle.icon}</div>
-              <span className="text-sm font-medium text-center">{vehicle.name}</span>
+              <div className={`mb-3 ${selected === vehicle.value ? 'text-primary' : 'text-gray-400'}`}>
+                {vehicle.icon}
+              </div>
+              <span className={`text-sm font-semibold text-center ${selected === vehicle.value ? 'text-gray-900' : 'text-gray-700'}`}>
+                {vehicle.name}
+              </span>
             </button>
           ))}
         </div>
 
-        <button
-          onClick={handleSubmit}
-          className="mt-6 w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
-        >
-          Continue
-        </button>
+        <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end">
+          <button
+            onClick={handleSubmit}
+            className="bg-primary text-white font-semibold py-2.5 px-8 rounded-lg hover:bg-primary-hover transition-colors shadow-sm"
+          >
+            Continue
+          </button>
+        </div>
       </div>
     </div>
   );

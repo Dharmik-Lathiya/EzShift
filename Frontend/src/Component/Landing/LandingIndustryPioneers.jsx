@@ -1,57 +1,50 @@
 import React from "react";
 
 export default function LandingIndustryPioneers() {
+  const testimonials = [
+    {
+      name: "Sarah Jenkins",
+      role: "Operations Manager",
+      company: "RetailTech",
+      quote: "Since switching to EzShift, our delivery disputes have dropped to zero. The real-time tracking is exactly what we needed to keep our customers informed.",
+    },
+    {
+      name: "Michael Chen",
+      role: "Facility Director",
+      company: "Urban Workspaces",
+      quote: "We move office equipment weekly. EzShift provides reliable trucks and professional labor that treats our hardware with care. Highly recommended.",
+    },
+    {
+      name: "Elena Rodriguez",
+      role: "Logistics Coordinator",
+      company: "Fresh Foods Inc",
+      quote: "The straightforward pricing model makes budgeting simple. We know exactly what a route will cost before booking, with no surprise charges.",
+    }
+  ];
+
   return (
-    <section className="bg-white text-gray-900 py-16">
-      <div className="max-w-6xl mx-auto px-5">
-        {/* Heading */}
-        <div className="text-center mb-12">
-          <p className="bg-gradient-to-tl from-pink-600 to-indigo-600 bg-clip-text text-transparent font-bold text-3xl md:text-5xl">
-            Trusted by
-          </p>
-          <p className="bg-gradient-to-tl from-pink-600 to-indigo-600 bg-clip-text text-transparent font-bold text-3xl md:text-5xl">
-            Industry Pioneers
-          </p>
-          <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-            Leaders across industries trust us to deliver innovation and 
-            excellence that drives real-world results.
-          </p>
-        </div>
+    <section className="bg-white py-24 border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-6">
+        <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight text-center mb-16">
+          Trusted by growing businesses
+        </h2>
 
-        {/* Testimonials */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition"
-            >
-              {/* Stars */}
-              <div className="text-yellow-400 mb-4">
+          {testimonials.map((item, i) => (
+            <div key={i} className="flex flex-col bg-gray-50 rounded-2xl p-8 border border-gray-100">
+              <div className="flex gap-1 text-yellow-400 mb-6 text-sm">
                 <i className="fa-solid fa-star"></i>
                 <i className="fa-solid fa-star"></i>
                 <i className="fa-solid fa-star"></i>
                 <i className="fa-solid fa-star"></i>
-                <i className="fa-solid fa-star-half-stroke"></i>
+                <i className="fa-solid fa-star"></i>
               </div>
-
-              {/* Review */}
-              <p className="text-gray-600 text-sm mb-6">
-                “Workify transformed the way we manage logistics. Their platform 
-                is reliable, efficient, and a true game-changer for the industry.”
+              <p className="text-gray-700 leading-relaxed mb-8 flex-grow">
+                "{item.quote}"
               </p>
-
-              {/* Profile */}
-              <div className="flex items-center">
-                <div className="h-14 w-14 bg-gray-200 rounded-full mr-4 flex items-center justify-center text-gray-500">
-                  <i className="fa-solid fa-user text-xl"></i>
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">John Doe</p>
-                  <p className="text-sm text-indigo-600 font-medium">
-                    Founder of Meta
-                  </p>
-                  <p className="text-xs text-gray-500">Global Innovator</p>
-                </div>
+              <div>
+                <p className="font-semibold text-gray-900">{item.name}</p>
+                <p className="text-sm text-gray-600">{item.role}, {item.company}</p>
               </div>
             </div>
           ))}

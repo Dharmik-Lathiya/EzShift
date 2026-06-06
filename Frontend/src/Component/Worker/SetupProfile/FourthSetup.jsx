@@ -90,19 +90,6 @@ export default function FourthSetup() {
     formData.append("vehicleDocument", vehicleDocument);
     formData.append("ownerId", ownerId);
 
-    console.log('Submitted:', {
-      vehicleOwner,
-      vehicleName,
-      vehicleCompany,
-      vehicleModel,
-      vehicleNumber,
-      drivingLicenseNumber,
-      drivingLicense,
-      vehicleDocument,
-      ownerId,
-      vehicleType
-    });
-
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/Worker/Vehicle/Add`,
@@ -133,128 +120,140 @@ export default function FourthSetup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+    <div className="flex-1 flex items-center justify-center p-6 bg-gray-50">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Vehicle & Document Details
-        </h2>
+      <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-200 w-full max-w-2xl">
+        <div className="mb-8 border-b border-gray-100 pb-6">
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+            Vehicle & Document Details
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">Provide information about your vehicle and upload required documents.</p>
+        </div>
 
-        {/* Vehicle Owner */}
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Vehicle Owner</label>
-          <select
-            value={vehicleOwner}
-            onChange={(e) => setVehicleOwner(e.target.value)}
-            className="w-full border rounded p-2"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Vehicle Owner */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Vehicle Owner</label>
+            <select
+              value={vehicleOwner}
+              onChange={(e) => setVehicleOwner(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-colors bg-white"
+            >
+              <option value="">Select Owner</option>
+              <option value="first">First Owner</option>
+              <option value="second">Second Owner</option>
+              <option value="third">Third Owner</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          {/* Vehicle Number */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Vehicle Number Plate</label>
+            <input
+              type="text"
+              placeholder="e.g. GJ01AB1234"
+              value={vehicleNumber}
+              onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-colors"
+            />
+          </div>
+
+          {/* Vehicle Company */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Vehicle Company</label>
+            <input
+              type="text"
+              placeholder="e.g. Tata, Mahindra"
+              value={vehicleCompany}
+              onChange={(e) => setVehicleCompany(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-colors"
+            />
+          </div>
+
+          {/* Vehicle Name */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Vehicle Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Bolero, Ace"
+              value={vehicleName}
+              onChange={(e) => setVehicleName(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-colors"
+            />
+          </div>
+
+          {/* Vehicle Model Year */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Model Year</label>
+            <input
+              type="text"
+              placeholder="e.g. 2020"
+              value={vehicleModel}
+              onChange={(e) => setVehicleModel(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-colors"
+            />
+          </div>
+
+          {/* Driving License Number */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">License Number</label>
+            <input
+              type="text"
+              placeholder="e.g. GJ05202100012345"
+              value={drivingLicenseNumber}
+              onChange={(e) => setDrivingLicenseNumber(e.target.value.toUpperCase())}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-colors"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Driving License File */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Driving License Photo</label>
+            <div className="border border-gray-300 border-dashed rounded-lg p-4 text-center hover:bg-gray-50 transition-colors">
+              <input
+                type="file"
+                accept="image/png, image/jpeg"
+                onChange={(e) => setDrivingLicense(e.target.files[0])}
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-light file:text-primary hover:file:bg-blue-100 cursor-pointer"
+              />
+            </div>
+            {drivingLicense && (
+              <p className="text-xs mt-2 text-gray-600 flex items-center gap-1">
+                <i className="fa-solid fa-check text-green-500"></i> {drivingLicense.name}
+              </p>
+            )}
+          </div>
+
+          {/* Vehicle Document */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Vehicle RC Book</label>
+            <div className="border border-gray-300 border-dashed rounded-lg p-4 text-center hover:bg-gray-50 transition-colors">
+              <input
+                type="file"
+                accept="image/png, image/jpeg"
+                onChange={(e) => setVehicleDocument(e.target.files[0])}
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-light file:text-primary hover:file:bg-blue-100 cursor-pointer"
+              />
+            </div>
+            {vehicleDocument && (
+              <p className="text-xs mt-2 text-gray-600 flex items-center gap-1">
+                <i className="fa-solid fa-check text-green-500"></i> {vehicleDocument.name}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-gray-100 flex justify-end">
+          <button
+            onClick={handleSubmit}
+            className="bg-primary text-white font-semibold py-2.5 px-8 rounded-lg hover:bg-primary-hover transition-colors shadow-sm"
           >
-            <option value="">Select Owner</option>
-            <option value="first">First Owner</option>
-            <option value="second">Second Owner</option>
-            <option value="third">Third Owner</option>
-            <option value="other">Other</option>
-          </select>
+            Submit Application
+          </button>
         </div>
-
-        {/* Vehicle Name */}
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Vehicle Name</label>
-          <input
-            type="text"
-            placeholder="e.g. Bolero, Omni"
-            value={vehicleName}
-            onChange={(e) => setVehicleName(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </div>
-
-        {/* Vehicle Company */}
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Vehicle Company</label>
-          <input
-            type="text"
-            placeholder="e.g. Tata, Mahindra"
-            value={vehicleCompany}
-            onChange={(e) => setVehicleCompany(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </div>
-
-        {/* Vehicle Model Year */}
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Vehicle Model Year</label>
-          <input
-            type="text"
-            placeholder="e.g. 2020, 2021"
-            value={vehicleModel}
-            onChange={(e) => setVehicleModel(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </div>
-
-        {/* Vehicle Number */}
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Vehicle Number Plate</label>
-          <input
-            type="text"
-            placeholder="e.g. GJ01AB1234"
-            value={vehicleNumber}
-            onChange={(e) => setVehicleNumber(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </div>
-
-        {/* Driving License Number */}
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Driving License Number</label>
-          <input
-            type="text"
-            placeholder="e.g. GJ05202100012345"
-            value={drivingLicenseNumber}
-            onChange={(e) => setDrivingLicenseNumber(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </div>
-
-        {/* Driving License File */}
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Driving License File</label>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            onChange={(e) => setDrivingLicense(e.target.files[0])}
-            className="w-full border rounded p-2"
-          />
-          {drivingLicense && (
-            <p className="text-sm mt-1 text-green-700">
-              Selected: {drivingLicense.name}
-            </p>
-          )}
-        </div>
-
-        {/* Vehicle Document */}
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Vehicle Document</label>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            onChange={(e) => setVehicleDocument(e.target.files[0])}
-            className="w-full border rounded p-2"
-          />
-          {vehicleDocument && (
-            <p className="text-sm mt-1 text-green-700">
-              Selected: {vehicleDocument.name}
-            </p>
-          )}
-        </div>
-
-        {/* Submit */}
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
-        >
-          Submit
-        </button>
       </div>
     </div>
   );

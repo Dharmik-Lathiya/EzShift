@@ -136,7 +136,7 @@ export default function ClientLogin() {
                   required
                 />
               </div>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+              <button className="w-full bg-primary hover:bg-primary-hover text-white py-2 rounded">
                 Login
               </button>
             </form>
@@ -194,7 +194,7 @@ export default function ClientLogin() {
                   required
                 />
               </div>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+              <button className="w-full bg-primary hover:bg-primary-hover text-white py-2 rounded">
                 Sign Up
               </button>
             </form>
@@ -204,7 +204,7 @@ export default function ClientLogin() {
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
               onClick={handleModeSwitch}
-              className="text-blue-600 hover:underline font-medium"
+              className="text-primary hover:underline font-medium"
             >
               {isLogin ? "Sign Up" : "Login"}
             </button>
