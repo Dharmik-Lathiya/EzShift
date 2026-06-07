@@ -54,18 +54,17 @@ export default function ClientHeader() {
             />
           </Link>
         </div>
-        
+
         <div className="hidden md:flex items-center justify-center flex-1 mx-8">
           <ul className="flex items-center space-x-1 lg:space-x-2">
             {navLinks.map((link) => (
               <li key={link.name}>
-                <Link 
+                <Link
                   to={link.path}
-                  className={`px-5 py-2.5 rounded-lg text-sm lg:text-base font-semibold transition-all duration-200 ${
-                    location.pathname.includes(link.path)
+                  className={`px-5 py-2.5 rounded-lg text-sm lg:text-base font-semibold transition-all duration-200 ${location.pathname.includes(link.path)
                       ? "bg-primary-light text-primary"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -79,10 +78,10 @@ export default function ClientHeader() {
             <div className="h-11 w-11 rounded-full overflow-hidden border-2 border-gray-200 group-hover:border-primary transition-colors">
               <img
                 className="h-full w-full object-cover"
-                src={avatarUrl || '/favicon.png'}
+                src={avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}
                 alt="profile"
                 onError={(e) => {
-                  e.currentTarget.src = '/favicon.png';
+                  e.currentTarget.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
                 }}
               />
             </div>
@@ -94,7 +93,7 @@ export default function ClientHeader() {
       {/* Mobile Menu Overlay */}
       {menuOpen && (
         <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden" onClick={() => setMenuOpen(false)}>
-          <div 
+          <div
             className="absolute top-0 left-0 h-full w-72 bg-white shadow-xl flex flex-col transform transition-transform duration-300"
             onClick={(e) => e.stopPropagation()}
           >
@@ -107,27 +106,26 @@ export default function ClientHeader() {
             <ul className="flex flex-col py-4">
               {navLinks.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     to={link.path}
                     onClick={() => setMenuOpen(false)}
-                    className={`block px-6 py-4 text-base font-semibold border-l-4 transition-colors ${
-                      location.pathname.includes(link.path)
+                    className={`block px-6 py-4 text-base font-semibold border-l-4 transition-colors ${location.pathname.includes(link.path)
                         ? "border-primary bg-primary-light text-primary"
                         : "border-transparent text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                    }`}
+                      }`}
                   >
                     {link.name}
                   </Link>
                 </li>
               ))}
               <li className="mt-4 border-t border-gray-100 pt-4">
-                 <Link 
-                    to="/Client/Profile"
-                    onClick={() => setMenuOpen(false)}
-                    className="block px-6 py-4 text-base font-semibold text-gray-700 hover:bg-gray-50"
-                  >
-                    My Profile
-                  </Link>
+                <Link
+                  to="/Client/Profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-6 py-4 text-base font-semibold text-gray-700 hover:bg-gray-50"
+                >
+                  My Profile
+                </Link>
               </li>
             </ul>
           </div>
