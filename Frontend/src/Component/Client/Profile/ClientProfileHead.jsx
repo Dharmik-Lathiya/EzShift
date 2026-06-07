@@ -121,7 +121,7 @@ export default function ClientProfileHead() {
             <div className="relative group shrink-0">
               <img
                 className="w-28 h-28 rounded-full object-cover border-4 border-gray-50 shadow-sm"
-                src={client.profilePic || '/favicon.png'}
+                src={client.profilePic || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}
                 alt="profile"
               />
             </div>
@@ -246,7 +246,7 @@ export default function ClientProfileHead() {
                 <div className="flex flex-col items-center justify-center mb-6">
                   <div className="relative group">
                     <img
-                      src={profilePic ? URL.createObjectURL(profilePic) : (client.profilePic || '/favicon.png')}
+                      src={profilePic ? URL.createObjectURL(profilePic) : (client.profilePic || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}
                       alt="preview"
                       className="h-24 w-24 rounded-full object-cover border-4 border-gray-50 shadow-sm"
                     />
