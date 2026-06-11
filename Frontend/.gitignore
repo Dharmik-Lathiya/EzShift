@@ -32,3 +32,4 @@ Backend/Database/firebase-service-account.json
 /graphhopper/graph-cache/
 /graphhopper/logs/
 
+.env
