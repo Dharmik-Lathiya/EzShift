@@ -2,7 +2,7 @@ import React from "react";
 
 export default function LandingBuiltTechnologies() {
   return (
-    <section className="bg-gray-50 py-24 border-b border-gray-100">
+    <section id="Tool-Section" className="bg-gray-50 py-24 border-b border-gray-100 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>

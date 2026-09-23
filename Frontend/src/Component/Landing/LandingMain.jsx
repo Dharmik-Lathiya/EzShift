@@ -38,6 +38,7 @@ export default function LandingMain() {
 
   return (
     <section
+      id="home"
       className="relative min-h-screen w-full text-white bg-gradient-to-br from-black via-slate-950 to-black bg-no-repeat bg-cover bg-center overflow-hidden"
     >
       {/* Animated Background Elements */}
@@ -127,7 +128,7 @@ export default function LandingMain() {
           src="/new.png"
           alt="Description of image"
           style={{ scale, rotateZ }}
-          className="w-[500px] h-[500px] lg:w-[700px] lg:h-[700px]"
+          className="w-[min(88vw,500px)] h-[min(88vw,500px)] lg:w-[700px] lg:h-[700px]"
         />
       </div>
 

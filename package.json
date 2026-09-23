@@ -1,0 +1,25 @@
+{
+  "name": "ezshift",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently -k -n db,backend,frontend -c blue,green,magenta \"npm:dev:db\" \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:db": "bash scripts/dev-db.sh",
+    "dev:backend": "pnpm --dir Backend run dev",
+    "dev:frontend": "pnpm --dir Frontend run dev",
+    "dev:phone": "concurrently -k -n db,backend,frontend -c blue,green,magenta \"npm:dev:db\" \"npm:dev:backend\" \"bash scripts/dev-phone-frontend.sh\"",
+    "dev:tunnel": "pnpm --dir Backend run tunnel",
+    "db:stop": "bash scripts/db-stop.sh stop",
+    "db:down": "bash scripts/db-stop.sh down",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@12.4.1"
+}

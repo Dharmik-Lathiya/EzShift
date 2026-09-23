@@ -35,7 +35,7 @@ export default function LandingFeatures() {
   ];
 
   return (
-    <section className="bg-white py-20 border-b border-gray-100">
+    <section id="Features-Section" className="bg-white py-20 border-b border-gray-100 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-16 md:flex md:justify-between md:items-end">
           <div className="max-w-2xl">

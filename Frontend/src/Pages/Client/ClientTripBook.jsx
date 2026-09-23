@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import useTripStore from '../../store/useTripStore';
 import ClientTripPricing from '../../Component/Client/BookTrip/ClientTripPricing';
-import { MapPin, Calendar, Clock, Truck, Users, FileText } from 'lucide-react';
+import { MapPin, Calendar, Clock, Truck, Users, FileText, Loader2 } from 'lucide-react';
 
 export default function ClientTripBook() {
   const {
@@ -25,6 +25,7 @@ export default function ClientTripBook() {
   } = useTripStore();
 
   const [showPricing, setShowPricing] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
   const [formData, setFormData] = useState({
     pickUp: '',
     destination: '',
@@ -65,20 +66,27 @@ export default function ClientTripBook() {
   };
 
   const calculateDistance = async () => {
-    try {
-      if (!formData.pickUp || !formData.destination) {
-        toast.error("Please enter both pickup and destination addresses.");
-        return;
-      }
+    if (isCalculating) return;
 
+    if (!formData.pickUp || !formData.destination) {
+      toast.error("Please enter both pickup and destination addresses.");
+      return;
+    }
+
+    setIsCalculating(true);
+    try {
       const geoCode = async (place) => {
         const res = await axios.get(`https://api.openrouteservice.org/geocode/search`, {
           params: { api_key: ORS_API_KEY, text: place },
         });
         if (!res.data.features || res.data.features.length === 0) {
-          throw new Error(`No coordinates found for: ${place}`);
+          throw new Error(`No coordinates found for: "${place}". Please try a more specific address.`);
         }
-        return res.data.features[0].geometry.coordinates;
+        const coords = res.data.features[0].geometry?.coordinates;
+        if (!Array.isArray(coords) || coords.length < 2) {
+          throw new Error(`Invalid location data for: "${place}". Please try again.`);
+        }
+        return [Number(coords[0]), Number(coords[1])];
       };
 
       const start = await geoCode(formData.pickUp);
@@ -87,14 +95,25 @@ export default function ClientTripBook() {
       const route = await axios.post(
         `https://api.openrouteservice.org/v2/directions/driving-car`,
         { coordinates: [start, end] },
-        { headers: { Authorization: ORS_API_KEY } }
+        { headers: { Authorization: ORS_API_KEY, 'Content-Type': 'application/json' } }
       );
+
+      if (!route.data?.routes?.[0]?.summary?.distance) {
+        throw new Error("Could not calculate a route between these locations.");
+      }
 
       const distKm = route.data.routes[0].summary.distance / 1000;
       setDistance(distKm.toFixed(2));
     } catch (error) {
       console.error('Distance calculation error:', error);
-      toast.error(error.message || "Distance calculation failed.");
+      const orsMessage = error.response?.data?.error?.message;
+      toast.error(
+        orsMessage ||
+          error.message ||
+          "Distance calculation failed. Please check the addresses and try again."
+      );
+    } finally {
+      setIsCalculating(false);
     }
   };
 
@@ -337,9 +356,17 @@ export default function ClientTripBook() {
             <div className="pt-6 border-t border-gray-100 flex justify-end">
               <button 
                 type="submit" 
-                className="w-full sm:w-auto px-8 py-3.5 bg-primary text-white font-bold rounded-xl shadow-sm hover:bg-primary-hover hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2"
+                disabled={isCalculating}
+                className="w-full sm:w-auto px-8 py-3.5 bg-primary text-white font-bold rounded-xl shadow-sm hover:bg-primary-hover hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-sm"
               >
-                Calculate Distance & Get Quote
+                {isCalculating ? (
+                  <>
+                    <Loader2 className="animate-spin" size={20} />
+                    Calculating Distance...
+                  </>
+                ) : (
+                  "Calculate Distance & Get Quote"
+                )}
               </button>
             </div>
           </form>

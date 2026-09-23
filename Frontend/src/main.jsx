@@ -11,6 +11,7 @@ import { getToken, onMessage } from 'firebase/messaging';
 const vapidKey = "BMruF894vKbbp2OJykTdHsQNC_O9b3mfbTHSui_kakTJzQ_LDADNVGI77GixHXzA3Ym9UAqyGWoMQ8tkCwicyC8";
 
 async function requestFCMToken() {
+  if (!messaging) return null;
   try {
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
@@ -36,14 +37,16 @@ async function requestFCMToken() {
   }
 }
 
-onMessage(messaging, (payload) => {
-  console.log('Foreground message received:', payload);
-  const { title, body, icon } = payload.notification || {};
-  new Notification(title || 'New Message', {
-    body: body || '',
-    icon: icon || '/favicon.ico',
+if (messaging) {
+  onMessage(messaging, (payload) => {
+    console.log('Foreground message received:', payload);
+    const { title, body, icon } = payload.notification || {};
+    new Notification(title || 'New Message', {
+      body: body || '',
+      icon: icon || '/favicon.ico',
+    });
   });
-});
+}
 
 function Root() {
   const [fcmToken, setFcmToken] = React.useState(null);

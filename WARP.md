@@ -20,12 +20,52 @@ The app models three main roles:
 
 ### Install dependencies
 
+- From the repository root:
+  - `pnpm install` (installs `concurrently` for the root dev scripts)
 - Backend:
   - `cd Backend`
-  - `npm install`
+  - `pnpm install`
 - Frontend:
   - `cd Frontend`
-  - `npm install`
+  - `pnpm install`
+
+### Run everything (root-level dev command)
+
+From the repository root, one command starts the whole stack with color-tagged
+logs (`[db]`, `[backend]`, `[frontend]`), and Ctrl+C stops them all:
+
+- `pnpm run dev`
+
+This runs three things concurrently:
+
+- `pnpm run dev:db` – starts the dev database:
+  - **Docker preferred** – `docker compose up -d postgres` (container `ezshift-postgres`,
+    port 5432 by default). Override `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`,
+    `POSTGRES_PORT` with a root `.env` file (see `.env.example`).
+  - **Local Postgres fallback** (no sudo needed) – if the Docker daemon is not running,
+    `scripts/dev-db.sh` initializes (first run) and starts a local cluster under
+    `.pgdata/` (gitignored) with `pg_ctl`, using the same `POSTGRES_*` defaults.
+- `pnpm run dev:backend` – `node-dev Backend/index.js` with auto-reload.
+- `pnpm run dev:frontend` – Vite dev server (default port 5173), proxied to the
+  backend through `VITE_BACKEND_URL` in `Frontend/.env`.
+
+Useful extras:
+
+- `pnpm run db:stop` / `pnpm run db:down` – stop / stop-and-remove the database
+  (Docker container, or the local `.pgdata` cluster when Docker is down).
+- `pnpm run dev:phone` – same as `dev`, but the frontend's `VITE_BACKEND_URL` is
+  set to the machine's LAN IP (e.g. `http://192.168.1.12:3000`) so a phone/tablet
+  on the same Wi‑Fi can use the whole stack. The frontend dev server is bound to
+  `0.0.0.0` (`host: true` in `Frontend/vite.config.js`), so open
+  `http://<LAN-IP>:5173` on the device. Express already listens on all interfaces.
+  Implementation: `scripts/dev-phone-frontend.sh` (detects the LAN IP, exports
+  `VITE_BACKEND_URL`, then starts Vite).
+- `pnpm run dev:tunnel` – opens an `ngrok http 3000` tunnel to the local backend.
+  Used to test **HTTPS-only features** (FCM push notifications, camera/mic) from a
+  real device, since Chrome blocks those on plain `http://<LAN-IP>` origins.
+  Requires a one-time `ngrok config add-authtoken <token>` (free ngrok account).
+  The npm `ngrok` package (v5 beta) is already a `Backend/` dependency.
+- Individual pieces: `pnpm run dev:backend`, `pnpm run dev:frontend`, `pnpm run dev:db`.
 
 ### Backend: run the API
 
@@ -269,11 +309,23 @@ Push notifications for workers/clients are handled via Firebase both in the serv
     - `requestFCMToken()` – obtains an FCM token using a VAPID key and the active service worker.
     - `listenForMessages(callback)` – attaches a foreground `onMessage` handler and forwards payloads to a custom callback.
 
-- `src/main.jsx` currently imports `messaging` from `./firebase-config.js` (which is empty at present) and manually wires `Notification.requestPermission` and `getToken(messaging, { vapidKey, serviceWorkerRegistration })`.
+- `src/main.jsx` imports `messaging` from `./firebase-config.js` (which holds the
+  real Firebase config and exports `getMessaging(app)`) and manually wires
+  `Notification.requestPermission` and `getToken(messaging, { vapidKey, serviceWorkerRegistration })`.
+  The token is sent to the backend once per worker session from
+  `WorkerDashboard.jsx` via `PATCH /Worker/FCMToken/:id`.
 
 When working on push notifications, be aware that:
 - There is a split between the `public/`-level Firebase setup and the `src/`-level setup.
 - The backend FCM integration (`sendNoti.js`) and frontend messaging must stay aligned on token handling and message payload shapes (e.g., including `tripId` in `data`).
+- **"Device unregistered" errors are normal when the stored token is stale** (browser
+  cleared site data or the worker logged in on a different device). `Book.js` already
+  auto-clears such tokens from `Worker.fcmToken` on
+  `messaging/registration-token-not-registered`, so the fix is simply to log the worker
+  in again on the device that should receive pushes so a fresh token is stored.
+- Push delivery is HTTPS-only (secure context), so it cannot be exercised from a phone
+  via plain `http://<LAN-IP>:5173`; use `pnpm run dev:tunnel` (ngrok) or the deployed
+  Vercel/Render URLs instead.
 
 ---
 

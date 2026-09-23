@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "dev": "node-dev index.js",
+    "start": "node index.js",
+    "tunnel": "ngrok http 3000"
+  },
   "dependencies": {
     "axios": "^1.10.0",
     "base-64": "^1.0.0",

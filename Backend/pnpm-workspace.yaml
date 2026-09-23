@@ -1,0 +1,6 @@
+allowBuilds:
+  '@firebase/util': false
+  bcrypt: true
+  core-js: true
+  ngrok: true
+  protobufjs: true

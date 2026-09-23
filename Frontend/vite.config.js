@@ -7,7 +7,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     fs: { strict: false },
-    middlewareMode: false
+    middlewareMode: false,
+    host: true
   },
   preview: {
     fs: {
