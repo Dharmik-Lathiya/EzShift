@@ -87,7 +87,7 @@ export default function ClientTripPricing() {
         <div>Total: ₹{pricing?.total.toFixed(2) ?? 0}</div>
         <div>
           <button
-            className="bg-primary-light0 text-white px-4 py-1 rounded hover:bg-primary-hover"
+            className="bg-primary text-white px-4 py-1 rounded hover:bg-primary-hover"
             onClick={handleBooking}
           >
             Book Trip

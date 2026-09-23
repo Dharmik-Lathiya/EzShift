@@ -162,6 +162,7 @@ export default function WorkerDashboard() {
 
    // Foreground messages
   useEffect(() => {
+    if (!messaging) return;
     const unsubscribe = onMessage(messaging, (payload) => {
       console.log("📩 Foreground FCM:", payload);
 

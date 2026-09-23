@@ -14,14 +14,33 @@ const firebaseConfig = {
 const vapidKey = 'BMruF894vKbbp2OJykTdHsQNC_O9b3mfbTHSui_kakTJzQ_LDADNVGI77GixHXzA3Ym9UAqyGWoMQ8tkCwicyC8';
 
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+
+// Same guard as src/firebase-config.js — getMessaging() throws on browsers
+// without push support (e.g. a phone on plain http://), which used to crash
+// every page that imported this file.
+const messaging = (() => {
+  try {
+    if (typeof window === 'undefined') return null;
+    if (!('Notification' in window)) return null;
+    if (!('serviceWorker' in navigator)) return null;
+    const isSecure =
+      window.isSecureContext ||
+      ['localhost', '127.0.0.1'].includes(window.location?.hostname);
+    if (!isSecure) return null;
+    return getMessaging(app);
+  } catch (err) {
+    console.warn('[firebase.js] Messaging unavailable:', err?.code || err?.message);
+    return null;
+  }
+})();
 
 export const requestFCMToken = async () => {
+  if (!messaging) return null;
   try {
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
       console.error('Notification permission denied.');
-      return;
+      return null;
     }
 
     const registration = await navigator.serviceWorker.ready;
@@ -35,14 +54,17 @@ export const requestFCMToken = async () => {
       return currentToken;
     } else {
       console.error('No registration token available.');
+      return null;
     }
   } catch (err) {
     console.error('An error occurred while retrieving token.', err);
+    return null;
   }
 };
 
 export const listenForMessages = (callback) => {
-  onMessage(messaging, (payload) => {
+  if (!messaging) return () => {};
+  return onMessage(messaging, (payload) => {
     console.log('[firebase.js] Foreground message:', payload);
     if (callback && typeof callback === 'function') {
       callback(payload);

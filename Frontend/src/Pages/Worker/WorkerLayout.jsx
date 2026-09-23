@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { FiMenu, FiX } from 'react-icons/fi';
+import MobileBottomNav from '../../Component/MobileBottomNav';
+import { LayoutDashboard, Route, Truck, User } from 'lucide-react';
 
 const navItems = [
-  { name: 'Dashboard', path: '/Worker', icon: 'fa-chart-pie' },
-  { name: 'Trips', path: '/Worker/Trips', icon: 'fa-route' },
-  { name: 'Vehicle', path: '/Worker/Vehicle', icon: 'fa-truck' },
-  { name: 'Profile', path: '/Worker/Profile', icon: 'fa-user' },
+  { name: 'Dashboard', path: '/Worker', icon: LayoutDashboard },
+  { name: 'Trips', path: '/Worker/Trips', icon: Route },
+  { name: 'Vehicle', path: '/Worker/Vehicle', icon: Truck },
+  { name: 'Profile', path: '/Worker/Profile', icon: User },
 ];
+
+const handleLogout = () => {
+  localStorage.setItem('workerId', '');
+  localStorage.setItem('workerIsLogin', '');
+  window.location.href = '/Worker/Auth';
+};
 
 export default function WorkerLayout() {
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const renderNavLinks = () => (
     <ul className="space-y-1">
@@ -23,9 +29,8 @@ export default function WorkerLayout() {
               ${location.pathname === item.path
                 ? 'bg-primary-light text-primary'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
-            onClick={() => setMobileOpen(false)} // Close menu on mobile
           >
-            <i className={`fa-solid ${item.icon} w-5 text-center ${location.pathname === item.path ? 'text-primary' : 'text-gray-400'}`}></i>
+            <item.icon className="w-5 text-center" size={18} />
             {item.name}
           </Link>
         </li>
@@ -44,30 +49,7 @@ export default function WorkerLayout() {
           </span>
           <div className="text-xl font-bold text-gray-900 tracking-tight">EzShift</div>
         </div>
-        <button className="text-gray-600 p-1" onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-        </button>
       </div>
-
-      {/* Mobile Dropdown Menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-b border-gray-200 px-4 py-4 space-y-4 absolute w-full z-50 shadow-lg">
-          {renderNavLinks()}
-          <div className="pt-4 border-t border-gray-100">
-            <button
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 font-medium hover:bg-red-50 rounded-lg transition-colors"
-              onClick={() => {
-                window.location.href = '/Worker/Auth';
-                localStorage.setItem('workerId', '');
-                localStorage.setItem('workerIsLogin', '');
-              }}
-            >
-              <i className="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
-              Logout
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-gray-200 flex-shrink-0">
@@ -87,11 +69,7 @@ export default function WorkerLayout() {
           <div className="mt-auto pt-6 border-t border-gray-100">
             <button
               className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
-              onClick={() => {
-                window.location.href = '/Worker/Auth';
-                localStorage.setItem('workerId', '');
-                localStorage.setItem('workerIsLogin', '');
-              }}
+              onClick={handleLogout}
             >
               <i className="fa-solid fa-arrow-right-from-bracket w-5 text-center text-gray-400"></i>
               Logout
@@ -102,10 +80,13 @@ export default function WorkerLayout() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-y-auto w-full relative">
-        <main className="p-6 md:p-10 w-full max-w-7xl mx-auto flex-1">
+        <main className="p-6 md:p-10 w-full max-w-7xl mx-auto flex-1 pb-24 md:pb-10">
           <Outlet />
         </main>
       </div>
+
+      {/* Mobile bottom navigation */}
+      <MobileBottomNav items={navItems} onLogout={handleLogout} />
     </div>
   );
 }
