@@ -3,6 +3,7 @@ import ClientHeader from '../../Component/Client/ClientHeader'
 import { Outlet } from 'react-router-dom';
 import LandingFooter from '../../Component/Landing/LandingFooter';
 import MobileBottomNav from '../../Component/MobileBottomNav';
+import { warmUpBackend } from '../../utils/backendWarmup.js';
 import { LayoutDashboard, Truck, Map, History, User } from 'lucide-react';
 
 const clientNavItems = [
@@ -14,6 +15,10 @@ const clientNavItems = [
 ];
 
 export default function ClientLayout() {
+  React.useEffect(() => {
+    warmUpBackend();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 pb-16 md:pb-0">
       <ClientHeader />

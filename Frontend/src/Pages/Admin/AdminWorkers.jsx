@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { UserRound } from 'lucide-react';
 
 export default function AdminWorkers() {
   const [users, setWorkers] = useState([]);
@@ -107,7 +108,17 @@ export default function AdminWorkers() {
                       {new Date(worker.createdAt).toLocaleDateString()}
                     </td>
                     <td className='border px-4 py-2' >
-                      <img src={worker.avatar} alt="Profile" className="h-10 w-10 rounded-full object-cover" />
+                      <div className="relative h-10 w-10 rounded-full bg-primary-light flex items-center justify-center mx-auto">
+                        <UserRound size={18} className="text-primary" />
+                        {worker.avatar && (
+                          <img
+                            src={worker.avatar}
+                            alt="Profile"
+                            className="absolute inset-0 h-full w-full rounded-full object-cover"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        )}
+                      </div>
                     </td>
                     <td className='border px-4 py-2'>
                       <button

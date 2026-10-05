@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import LandingHeader from '../../Component/Landing/LandingHeader';
 import LandingFooter from '../../Component/Landing/LandingFooter';
-import logo from '../../assets/logo.png';
-import { User, Phone, Mail, Lock, Truck, Check } from 'lucide-react';
+import { User, Phone, Mail, Lock } from 'lucide-react';
 
 function Field({ icon, label, error, className, ...props }) {
   const Icon = icon;
@@ -179,161 +178,132 @@ export default function WorkerLogin() {
   return (
     <>
       <LandingHeader/>
-      <div className="min-h-screen bg-slate-50 relative flex items-center justify-center px-4 py-16 sm:py-20 overflow-hidden">
-        {/* Soft brand accents */}
-        <div className="absolute -top-24 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 -right-24 w-80 h-80 rounded-full bg-indigo-500/5 blur-3xl pointer-events-none"></div>
+      <Toaster position="top-center" reverseOrder={false} />
+      <section className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16 sm:py-20">
+        <div className="w-full max-w-sm">
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+            <h1 className="text-2xl font-bold text-gray-900 text-center tracking-tight">
+              {isLogin ? "Log in" : "Join as a worker"}
+            </h1>
+            <p className="text-center text-sm text-gray-500 mt-1.5 mb-8">
+              {isLogin ? "Pick up jobs near you, on your schedule." : "Create your account to start taking trips."}
+            </p>
 
-        <Toaster position="top-center" reverseOrder={false} />
-
-        <div className="relative w-full max-w-4xl">
-          <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/70 overflow-hidden grid md:grid-cols-2">
-            {/* Brand panel (desktop) */}
-            <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-primary via-sky-500 to-indigo-600 p-10 text-white">
-              <div>
-                <div className="flex items-center gap-2.5">
-                  <span className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                    <Truck size={22} className="text-white" />
-                  </span>
-                  <span className="text-2xl font-bold tracking-tight">EzShift</span>
-                </div>
-                <h2 className="mt-14 text-3xl font-bold leading-tight">Work when you want</h2>
-                <p className="mt-3 text-white/80 leading-relaxed">
-                  Join EzShift and get moving jobs near you — flexible shifts, real earnings.
-                </p>
-              </div>
-              <ul className="mt-10 space-y-3.5">
-                {[
-                  'Get matched to nearby trips instantly',
-                  'Transparent earnings & weekly payouts',
-                  'Verified vehicles and 24/7 support',
-                ].map((point) => (
-                  <li key={point} className="flex items-start gap-3 text-white/90">
-                    <Check size={17} className="mt-0.5 shrink-0 text-white" />
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Form panel */}
-            <div className="p-8 sm:p-10">
-              <div className="md:hidden flex justify-center mb-6">
-                <img src={logo} alt="EzShift" className="h-10 w-auto object-contain" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 text-center md:text-left">
-                {isLogin ? "Worker Login" : "Worker Sign Up"}
-              </h2>
-              <p className="text-center md:text-left text-sm text-gray-500 mt-1.5 mb-8">
-                {isLogin ? "Sign in to get to work" : "Create your worker account"}
-              </p>
-
-              {isLogin ? (
-                <form className="space-y-4" onSubmit={handleLoginSubmit} noValidate>
-                  <Field
-                    icon={Mail}
-                    label="Email"
-                    type="email"
-                    placeholder="Enter Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    error={errors.email}
-                    required
-                  />
-                  <Field
-                    icon={Lock}
-                    label="Password"
-                    type="password"
-                    name="password"
-                    placeholder="Enter Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    error={errors.password}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 rounded-lg shadow-lg shadow-primary/20 transition duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  >
-                    Login
-                  </button>
-                </form>
-              ) : (
-                <form className="space-y-4" onSubmit={handleSignupSubmit} noValidate>
-                  <Field
-                    icon={User}
-                    label="Full Name"
-                    type="text"
-                    placeholder="Enter Name"
-                    name="fullname"
-                    value={formData.fullname}
-                    onChange={handleChange}
-                    error={errors.fullname}
-                    required
-                  />
-                  <Field
-                    icon={Phone}
-                    label="Mobile No"
-                    type="tel"
-                    maxLength={10}
-                    inputMode="numeric"
-                    name="mobileno"
-                    placeholder="Enter Mobile No"
-                    value={formData.mobileno}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d{0,10}$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    error={errors.mobileno}
-                    required
-                  />
-                  <Field
-                    icon={Mail}
-                    label="Email"
-                    type="email"
-                    placeholder="Enter Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    error={errors.email}
-                    required
-                  />
-                  <Field
-                    icon={Lock}
-                    label="Password"
-                    type="password"
-                    name="password"
-                    placeholder="Enter Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    error={errors.password}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 rounded-lg shadow-lg shadow-primary/20 transition duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  >
-                    Sign Up
-                  </button>
-                </form>
-              )}
-
-              <p className="text-center text-sm text-gray-500 mt-6">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+            {isLogin ? (
+              <form className="space-y-4" onSubmit={handleLoginSubmit} noValidate>
+                <Field
+                  icon={Mail}
+                  label="Email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  error={errors.email}
+                  required
+                />
+                <Field
+                  icon={Lock}
+                  label="Password"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Your password"
+                  autoComplete="current-password"
+                  error={errors.password}
+                  required
+                />
                 <button
-                  onClick={handleModeSwitch}
-                  className="text-primary hover:text-primary-hover font-medium"
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40"
                 >
-                  {isLogin ? "Sign Up" : "Login"}
+                  Log in
                 </button>
-              </p>
-            </div>
+              </form>
+            ) : (
+              <form className="space-y-4" onSubmit={handleSignupSubmit} noValidate>
+                <Field
+                  icon={User}
+                  label="Full Name"
+                  type="text"
+                  placeholder="Your full name"
+                  autoComplete="name"
+                  name="fullname"
+                  value={formData.fullname}
+                  onChange={handleChange}
+                  error={errors.fullname}
+                  required
+                />
+                <Field
+                  icon={Phone}
+                  label="Mobile No"
+                  type="tel"
+                  maxLength={10}
+                  inputMode="numeric"
+                  autoComplete="tel"
+                  name="mobileno"
+                  placeholder="Your mobile number"
+                  value={formData.mobileno}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d{0,10}$/.test(value)) {
+                      handleChange(e);
+                    }
+                  }}
+                  error={errors.mobileno}
+                  required
+                />
+                <Field
+                  icon={Mail}
+                  label="Email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={errors.email}
+                  required
+                />
+                <Field
+                  icon={Lock}
+                  label="Password"
+                  type="password"
+                  autoComplete="new-password"
+                  name="password"
+                  placeholder="Create a password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  error={errors.password}
+                  required
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                >
+                  Create account
+                </button>
+              </form>
+            )}
+
+            <p className="text-center text-sm text-gray-500 mt-7">
+              {isLogin ? "New to EzShift?" : "Already have an account?"}{" "}
+              <button
+                onClick={handleModeSwitch}
+                className="text-primary hover:text-primary-hover font-medium"
+              >
+                {isLogin ? "Join as a worker" : "Log in"}
+              </button>
+            </p>
           </div>
+
+          <p className="text-center text-xs text-gray-400 mt-6">
+            Earn on every trip you complete
+          </p>
         </div>
-      </div>
+      </section>
       <LandingFooter/>
     </>
   );

@@ -1,11 +1,17 @@
 import React, { useState } from 'react'
 import logo from '../../assets/logo.png'
 import { Link } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Home, Sparkles, Wrench, Info, Mail, ChevronRight } from 'lucide-react'
 
 const navLinks = [
   { name: 'Features', target: 'Features-Section' },
   { name: 'Tools', target: 'Tool-Section' },
+]
+
+const mobileMenuLinks = [
+  { name: 'Home', target: 'home', icon: Home },
+  { name: 'Features', target: 'Features-Section', icon: Sparkles },
+  { name: 'Tools', target: 'Tool-Section', icon: Wrench },
 ]
 
 export default function LandingHeader() {
@@ -94,50 +100,72 @@ export default function LandingHeader() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-slate-950 px-4 sm:px-6 pb-6 pt-1 border-t border-white/10">
-          <ul>
-            {navLinks.map((link) => (
-              <li key={link.target}>
-                <a
-                  href={`/#${link.target}`}
-                  onClick={(e) => scrollToSection(e, link.target)}
-                  className="block py-3 text-slate-200 hover:text-white border-b border-white/5 transition-colors"
-                >
-                  {link.name}
-                </a>
-              </li>
-            ))}
+        <div className="md:hidden bg-slate-950/95 backdrop-blur-xl px-4 sm:px-6 pb-6 pt-3 border-t border-white/10">
+          <ul className="space-y-2">
+            {mobileMenuLinks.map((link) => {
+              const Icon = link.icon
+              return (
+                <li key={link.target}>
+                  <a
+                    href={`/#${link.target}`}
+                    onClick={(e) => scrollToSection(e, link.target)}
+                    className="flex items-center justify-between rounded-xl bg-white/[0.03] border border-white/5 px-4 py-3.5 text-slate-200 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  >
+                    <span className="flex items-center gap-3">
+                      <span className="w-8 h-8 rounded-lg bg-white/[0.07] flex items-center justify-center text-primary shrink-0">
+                        <Icon size={17} />
+                      </span>
+                      <span className="font-medium">{link.name}</span>
+                    </span>
+                    <ChevronRight size={16} className="text-slate-500" />
+                  </a>
+                </li>
+              )
+            })}
             <li>
               <Link
                 to="/AboutUs"
                 onClick={() => setMenuOpen(false)}
-                className="block py-3 text-slate-200 hover:text-white border-b border-white/5 transition-colors"
+                className="flex items-center justify-between rounded-xl bg-white/[0.03] border border-white/5 px-4 py-3.5 text-slate-200 hover:text-white hover:bg-white/[0.06] transition-colors"
               >
-                About us
+                <span className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-lg bg-white/[0.07] flex items-center justify-center text-primary shrink-0">
+                    <Info size={17} />
+                  </span>
+                  <span className="font-medium">About us</span>
+                </span>
+                <ChevronRight size={16} className="text-slate-500" />
               </Link>
             </li>
             <li>
               <Link
                 to="/ContectUs"
                 onClick={() => setMenuOpen(false)}
-                className="block py-3 text-slate-200 hover:text-white border-b border-white/5 transition-colors"
+                className="flex items-center justify-between rounded-xl bg-white/[0.03] border border-white/5 px-4 py-3.5 text-slate-200 hover:text-white hover:bg-white/[0.06] transition-colors"
               >
-                Contact us
+                <span className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-lg bg-white/[0.07] flex items-center justify-center text-primary shrink-0">
+                    <Mail size={17} />
+                  </span>
+                  <span className="font-medium">Contact us</span>
+                </span>
+                <ChevronRight size={16} className="text-slate-500" />
               </Link>
             </li>
           </ul>
-          <div className="mt-5 flex flex-col gap-3">
+
+          <div className="mt-5 pt-4 border-t border-white/10 flex flex-col gap-3">
             <Link
               to="/Worker/Auth"
               onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-200 border border-slate-700 hover:border-slate-500 hover:text-white transition-colors"
+              className="inline-flex items-center justify-center px-4 py-3 rounded-xl text-sm font-semibold text-slate-200 border border-slate-700 hover:border-slate-500 hover:text-white transition-colors"
             >
               Start As Worker
             </Link>
             <Link
               to="/Client/Auth"
               onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors"
+              className="inline-flex items-center justify-center px-4 py-3 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors"
             >
               Get Started
             </Link>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import MobileBottomNav from '../../Component/MobileBottomNav';
+import { warmUpBackend } from '../../utils/backendWarmup.js';
 import { LayoutDashboard, Route, Truck, Users, UserRound } from 'lucide-react';
 
 const navItems = [
@@ -18,6 +19,10 @@ const handleLogout = () => {
 
 export default function AdminLayout() {
   const location = useLocation();
+
+  React.useEffect(() => {
+    warmUpBackend();
+  }, []);
 
   const renderNavLinks = () => (
     <ul className="space-y-2">

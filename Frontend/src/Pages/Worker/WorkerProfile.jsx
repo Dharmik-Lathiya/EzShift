@@ -28,12 +28,9 @@ export default function WorkerProfile() {
   });
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [earning, setEarning] = useState(0);
-  const [trips, setTrips] = useState(0);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -75,7 +72,6 @@ export default function WorkerProfile() {
     }
   
     setPreview(URL.createObjectURL(file));
-    setImageFile(file);
   
     try {
       const formData = new FormData();
@@ -99,8 +95,6 @@ export default function WorkerProfile() {
           setPreview(url);
           setProfile((p) => ({ ...p, avatar: url }));
         }
-
-        setImageFile(null);
       } else {
         setMessage({ type: "error", text: result.error || "Upload failed" });
       }
@@ -132,18 +126,16 @@ export default function WorkerProfile() {
       if (response.ok) {
         setMessage({ type: 'success', text: 'Profile updated successfully!' });
         setEditMode(false);
-        setImageFile(null);
       } else {
         setMessage({ type: 'error', text: 'Failed to update profile' });
       }
-    } catch (error) {
+    } catch {
       setMessage({ type: 'error', text: 'Network error occurred' });
     }
     setSaving(false);
   };
 
   const removeImage = () => {
-    setImageFile(null);
     setPreview('');
   };
 
@@ -204,11 +196,17 @@ export default function WorkerProfile() {
                 {/* Avatar Section */}
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-10 pb-8 border-b border-gray-100">
                   <div className="relative group shrink-0">
-                    <img
-                      src={preview || profile.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}
-                      alt="Profile"
-                      className="w-28 h-28 rounded-full object-cover border-4 border-gray-50 shadow-sm"
-                    />
+                    <div className="w-28 h-28 rounded-full bg-primary-light border-4 border-gray-50 shadow-sm flex items-center justify-center">
+                      <User size={56} className="text-primary" />
+                    </div>
+                    {(preview || profile.avatar) && (
+                      <img
+                        src={preview || profile.avatar}
+                        alt="Profile"
+                        className="absolute inset-0 w-28 h-28 rounded-full object-cover border-4 border-gray-50 shadow-sm"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    )}
                     {editMode && (
                       <div className="absolute inset-0 bg-gray-900/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <label className="cursor-pointer">

@@ -119,11 +119,17 @@ export default function ClientProfileHead() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-8 flex flex-col sm:flex-row items-center gap-6">
             <div className="relative group shrink-0">
-              <img
-                className="w-28 h-28 rounded-full object-cover border-4 border-gray-50 shadow-sm"
-                src={client.profilePic || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}
-                alt="profile"
-              />
+              <div className="w-28 h-28 rounded-full bg-primary-light border-4 border-gray-50 shadow-sm flex items-center justify-center">
+                <User size={56} className="text-primary" />
+              </div>
+              {client.profilePic && (
+                <img
+                  className="absolute inset-0 w-28 h-28 rounded-full object-cover border-4 border-gray-50 shadow-sm"
+                  src={client.profilePic}
+                  alt="profile"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              )}
             </div>
             <div className="text-center sm:text-left">
               <h2 className="text-2xl font-bold text-gray-900">{client.fullName}</h2>
@@ -245,11 +251,17 @@ export default function ClientProfileHead() {
               <form onSubmit={handleSave} className="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
                 <div className="flex flex-col items-center justify-center mb-6">
                   <div className="relative group">
-                    <img
-                      src={profilePic ? URL.createObjectURL(profilePic) : (client.profilePic || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}
-                      alt="preview"
-                      className="h-24 w-24 rounded-full object-cover border-4 border-gray-50 shadow-sm"
-                    />
+                    <div className="h-24 w-24 rounded-full bg-primary-light border-4 border-gray-50 shadow-sm flex items-center justify-center">
+                      <User size={40} className="text-primary" />
+                    </div>
+                    {(profilePic || client.profilePic) && (
+                      <img
+                        src={profilePic ? URL.createObjectURL(profilePic) : client.profilePic}
+                        alt="preview"
+                        className="absolute inset-0 h-24 w-24 rounded-full object-cover border-4 border-gray-50 shadow-sm"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    )}
                     <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <label className="cursor-pointer">
                         <Camera className="text-white" size={24} />

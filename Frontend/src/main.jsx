@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router";
 import App from './App.jsx';
 import { messaging } from './firebase-config.js';
 import { getToken, onMessage } from 'firebase/messaging';
+import { warmUpBackend } from './utils/backendWarmup.js';
 
 const vapidKey = "BMruF894vKbbp2OJykTdHsQNC_O9b3mfbTHSui_kakTJzQ_LDADNVGI77GixHXzA3Ym9UAqyGWoMQ8tkCwicyC8";
 
@@ -52,6 +53,7 @@ function Root() {
   const [fcmToken, setFcmToken] = React.useState(null);
 
   React.useEffect(() => {
+    warmUpBackend();
     requestFCMToken().then((token) => {
       if (token) setFcmToken(token);
     });

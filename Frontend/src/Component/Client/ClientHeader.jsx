@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 
 export default function ClientHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,7 +49,7 @@ export default function ClientHeader() {
           <Link to="/Client/Dashboard" className="flex items-center">
             <img
               className="h-10 lg:h-12 w-auto"
-              src={'/logo.png'}
+              src={'/logo-black.png'}
               alt="EzShift Logo"
             />
           </Link>
@@ -75,15 +75,18 @@ export default function ClientHeader() {
 
         <div className="flex items-center gap-4">
           <Link to="/Client/Profile" className="block relative group">
-            <div className="h-11 w-11 rounded-full overflow-hidden border-2 border-gray-200 group-hover:border-primary transition-colors">
-              <img
-                className="h-full w-full object-cover"
-                src={avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}
-                alt="profile"
-                onError={(e) => {
-                  e.currentTarget.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
-                }}
-              />
+            <div className="h-11 w-11 rounded-full overflow-hidden border-2 border-gray-200 group-hover:border-primary transition-colors bg-primary-light flex items-center justify-center">
+              <User size={24} className="text-primary" />
+              {avatarUrl && (
+                <img
+                  className="absolute inset-0 h-full w-full object-cover"
+                  src={avatarUrl}
+                  alt="profile"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              )}
             </div>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
           </Link>
@@ -98,7 +101,7 @@ export default function ClientHeader() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <img className="h-8 w-auto" src={'/logo.png'} alt="Logo" />
+              <img className="h-8 w-auto" src={'/logo-black.png'} alt="Logo" />
               <button onClick={() => setMenuOpen(false)} className="text-gray-500 hover:text-gray-800">
                 <X size={24} />
               </button>
